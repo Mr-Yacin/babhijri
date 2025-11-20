@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/common/Header.astro';
+import Footer from '../../components/common/Footer.astro';
+import ProfileGrid from '../../components/dating/ProfileGrid.svelte';
+import { SITE_CONFIG } from '../../config';
+---
+
+<Layout title={`تعارف | ${SITE_CONFIG.name}`}>
+	<Header />
+	<main class="container mx-auto px-4 py-8">
+		<div class="flex items-center justify-between mb-8">
+			<h1 class="text-3xl font-bold text-gray-900">ابحث عن شريك حياتك</h1>
+			<a href="/app/login" class="text-teal-600 font-medium hover:underline">تسجيل الدخول</a>
+		</div>
+		
+		<!-- Svelte Component for Interactive Grid -->
+		<ProfileGrid client:only="svelte" />
+	</main>
+	<script>
+		import { authStore } from '../../lib/stores/auth';
+		
+		const unsubscribe = authStore.subscribe(state => {
+			if (!state.loading && !state.isLoggedIn) {
+				window.location.href = '/app/login';
+			}
+		});
+	</script>
+
+	<Footer />
+</Layout>

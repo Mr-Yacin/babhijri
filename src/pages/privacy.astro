@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import { SITE_CONFIG } from '../config';
+---
+
+<Layout title={`سياسة الخصوصية | ${SITE_CONFIG.name}`} description="سياسة الخصوصية وحماية البيانات في منصة باب الهجرة">
+	<Header />
+	
+	<main class="min-h-screen bg-gray-50">
+		<!-- Page Header -->
+		<section class="bg-gradient-to-r from-pink-900 to-pink-700 text-white py-16">
+			<div class="container mx-auto px-4">
+				<h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">سياسة الخصوصية</h1>
+				<p class="text-pink-100 text-center text-lg">آخر تحديث: {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+			</div>
+		</section>
+
+		<!-- Privacy Content -->
+		<section class="py-12">
+			<div class="container mx-auto px-4 max-w-4xl">
+				<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 space-y-8">
+					
+					<!-- Introduction -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">مقدمة</h2>
+						<p class="text-gray-700 leading-relaxed">
+							في {SITE_CONFIG.name}، نحن نقدر خصوصيتك ونلتزم بحماية بياناتك الشخصية. 
+							توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك عند استخدام منصتنا.
+						</p>
+					</div>
+
+					<!-- Section 1 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">١. المعلومات التي نجمعها</h2>
+						
+						<h3 class="text-xl font-semibold text-gray-800 mb-3 mt-4">المعلومات الشخصية</h3>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							عند التسجيل في منصتنا، قد نجمع المعلومات التالية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>الاسم الكامل</li>
+							<li>عنوان البريد الإلكتروني</li>
+							<li>تاريخ الميلاد والعمر</li>
+							<li>الجنس</li>
+							<li>الموقع الجغرافي (المدينة والدولة)</li>
+							<li>الصور الشخصية</li>
+							<li>معلومات الملف الشخصي (السيرة الذاتية، الاهتمامات، التعليم، المهنة)</li>
+						</ul>
+
+						<h3 class="text-xl font-semibold text-gray-800 mb-3 mt-6">معلومات الاستخدام</h3>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>عنوان IP الخاص بك</li>
+							<li>نوع المتصفح والجهاز</li>
+							<li>الصفحات التي تزورها على منصتنا</li>
+							<li>الوقت والتاريخ الذي تقضيه على المنصة</li>
+							<li>التفاعلات مع المستخدمين الآخرين</li>
+						</ul>
+					</div>
+
+					<!-- Section 2 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٢. كيفية استخدام معلوماتك</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							نستخدم المعلومات التي نجمعها للأغراض التالية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li><strong>تقديم الخدمة:</strong> لإنشاء وإدارة حسابك وتمكينك من استخدام ميزات المنصة</li>
+							<li><strong>التوفيق بين المستخدمين:</strong> لمساعدتك في العثور على تطابقات محتملة بناءً على تفضيلاتك</li>
+							<li><strong>التواصل:</strong> لإرسال إشعارات وتحديثات مهمة حول حسابك</li>
+							<li><strong>تحسين الخدمة:</strong> لتحليل كيفية استخدام المنصة وتحسين تجربة المستخدم</li>
+							<li><strong>الأمان:</strong> لحماية المنصة من الاحتيال والأنشطة الضارة</li>
+							<li><strong>الامتثال القانوني:</strong> للامتثال للقوانين واللوائح المعمول بها</li>
+						</ul>
+					</div>
+
+					<!-- Section 3 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٣. مشاركة المعلومات</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							نحن لا نبيع معلوماتك الشخصية لأطراف ثالثة. قد نشارك معلوماتك في الحالات التالية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li><strong>مع مستخدمين آخرين:</strong> معلومات ملفك الشخصي مرئية للمستخدمين الآخرين على المنصة</li>
+							<li><strong>مقدمو الخدمات:</strong> شركات تساعدنا في تشغيل المنصة (مثل Firebase لاستضافة البيانات)</li>
+							<li><strong>الامتثال القانوني:</strong> عندما يكون ذلك مطلوباً بموجب القانون أو لحماية حقوقنا</li>
+							<li><strong>نقل الأعمال:</strong> في حالة الاندماج أو الاستحواذ أو بيع الأصول</li>
+						</ul>
+					</div>
+
+					<!-- Section 4 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٤. حماية البيانات</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							نتخذ إجراءات أمنية معقولة لحماية معلوماتك:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>تشفير البيانات أثناء النقل والتخزين</li>
+							<li>استخدام خدمات استضافة آمنة (Firebase)</li>
+							<li>مراجعة منتظمة لممارسات الأمان</li>
+							<li>تقييد الوصول إلى البيانات الشخصية</li>
+						</ul>
+						<p class="text-gray-700 leading-relaxed mt-3">
+							ومع ذلك، لا يمكن ضمان أمان البيانات بنسبة 100٪ على الإنترنت. نحن نشجعك على اتخاذ خطوات لحماية معلوماتك.
+						</p>
+					</div>
+
+					<!-- Section 5 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٥. حقوقك</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							لديك الحقوق التالية فيما يتعلق بمعلوماتك الشخصية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li><strong>الوصول:</strong> يمكنك طلب نسخة من بياناتك الشخصية</li>
+							<li><strong>التصحيح:</strong> يمكنك تحديث أو تصحيح معلوماتك في أي وقت</li>
+							<li><strong>الحذف:</strong> يمكنك طلب حذف حسابك وبياناتك</li>
+							<li><strong>الاعتراض:</strong> يمكنك الاعتراض على معالجة معينة لبياناتك</li>
+							<li><strong>نقل البيانات:</strong> يمكنك طلب نقل بياناتك إلى خدمة أخرى</li>
+						</ul>
+						<p class="text-gray-700 leading-relaxed mt-3">
+							لممارسة أي من هذه الحقوق، يرجى <a href="/contact" class="text-pink-600 hover:text-pink-700 font-semibold underline">الاتصال بنا</a>.
+						</p>
+					</div>
+
+					<!-- Section 6 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٦. ملفات تعريف الارتباط (Cookies)</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							نستخدم ملفات تعريف الارتباط والتقنيات المشابهة لـ:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>تذكر تفضيلاتك وإعداداتك</li>
+							<li>فهم كيفية استخدامك للمنصة</li>
+							<li>تحسين تجربة المستخدم</li>
+							<li>تحليل حركة المرور على الموقع</li>
+						</ul>
+						<p class="text-gray-700 leading-relaxed mt-3">
+							يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك.
+						</p>
+					</div>
+
+					<!-- Section 7 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٧. الاحتفاظ بالبيانات</h2>
+						<p class="text-gray-700 leading-relaxed">
+							نحتفظ بمعلوماتك الشخصية طالما كان حسابك نشطاً أو حسب الحاجة لتقديم خدماتنا. 
+							عند حذف حسابك، سنحذف أو نجعل معلوماتك مجهولة المصدر، ما لم نكن بحاجة للاحتفاظ بها للامتثال القانوني.
+						</p>
+					</div>
+
+					<!-- Section 8 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٨. خصوصية الأطفال</h2>
+						<p class="text-gray-700 leading-relaxed">
+							منصتنا غير مخصصة للأشخاص الذين تقل أعمارهم عن 18 عاماً. 
+							نحن لا نجمع عن قصد معلومات شخصية من الأطفال. 
+							إذا علمنا أننا جمعنا معلومات من طفل، سنحذفها على الفور.
+						</p>
+					</div>
+
+					<!-- Section 9 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٩. التغييرات على سياسة الخصوصية</h2>
+						<p class="text-gray-700 leading-relaxed">
+							قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. 
+							سنخطرك بأي تغييرات جوهرية عن طريق نشر السياسة الجديدة على هذه الصفحة وتحديث تاريخ "آخر تحديث".
+						</p>
+					</div>
+
+					<!-- Section 10 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">١٠. نقل البيانات الدولي</h2>
+						<p class="text-gray-700 leading-relaxed">
+							قد يتم نقل معلوماتك وتخزينها ومعالجتها في بلدان خارج بلد إقامتك. 
+							نتخذ خطوات لضمان معالجة بياناتك بشكل آمن ووفقاً لسياسة الخصوصية هذه.
+						</p>
+					</div>
+
+					<!-- Contact Section -->
+					<div class="bg-pink-50 border border-pink-200 rounded-xl p-6 mt-8">
+						<h3 class="text-xl font-bold text-pink-900 mb-3">أسئلة حول الخصوصية؟</h3>
+						<p class="text-pink-800 mb-4">
+							إذا كان لديك أي أسئلة أو مخاوف بشأن سياسة الخصوصية أو ممارسات البيانات الخاصة بنا:
+						</p>
+						<div class="space-y-2 text-pink-900">
+							<p><strong>البريد الإلكتروني:</strong> privacy@babhijra.com</p>
+							<p>أو <a href="/contact" class="text-pink-600 hover:text-pink-700 font-semibold underline">اتصل بنا</a> مباشرة</p>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+</Layout>

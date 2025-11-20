@@ -1,0 +1,162 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import { SITE_CONFIG } from '../config';
+---
+
+<Layout title={`شروط الخدمة | ${SITE_CONFIG.name}`} description="شروط وأحكام استخدام منصة باب الهجرة">
+	<Header />
+	
+	<main class="min-h-screen bg-gray-50">
+		<!-- Page Header -->
+		<section class="bg-gradient-to-r from-teal-900 to-teal-700 text-white py-16">
+			<div class="container mx-auto px-4">
+				<h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">شروط الخدمة</h1>
+				<p class="text-teal-100 text-center text-lg">آخر تحديث: {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+			</div>
+		</section>
+
+		<!-- Terms Content -->
+		<section class="py-12">
+			<div class="container mx-auto px-4 max-w-4xl">
+				<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 space-y-8">
+					
+					<!-- Introduction -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">مقدمة</h2>
+						<p class="text-gray-700 leading-relaxed">
+							مرحباً بك في {SITE_CONFIG.name}. باستخدامك لهذه المنصة، فإنك توافق على الالتزام بشروط الخدمة التالية. 
+							يرجى قراءة هذه الشروط بعناية قبل استخدام خدماتنا.
+						</p>
+					</div>
+
+					<!-- Section 1 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">١. قبول الشروط</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							من خلال الوصول إلى هذه المنصة واستخدامها، فإنك تقر بأنك قد قرأت وفهمت ووافقت على الالتزام بهذه الشروط والأحكام.
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>يجب أن تكون بالغاً (18 عاماً أو أكثر) لاستخدام هذه المنصة</li>
+							<li>يجب تقديم معلومات صحيحة ودقيقة عند التسجيل</li>
+							<li>أنت مسؤول عن الحفاظ على سرية حسابك وكلمة المرور</li>
+						</ul>
+					</div>
+
+					<!-- Section 2 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٢. استخدام الخدمة</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							توفر منصة {SITE_CONFIG.name} خدمتين رئيسيتين:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li><strong>محتوى الهجرة:</strong> مقالات وأدلة إرشادية حول الهجرة والسفر</li>
+							<li><strong>منصة التعارف:</strong> خدمة للتعارف بهدف الزواج للمجتمع العربي</li>
+						</ul>
+					</div>
+
+					<!-- Section 3 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٣. السلوك المقبول</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							عند استخدام منصتنا، توافق على:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>التعامل مع المستخدمين الآخرين باحترام ولطف</li>
+							<li>عدم نشر محتوى مسيء أو غير لائق أو مضلل</li>
+							<li>عدم انتحال شخصية الآخرين أو تقديم معلومات كاذبة</li>
+							<li>عدم استخدام المنصة لأغراض تجارية دون إذن</li>
+							<li>عدم التحرش أو الإساءة لأي مستخدم آخر</li>
+							<li>احترام خصوصية المستخدمين الآخرين</li>
+						</ul>
+					</div>
+
+					<!-- Section 4 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٤. المحتوى والملكية الفكرية</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							جميع المحتويات المنشورة على {SITE_CONFIG.name} محمية بحقوق النشر والملكية الفكرية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>المحتوى الذي تنشره يبقى ملكك، لكنك تمنحنا ترخيصاً لاستخدامه</li>
+							<li>لا يجوز نسخ أو توزيع محتوى المنصة دون إذن</li>
+							<li>نحتفظ بالحق في إزالة أي محتوى ينتهك هذه الشروط</li>
+						</ul>
+					</div>
+
+					<!-- Section 5 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٥. الخصوصية والبيانات</h2>
+						<p class="text-gray-700 leading-relaxed">
+							نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. لمزيد من المعلومات، يرجى الاطلاع على 
+							<a href="/privacy" class="text-teal-600 hover:text-teal-700 font-semibold underline">سياسة الخصوصية</a>.
+						</p>
+					</div>
+
+					<!-- Section 6 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٦. إنهاء الحساب</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							نحتفظ بالحق في تعليق أو إنهاء حسابك في الحالات التالية:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>انتهاك شروط الخدمة</li>
+							<li>السلوك المسيء أو غير اللائق</li>
+							<li>النشاط الاحتيالي أو المشبوه</li>
+							<li>عدم النشاط لفترة طويلة</li>
+						</ul>
+					</div>
+
+					<!-- Section 7 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٧. إخلاء المسؤولية</h2>
+						<p class="text-gray-700 leading-relaxed mb-3">
+							{SITE_CONFIG.name} توفر المعلومات "كما هي" دون أي ضمانات:
+						</p>
+						<ul class="list-disc list-inside text-gray-700 space-y-2 mr-4">
+							<li>المعلومات المتعلقة بالهجرة هي للإرشاد فقط وليست استشارة قانونية</li>
+							<li>لا نضمن دقة أو اكتمال المعلومات المقدمة</li>
+							<li>لسنا مسؤولين عن أي قرارات تتخذها بناءً على محتوانا</li>
+							<li>لسنا مسؤولين عن تصرفات المستخدمين الآخرين على المنصة</li>
+						</ul>
+					</div>
+
+					<!-- Section 8 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٨. التعديلات على الشروط</h2>
+						<p class="text-gray-700 leading-relaxed">
+							نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إخطارك بأي تغييرات جوهرية، 
+							واستمرارك في استخدام المنصة يعني موافقتك على الشروط المعدلة.
+						</p>
+					</div>
+
+					<!-- Section 9 -->
+					<div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-4">٩. القانون الحاكم</h2>
+						<p class="text-gray-700 leading-relaxed">
+							تخضع هذه الشروط وتفسر وفقاً للقوانين المعمول بها، دون النظر إلى تعارض أحكام القانون.
+						</p>
+					</div>
+
+					<!-- Contact Section -->
+					<div class="bg-teal-50 border border-teal-200 rounded-xl p-6 mt-8">
+						<h3 class="text-xl font-bold text-teal-900 mb-3">هل لديك أسئلة؟</h3>
+						<p class="text-teal-800 mb-4">
+							إذا كان لديك أي أسئلة حول شروط الخدمة، يرجى التواصل معنا:
+						</p>
+						<a 
+							href="/contact" 
+							class="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors"
+						>
+							اتصل بنا
+						</a>
+					</div>
+
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+</Layout>

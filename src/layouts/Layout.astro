@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+import { SITE_CONFIG } from '../config';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_CONFIG.defaultLang} dir={SITE_CONFIG.dir}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		
+		<!-- Google Fonts: Noto Sans Arabic -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+		<slot />
+		<script>
+			import { authStore } from '../lib/stores/auth';
+			authStore.init();
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--font-sans: 'Noto Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	}
+	
+	html {
+		font-family: var(--font-sans);
+	}
+</style>
