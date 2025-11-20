@@ -53,3 +53,21 @@ export interface ProfileFormData {
     height?: number;
     photos: string[];
 }
+
+export interface UserSettings {
+    uid: string;
+    emailNotifications: boolean;
+    matchNotifications: boolean;
+    messageNotifications: boolean;
+    profileVisibility: 'everyone' | 'matches';
+    showOnlineStatus: boolean;
+    language: 'ar' | 'en';
+    updatedAt: number;
+}
+
+export interface ProfileStats {
+    views: number;
+    likes: number;
+    matches: number;
+    lastUpdated: number;
+}

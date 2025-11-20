@@ -110,7 +110,7 @@
                 <!-- Menu Items -->
                 <div class="py-1">
                     <a
-                        href="/app"
+                        href="/app/dashboard"
                         class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
                     >
                         <svg

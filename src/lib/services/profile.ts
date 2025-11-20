@@ -8,9 +8,11 @@ import {
     Timestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { DatingProfile, ProfileFormData } from '../types/user';
+import type { DatingProfile, ProfileFormData, UserSettings, ProfileStats } from '../types/user';
 
 const COLLECTION_NAME = 'profiles';
+const SETTINGS_COLLECTION = 'userSettings';
+const STATS_COLLECTION = 'profileStats';
 
 export const ProfileService = {
     /**
@@ -49,6 +51,12 @@ export const ProfileService = {
             const cleanedProfile = this.removeUndefined(newProfile);
 
             await setDoc(profileRef, cleanedProfile);
+
+            // Initialize default settings
+            await this.initializeSettings(uid);
+
+            // Initialize stats
+            await this.initializeStats(uid);
         } catch (error) {
             console.error('Error creating profile:', error);
             throw error;
@@ -156,5 +164,156 @@ export const ProfileService = {
         });
 
         return Math.round((completed / fields.length) * 100);
+    },
+
+    /**
+     * Toggle profile visibility (active/inactive)
+     */
+    async updateProfileVisibility(uid: string, isActive: boolean): Promise<void> {
+        try {
+            const profileRef = doc(db, COLLECTION_NAME, uid);
+            await updateDoc(profileRef, {
+                isActive,
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error updating profile visibility:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Get profile statistics
+     */
+    async getProfileStats(uid: string): Promise<ProfileStats> {
+        try {
+            const statsRef = doc(db, STATS_COLLECTION, uid);
+            const docSnap = await getDoc(statsRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                return {
+                    views: data.views || 0,
+                    likes: data.likes || 0,
+                    matches: data.matches || 0,
+                    lastUpdated: data.lastUpdated instanceof Timestamp
+                        ? data.lastUpdated.toMillis()
+                        : data.lastUpdated || Date.now()
+                } as ProfileStats;
+            } else {
+                // Return default stats if none exist
+                return {
+                    views: 0,
+                    likes: 0,
+                    matches: 0,
+                    lastUpdated: Date.now()
+                };
+            }
+        } catch (error) {
+            console.error('Error getting profile stats:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Initialize default stats for a new profile
+     */
+    async initializeStats(uid: string): Promise<void> {
+        try {
+            const statsRef = doc(db, STATS_COLLECTION, uid);
+            await setDoc(statsRef, {
+                views: 0,
+                likes: 0,
+                matches: 0,
+                lastUpdated: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error initializing stats:', error);
+            // Don't throw - stats are not critical
+        }
+    },
+
+    /**
+     * Get user settings
+     */
+    async getUserSettings(uid: string): Promise<UserSettings> {
+        try {
+            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            const docSnap = await getDoc(settingsRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                return {
+                    uid: data.uid,
+                    emailNotifications: data.emailNotifications ?? true,
+                    matchNotifications: data.matchNotifications ?? true,
+                    messageNotifications: data.messageNotifications ?? true,
+                    profileVisibility: data.profileVisibility || 'everyone',
+                    showOnlineStatus: data.showOnlineStatus ?? true,
+                    language: data.language || 'ar',
+                    updatedAt: data.updatedAt instanceof Timestamp
+                        ? data.updatedAt.toMillis()
+                        : data.updatedAt || Date.now()
+                } as UserSettings;
+            } else {
+                // Return default settings
+                return {
+                    uid,
+                    emailNotifications: true,
+                    matchNotifications: true,
+                    messageNotifications: true,
+                    profileVisibility: 'everyone',
+                    showOnlineStatus: true,
+                    language: 'ar',
+                    updatedAt: Date.now()
+                };
+            }
+        } catch (error) {
+            console.error('Error getting user settings:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Update user settings
+     */
+    async updateUserSettings(uid: string, settings: Partial<UserSettings>): Promise<void> {
+        try {
+            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            const updateData = {
+                ...settings,
+                uid,
+                updatedAt: serverTimestamp()
+            };
+
+            const cleanedData = this.removeUndefined(updateData);
+            await setDoc(settingsRef, cleanedData, { merge: true });
+        } catch (error) {
+            console.error('Error updating user settings:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Initialize default settings for a new user
+     */
+    async initializeSettings(uid: string): Promise<void> {
+        try {
+            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            await setDoc(settingsRef, {
+                uid,
+                emailNotifications: true,
+                matchNotifications: true,
+                messageNotifications: true,
+                profileVisibility: 'everyone',
+                showOnlineStatus: true,
+                language: 'ar',
+                updatedAt: serverTimestamp()
+            });
+        } catch (error) {
+            console.error('Error initializing settings:', error);
+            // Don't throw - settings can be created later
+        }
     }
 };
+
