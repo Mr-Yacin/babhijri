@@ -1,28 +1,45 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/common/Header.astro';
-import Footer from '../../components/common/Footer.astro';
-import ProfileGrid from '../../components/dating/ProfileGrid.svelte';
-import { SITE_CONFIG } from '../../config';
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/common/Header.astro";
+import Footer from "../../components/common/Footer.astro";
+import ProfileGrid from "../../components/dating/ProfileGrid.svelte";
+import { SITE_CONFIG } from "../../config";
 ---
 
 <Layout title={`تعارف | ${SITE_CONFIG.name}`}>
 	<Header />
-	<main class="container mx-auto px-4 py-8">
-		<div class="flex items-center justify-between mb-8">
-			<h1 class="text-3xl font-bold text-gray-900">ابحث عن شريك حياتك</h1>
-			<a href="/app/login" class="text-teal-600 font-medium hover:underline">تسجيل الدخول</a>
-		</div>
-		
-		<!-- Svelte Component for Interactive Grid -->
-		<ProfileGrid client:only="svelte" />
+
+	<main class="min-h-screen bg-gray-50">
+		<!-- Page Header -->
+		<section
+			class="bg-gradient-to-r from-pink-900 to-pink-700 text-white py-16"
+		>
+			<div class="container mx-auto px-4">
+				<h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">
+					ابحث عن شريك حياتك
+				</h1>
+				<p class="text-pink-100 text-center text-lg max-w-2xl mx-auto">
+					تعرف على أشخاص جدد من المجتمع العربي حول العالم واعثر على
+					شريك حياتك المثالي
+				</p>
+			</div>
+		</section>
+
+		<!-- Profile Grid Section -->
+		<section class="py-12">
+			<div class="container mx-auto px-4">
+				<!-- Svelte Component for Interactive Grid -->
+				<ProfileGrid client:only="svelte" />
+			</div>
+		</section>
 	</main>
+
 	<script>
-		import { authStore } from '../../lib/stores/auth';
-		
-		const unsubscribe = authStore.subscribe(state => {
+		import { authStore } from "../../lib/stores/auth";
+
+		const unsubscribe = authStore.subscribe((state) => {
 			if (!state.loading && !state.isLoggedIn) {
-				window.location.href = '/app/login';
+				window.location.href = "/app/login";
 			}
 		});
 	</script>

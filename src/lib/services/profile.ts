@@ -14,24 +14,41 @@ const COLLECTION_NAME = 'profiles';
 
 export const ProfileService = {
     /**
+     * Remove undefined values from an object
+     * Firestore doesn't accept undefined values
+     */
+    removeUndefined(obj: any): any {
+        const cleaned: any = {};
+        Object.keys(obj).forEach(key => {
+            if (obj[key] !== undefined) {
+                cleaned[key] = obj[key];
+            }
+        });
+        return cleaned;
+    },
+
+    /**
      * Create or overwrite a user's dating profile
      */
     async createProfile(uid: string, data: ProfileFormData): Promise<void> {
         try {
             const profileRef = doc(db, COLLECTION_NAME, uid);
 
-            const newProfile: DatingProfile = {
+            const newProfile: any = {
                 uid,
                 ...data,
                 location: `${data.city}, ${data.country}`,
                 photos: data.photos || [],
                 verified: false,
                 isActive: true,
-                createdAt: Date.now(),
-                updatedAt: Date.now()
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
             };
 
-            await setDoc(profileRef, newProfile);
+            // Remove undefined values (Firestore doesn't accept them)
+            const cleanedProfile = this.removeUndefined(newProfile);
+
+            await setDoc(profileRef, cleanedProfile);
         } catch (error) {
             console.error('Error creating profile:', error);
             throw error;
@@ -47,7 +64,18 @@ export const ProfileService = {
             const docSnap = await getDoc(profileRef);
 
             if (docSnap.exists()) {
-                return docSnap.data() as DatingProfile;
+                const data = docSnap.data();
+
+                // Convert Firestore Timestamps to numbers for compatibility
+                return {
+                    ...data,
+                    createdAt: data.createdAt instanceof Timestamp
+                        ? data.createdAt.toMillis()
+                        : data.createdAt,
+                    updatedAt: data.updatedAt instanceof Timestamp
+                        ? data.updatedAt.toMillis()
+                        : data.updatedAt
+                } as DatingProfile;
             } else {
                 return null;
             }
@@ -64,10 +92,15 @@ export const ProfileService = {
         try {
             const profileRef = doc(db, COLLECTION_NAME, uid);
 
-            await updateDoc(profileRef, {
+            const updateData = {
                 ...data,
-                updatedAt: Date.now()
-            });
+                updatedAt: serverTimestamp()
+            };
+
+            // Remove undefined values (Firestore doesn't accept them)
+            const cleanedData = this.removeUndefined(updateData);
+
+            await updateDoc(profileRef, cleanedData);
         } catch (error) {
             console.error('Error updating profile:', error);
             throw error;
