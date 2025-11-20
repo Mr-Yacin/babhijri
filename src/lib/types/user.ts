@@ -71,3 +71,47 @@ export interface ProfileStats {
     matches: number;
     lastUpdated: number;
 }
+
+// Admin-specific types
+export interface AdminStats {
+    totalUsers: number;
+    activeUsers: number;
+    inactiveUsers: number;
+    verifiedUsers: number;
+    newUsersThisWeek: number;
+    newUsersThisMonth: number;
+    totalProfiles: number;
+    maleUsers: number;
+    femaleUsers: number;
+    lastUpdated: number;
+}
+
+export interface UserActivity {
+    uid: string;
+    action: 'login' | 'logout' | 'profile_update' | 'profile_create' | 'settings_update' | 'account_delete';
+    timestamp: number;
+    details?: string;
+    ipAddress?: string;
+}
+
+export interface UserListItem {
+    uid: string;
+    email: string;
+    displayName: string;
+    photoURL?: string;
+    role: 'user' | 'admin';
+    isActive: boolean;
+    verified: boolean;
+    createdAt: number;
+    lastLogin?: number;
+    profileCompletion?: number;
+}
+
+export interface AdminFilters {
+    search?: string;
+    role?: 'user' | 'admin' | 'all';
+    status?: 'active' | 'inactive' | 'all';
+    verified?: 'verified' | 'unverified' | 'all';
+    dateFrom?: number;
+    dateTo?: number;
+}

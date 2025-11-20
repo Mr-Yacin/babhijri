@@ -1,0 +1,341 @@
+<script lang="ts">
+    import { onMount } from "svelte";
+    import { AdminService } from "../../lib/services/admin";
+    import { ProfileService } from "../../lib/services/profile";
+    import { userService } from "../../lib/services/user";
+    import type {
+        DatingProfile,
+        UserProfile,
+        UserActivity,
+    } from "../../lib/types/user";
+
+    export let uid: string = "";
+
+    let profile: DatingProfile | null = null;
+    let userAccount: UserProfile | null = null;
+    let activities: UserActivity[] = [];
+    let loading = true;
+    let error = "";
+
+    onMount(async () => {
+        if (!uid) {
+            const params = new URLSearchParams(window.location.search);
+            uid = params.get("uid") || "";
+        }
+        if (uid) {
+            await loadUserData();
+        } else {
+            error = "User ID not found";
+            loading = false;
+        }
+    });
+
+    async function loadUserData() {
+        loading = true;
+        try {
+            const [p, u, a] = await Promise.all([
+                ProfileService.getProfile(uid),
+                userService.getUserProfile(uid),
+                AdminService.getUserActivity(uid),
+            ]);
+            profile = p;
+            userAccount = u;
+            activities = a;
+        } catch (e) {
+            console.error("Error loading user data:", e);
+            error = "فشل تحميل بيانات المستخدم";
+        } finally {
+            loading = false;
+        }
+    }
+
+    function formatAction(action: string) {
+        const map: Record<string, string> = {
+            login: "تسجيل دخول",
+            update_profile: "تحديث الملف الشخصي",
+            view_profile: "عرض ملف شخصي",
+            like_profile: "إعجاب بملف",
+            match: "تطابق جديد",
+        };
+        return map[action] || action;
+    }
+
+    async function toggleStatus() {
+        if (!profile || !uid) return;
+        if (
+            !confirm(
+                profile.isActive
+                    ? "هل تريد تعطيل هذا المستخدم؟"
+                    : "هل تريد تفعيل هذا المستخدم؟",
+            )
+        )
+            return;
+
+        try {
+            await AdminService.toggleUserStatus(uid, !profile.isActive);
+            loadUserData(); // Reload
+        } catch (e) {
+            alert("حدث خطأ أثناء تحديث الحالة");
+        }
+    }
+
+    async function deleteUser() {
+        if (!uid) return;
+        if (!confirm("هل أنت متأكد تماماً؟ هذا الإجراء لا يمكن التراجع عنه."))
+            return;
+
+        try {
+            await AdminService.deleteUserAccount(uid);
+            window.location.href = "/app/admin/users";
+        } catch (e) {
+            alert("حدث خطأ أثناء حذف المستخدم");
+        }
+    }
+
+    async function toggleRole() {
+        if (!userAccount || !uid) return;
+        const newRole = userAccount.role === "admin" ? "user" : "admin";
+        if (
+            !confirm(
+                `هل تريد تغيير دور المستخدم إلى ${newRole === "admin" ? "مشرف" : "مستخدم"}؟`,
+            )
+        )
+            return;
+
+        try {
+            await AdminService.updateUserRole(uid, newRole);
+            loadUserData();
+        } catch (e) {
+            alert("حدث خطأ أثناء تحديث الدور");
+        }
+    }
+</script>
+
+{#if loading}
+    <div class="flex justify-center py-12">
+        <svg
+            class="animate-spin h-8 w-8 text-indigo-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+        >
+            <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+            ></circle>
+            <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+            ></path>
+        </svg>
+    </div>
+{:else if error || !profile}
+    <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center">
+        {error || "المستخدم غير موجود"}
+    </div>
+{:else}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- User Info Card -->
+            <div
+                class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+                <div class="text-center mb-6">
+                    <div
+                        class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-gray-500"
+                    >
+                        <span
+                            >{profile.displayName
+                                ? profile.displayName[0].toUpperCase()
+                                : "U"}</span
+                        >
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-1">
+                        {profile.displayName}
+                    </h2>
+                    <p class="text-sm text-gray-500 mb-3">
+                        {userAccount?.email || "غير متوفر"}
+                    </p>
+                    <div class="flex justify-center gap-2">
+                        <span
+                            class={`px-3 py-1 rounded-full text-sm font-medium ${userAccount?.role === "admin" ? "bg-indigo-100 text-indigo-800" : "bg-gray-100 text-gray-800"}`}
+                        >
+                            {userAccount?.role === "admin" ? "مشرف" : "مستخدم"}
+                        </span>
+                        <span
+                            class={`px-3 py-1 rounded-full text-sm font-medium ${profile.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                        >
+                            {profile.isActive ? "نشط" : "غير نشط"}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 border-t border-gray-100 pt-6">
+                    <button
+                        on:click={toggleStatus}
+                        class="w-full py-2 px-4 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors font-medium"
+                    >
+                        تغيير الحالة (تفعيل/تعطيل)
+                    </button>
+                    <button
+                        on:click={toggleRole}
+                        class="w-full py-2 px-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
+                    >
+                        تغيير الدور (مشرف/مستخدم)
+                    </button>
+                    <button
+                        on:click={deleteUser}
+                        class="w-full py-2 px-4 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                    >
+                        حذف الحساب
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div
+                class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+                <h3 class="font-bold text-gray-900 mb-4">سجل النشاط</h3>
+                <div class="space-y-2 max-h-96 overflow-y-auto">
+                    {#if activities.length === 0}
+                        <p class="text-gray-500 text-center py-4">
+                            لا يوجد نشاط مسجل
+                        </p>
+                    {:else}
+                        {#each activities as act}
+                            <div
+                                class="flex items-start gap-4 py-3 border-b border-gray-100 last:border-0"
+                            >
+                                <div
+                                    class="w-2 h-2 mt-2 rounded-full bg-gray-300"
+                                ></div>
+                                <div>
+                                    <p
+                                        class="text-sm font-medium text-gray-900"
+                                    >
+                                        {formatAction(act.action)}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {new Date(act.timestamp).toLocaleString(
+                                            "ar-SA",
+                                        )}
+                                    </p>
+                                    {#if act.details}
+                                        <p class="text-xs text-gray-400 mt-1">
+                                            {JSON.stringify(act.details)}
+                                        </p>
+                                    {/if}
+                                </div>
+                            </div>
+                        {/each}
+                    {/if}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Details -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Profile Details -->
+            <div
+                class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+                <h3
+                    class="font-bold text-gray-900 mb-6 text-lg border-b border-gray-100 pb-2"
+                >
+                    معلومات الملف الشخصي
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">العمر</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.age || "-"}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">الجنس</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.gender === "male" ? "ذكر" : "أنثى"}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">الموقع</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.city || ""}, {profile.country || ""}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">
+                            الحالة الاجتماعية
+                        </p>
+                        <p class="font-medium text-gray-900">
+                            {profile.maritalStatus || "-"}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">التعليم</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.education || "-"}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">المهنة</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.occupation || "-"}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">الديانة</p>
+                        <p class="font-medium text-gray-900">
+                            {profile.religion || "-"}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="text-sm text-gray-500 mb-1">نبذة شخصية</p>
+                    <p class="font-medium text-gray-900 leading-relaxed">
+                        {profile.bio || "-"}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Photos -->
+            <div
+                class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+            >
+                <h3
+                    class="font-bold text-gray-900 mb-6 text-lg border-b border-gray-100 pb-2"
+                >
+                    الصور
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {#if profile.photos && profile.photos.length > 0}
+                        {#each profile.photos as url}
+                            <div
+                                class="relative aspect-square rounded-lg overflow-hidden border border-gray-200"
+                            >
+                                <img
+                                    src={url}
+                                    alt="User photo"
+                                    class="w-full h-full object-cover"
+                                />
+                            </div>
+                        {/each}
+                    {:else}
+                        <p class="text-gray-500 col-span-full text-center py-4">
+                            لا توجد صور
+                        </p>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/if}
