@@ -1,0 +1,22 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ProfileCreationWizard from "../../../components/app/profile/ProfileCreationWizard.svelte";
+---
+
+<Layout title="إنشاء ملف شخصي | BabHijra">
+    <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    أهلاً بك في باب هجرة
+                </h1>
+                <p class="mt-4 text-lg text-gray-600">
+                    لنقم بإنشاء ملفك الشخصي لنساعدك في العثور على شريك حياتك
+                    المناسب
+                </p>
+            </div>
+
+            <ProfileCreationWizard client:load />
+        </div>
+    </div>
+</Layout>

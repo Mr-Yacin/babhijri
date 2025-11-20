@@ -16,9 +16,9 @@ export const SITE_CONFIG = {
 
     // Social Media (update with your actual links)
     social: {
-        facebook: '#',
-        twitter: '#',
-        instagram: '#'
+        facebook: 'https://www.facebook.com/babhijra',
+        twitter: 'https://x.com/babhijra',
+        instagram: 'https://www.instagram.com/babhijra'
     },
 
     // Localization

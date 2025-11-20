@@ -440,9 +440,9 @@ npm install
 ## 🚀 Next Steps
 
 1. **Read the documentation**:
-   - `DOCUMENTATION.md` - Full app documentation
-   - `ROADMAP.md` - Feature roadmap
-   - `TASKS.md` - Current tasks
+   - `../status/DOCUMENTATION.md` - Full app documentation
+   - `../status/ROADMAP.md` - Feature roadmap
+   - `../status/TASKS.md` - Current tasks
 
 2. **Set up Firebase**:
    - Follow `FIREBASE_SETUP.md`

@@ -107,10 +107,11 @@ babhijri/
 │   ├── styles/              # Global styles
 │   └── config.ts            # App configuration
 ├── public/                  # Static assets
-├── DOCUMENTATION.md         # Comprehensive documentation
-├── ROADMAP.md              # Development roadmap
-├── TASKS.md                # Task checklist
-└── README.md               # This file
+├── doc/                     # Project documentation
+│   ├── status/              # Roadmap, tasks, summary
+│   ├── guides/              # Setup guides (Firebase, Email, etc.)
+│   └── archive/             # Old documentation
+└── README.md                # This file
 ```
 
 ---
@@ -136,9 +137,10 @@ babhijri/
 
 ## 📚 Documentation
 
-- **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete application documentation
-- **[ROADMAP.md](./ROADMAP.md)** - Development roadmap and feature planning
-- **[TASKS.md](./TASKS.md)** - Current tasks and sprint planning
+- **[DOCUMENTATION.md](./doc/status/DOCUMENTATION.md)** - Complete application documentation
+- **[ROADMAP.md](./doc/status/ROADMAP.md)** - Development roadmap and feature planning
+- **[TASKS.md](./doc/status/TASKS.md)** - Current tasks and sprint planning
+- **[Guides](./doc/guides/)** - Setup guides and tutorials
 
 ---
 
@@ -165,7 +167,7 @@ babhijri/
 - Premium features
 - Mobile app
 
-See [ROADMAP.md](./ROADMAP.md) for detailed feature planning.
+See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 
 ---
 

@@ -409,7 +409,7 @@ profiles/{uid}
 ├── photos: string[]
 ├── bio: string
 ├── interests: string[]
-└── ... (see DOCUMENTATION.md for full schema)
+└── ... (see ../status/DOCUMENTATION.md for full schema)
 ```
 
 #### `interactions`

@@ -139,18 +139,6 @@ babhijri/
 │   ├── config.ts           # App configuration
 │   └── env.d.ts            # TypeScript environment types
 ├── .env                    # Environment variables (not in git)
-├── .env.example            # Example environment variables
-├── .gitignore
-├── astro.config.mjs        # Astro configuration
-├── package.json
-├── README.md
-├── svelte.config.js
-└── tsconfig.json
-```
-
----
-
-## ⚙️ Configuration
 
 ### Site Configuration (`src/config.ts`)
 ```typescript
