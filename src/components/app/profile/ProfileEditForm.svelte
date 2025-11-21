@@ -7,11 +7,11 @@
         DatingProfile,
     } from "../../../lib/types/user";
 
-    // Reuse step components for the form sections
-    import BasicInfoStep from "./steps/BasicInfoStep.svelte";
-    import LocationStep from "./steps/LocationStep.svelte";
-    import AboutStep from "./steps/AboutStep.svelte";
-    import PhotoUploadStep from "./steps/PhotoUploadStep.svelte";
+    // Reuse step components from the create wizard
+    import BasicInfoStep from "./create/steps/BasicInfoStep.svelte";
+    import LocationStep from "./create/steps/LocationStep.svelte";
+    import AboutStep from "./create/steps/AboutStep.svelte";
+    import PhotoUploadStep from "./create/steps/PhotoUploadStep.svelte";
 
     let isLoading = true;
     let isSaving = false;

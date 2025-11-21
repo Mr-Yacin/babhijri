@@ -5,6 +5,8 @@ import Footer from "../../../../components/common/Footer.astro";
 import UserDetail from "../../../../components/admin/UserDetail.svelte";
 import { SITE_CONFIG } from "../../../../config";
 
+export const prerender = false;
+
 const { uid } = Astro.params;
 ---
 

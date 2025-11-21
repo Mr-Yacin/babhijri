@@ -1,0 +1,92 @@
+
+> babhijri@0.0.1 build
+> astro build
+
+[2m11:58:02[22m [34m[content][39m Syncing content
+[2m11:58:02[22m [34m[content][39m Synced content
+[2m11:58:02[22m [34m[types][39m Generated [2m405ms[22m
+[2m11:58:02[22m [34m[build][39m output: [34m"static"[39m
+[2m11:58:02[22m [34m[build][39m mode: [34m"static"[39m
+[2m11:58:02[22m [34m[build][39m directory: [34mC:\Users\yacin\Documents\babhijri\dist\[39m
+[2m11:58:02[22m [34m[build][39m Collecting build info...
+[2m11:58:02[22m [34m[build][39m [32m✓ Completed in 441ms.[39m
+[2m11:58:02[22m [34m[build][39m Building static entrypoints...
+[33m[1m11:58:04[22m [WARN] [vite][39m [33m"matchHostname", "matchPathname", "matchPort" and "matchProtocol" are imported from external module "@astrojs/internal-helpers/remote" but never used in "node_modules/astro/dist/assets/utils/remotePattern.js".[39m
+[2m11:58:05[22m [34m[vite][39m [32m✓ built in 2.06s[39m
+[2m11:58:05[22m [34m[build][39m [32m✓ Completed in 2.10s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m11:58:05[22m [34m[vite][39m transforming...
+[2m11:58:06[22m [34m[vite][39m [32m✓[39m 169 modules transformed.
+[2m11:58:06[22m [34m[vite][39m rendering chunks...
+[2m11:58:06[22m [34m[vite][39m computing gzip size...
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[35m_astro/edit.bHhkubgM.css                                           [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[35m_astro/admin.B43yhYnq.css                                          [39m[1m[2m  0.19 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[35m_astro/edit.DhADNjkv.css                                           [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[35m_astro/create.CJQN_Eln.css                                         [39m[1m[2m  0.37 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/legacy.zWq7SGiw.js                                          [39m[1m[2m  0.05 kB[22m[1m[22m[2m │ gzip:   0.07 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/event-modifiers.D4Caz1gY.js                                 [39m[1m[2m  0.11 kB[22m[1m[22m[2m │ gzip:   0.11 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/Layout.astro_astro_type_script_index_0_lang.APGC1Yk4.js     [39m[1m[2m  0.14 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/_uid_.astro_astro_type_script_index_0_lang.DXMzP2Db.js      [39m[1m[2m  0.19 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/users.astro_astro_type_script_index_0_lang.DXMzP2Db.js      [39m[1m[2m  0.19 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/admin.astro_astro_type_script_index_0_lang.DXMzP2Db.js      [39m[1m[2m  0.19 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.AIlrh2Ie.js      [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/auth.CE3VFokm.js                                            [39m[1m[2m  0.38 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/class.s96wPpAE.js                                           [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/auth-guard.B1_f60jt.js                                      [39m[1m[2m  0.52 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/lifecycle.CRVujQYj.js                                       [39m[1m[2m  0.53 kB[22m[1m[22m[2m │ gzip:   0.34 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/index-client.B1Xvd4gS.js                                    [39m[1m[2m  0.64 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.DI_2zazx.js                                           [39m[1m[2m  0.64 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/store.D6wUpadT.js                                           [39m[1m[2m  0.65 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/user.CnVd4DaQ.js                                            [39m[1m[2m  0.78 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/attributes.5NLzJ8At.js                                      [39m[1m[2m  0.94 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/select.jhkYNCg3.js                                          [39m[1m[2m  1.00 kB[22m[1m[22m[2m │ gzip:   0.58 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/client.svelte.Bz_0Mxm2.js                                   [39m[1m[2m  1.16 kB[22m[1m[22m[2m │ gzip:   0.64 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/contact.astro_astro_type_script_index_0_lang.Bc768I09.js    [39m[1m[2m  1.37 kB[22m[1m[22m[2m │ gzip:   0.81 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/input.Cz9-wfZP.js                                           [39m[1m[2m  1.59 kB[22m[1m[22m[2m │ gzip:   0.84 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/props.CehkXk8h.js                                           [39m[1m[2m  1.78 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/if.DF8iCv1H.js                                              [39m[1m[2m  1.92 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/dashboard.astro_astro_type_script_index_0_lang.D5Kk2EYL.js  [39m[1m[2m  1.92 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/LoginForm.DrRn0XwR.js                                       [39m[1m[2m  3.54 kB[22m[1m[22m[2m │ gzip:   1.60 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/each.2Z5QMe9B.js                                            [39m[1m[2m  3.63 kB[22m[1m[22m[2m │ gzip:   1.82 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/settings.astro_astro_type_script_index_0_lang.C6ZkoxPB.js   [39m[1m[2m  3.74 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.DT8E9kSD.js      [39m[1m[2m  3.96 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/AdminDashboard.DpVi3t1F.js                                  [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:   2.10 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/SignupForm.5dlFygKH.js                                      [39m[1m[2m  4.41 kB[22m[1m[22m[2m │ gzip:   1.77 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/profile.VHpAngrO.js                                         [39m[1m[2m  4.98 kB[22m[1m[22m[2m │ gzip:   1.79 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/ProfileGrid.3et9mN18.js                                     [39m[1m[2m  5.01 kB[22m[1m[22m[2m │ gzip:   2.36 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/admin.Cxwg0V3u.js                                           [39m[1m[2m  5.17 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/ProfileEditForm.CMZFIKDv.js                                 [39m[1m[2m  5.95 kB[22m[1m[22m[2m │ gzip:   2.47 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/UserMenu.CRzwE7Mi.js                                        [39m[1m[2m  6.19 kB[22m[1m[22m[2m │ gzip:   2.44 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/render.By2IZI_7.js                                          [39m[1m[2m  6.96 kB[22m[1m[22m[2m │ gzip:   3.09 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/UserList.YOqoUpXQ.js                                        [39m[1m[2m  7.81 kB[22m[1m[22m[2m │ gzip:   3.43 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/ProfileCreationForm.DMD2IOgB.js                             [39m[1m[2m  7.99 kB[22m[1m[22m[2m │ gzip:   3.40 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/UserDetail.DMyyhqZ2.js                                      [39m[1m[2m 21.41 kB[22m[1m[22m[2m │ gzip:   6.95 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/runtime.BB5g5vMo.js                                         [39m[1m[2m 22.23 kB[22m[1m[22m[2m │ gzip:   8.72 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/PhotoUploadStep.DR88wsHE.js                                 [39m[1m[2m 25.87 kB[22m[1m[22m[2m │ gzip:   7.45 kB[22m
+[2m11:58:06[22m [34m[vite][39m [2mdist/[22m[36m_astro/firebase.BPSvPpum.js                                        [39m[1m[33m508.72 kB[39m[22m[2m │ gzip: 120.35 kB[22m
+[33m[1m11:58:06[22m [WARN] [vite][39m [33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[2m11:58:06[22m [34m[vite][39m [32m✓ built in 1.85s[39m
+
+[42m[30m generating static routes [39m[49m
+[2m11:58:07[22m [32m▶[39m src/pages/app/admin/users/[uid].astro
+11:58:07 [ERROR] [build] Failed to call getStaticPaths for src/pages/app/admin/users/[uid].astro
+[GetStaticPathsRequired] `getStaticPaths()` function is required for dynamic routes. Make sure that you `export` a `getStaticPaths` function from your dynamic route.
+  Hint:
+    See https://docs.astro.build/en/guides/routing/#dynamic-routes for more information on dynamic routes.
+    
+    	If you meant for this route to be server-rendered, set `export const prerender = false;` in the page.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/get-static-paths-required/
+  Location:
+    src/pages/app/admin/users/[uid].astro:0:0
+  Stack trace:
+    at validateDynamicRouteModule (file:///C:/Users/yacin/Documents/babhijri/node_modules/astro/dist/core/routing/validation.js:19:11)
+    at getPathsForRoute (file:///C:/Users/yacin/Documents/babhijri/node_modules/astro/dist/core/build/generate.js:213:31)
+    at async generatePages (file:///C:/Users/yacin/Documents/babhijri/node_modules/astro/dist/core/build/generate.js:99:7)
+    at async AstroBuilder.build (file:///C:/Users/yacin/Documents/babhijri/node_modules/astro/dist/core/build/index.js:157:5)
+    at async build (file:///C:/Users/yacin/Documents/babhijri/node_modules/astro/dist/core/build/index.js:45:3)
