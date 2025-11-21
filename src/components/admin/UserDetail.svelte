@@ -17,6 +17,11 @@
     let loading = true;
     let error = "";
 
+    // Edit Mode State
+    let isEditing = false;
+    let editForm: Partial<DatingProfile> = {};
+    let saving = false;
+
     onMount(async () => {
         if (!uid) {
             const params = new URLSearchParams(window.location.search);
@@ -46,6 +51,33 @@
             error = "فشل تحميل بيانات المستخدم";
         } finally {
             loading = false;
+        }
+    }
+
+    function startEditing() {
+        if (!profile) return;
+        editForm = { ...profile };
+        isEditing = true;
+    }
+
+    function cancelEditing() {
+        isEditing = false;
+        editForm = {};
+    }
+
+    async function saveProfile() {
+        if (!uid || !editForm) return;
+        saving = true;
+        try {
+            await ProfileService.updateProfile(uid, editForm);
+            await loadUserData();
+            isEditing = false;
+            alert("تم تحديث الملف الشخصي بنجاح");
+        } catch (e) {
+            console.error("Error updating profile:", e);
+            alert("حدث خطأ أثناء تحديث الملف الشخصي");
+        } finally {
+            saving = false;
         }
     }
 
@@ -177,6 +209,14 @@
                 </div>
 
                 <div class="space-y-3 border-t border-gray-100 pt-6">
+                    {#if !isEditing}
+                        <button
+                            on:click={startEditing}
+                            class="w-full py-2 px-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                        >
+                            تعديل البيانات
+                        </button>
+                    {/if}
                     <button
                         on:click={toggleStatus}
                         class="w-full py-2 px-4 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors font-medium"
@@ -246,65 +286,196 @@
             <div
                 class="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
             >
-                <h3
-                    class="font-bold text-gray-900 mb-6 text-lg border-b border-gray-100 pb-2"
+                <div
+                    class="flex justify-between items-center mb-6 border-b border-gray-100 pb-2"
                 >
-                    معلومات الملف الشخصي
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">العمر</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.age || "-"}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">الجنس</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.gender === "male" ? "ذكر" : "أنثى"}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">الموقع</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.city || ""}, {profile.country || ""}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">
-                            الحالة الاجتماعية
-                        </p>
-                        <p class="font-medium text-gray-900">
-                            {profile.maritalStatus || "-"}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">التعليم</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.education || "-"}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">المهنة</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.occupation || "-"}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 mb-1">الديانة</p>
-                        <p class="font-medium text-gray-900">
-                            {profile.religion || "-"}
-                        </p>
-                    </div>
+                    <h3 class="font-bold text-gray-900 text-lg">
+                        معلومات الملف الشخصي
+                    </h3>
+                    {#if isEditing}
+                        <div class="flex gap-2">
+                            <button
+                                on:click={cancelEditing}
+                                class="px-4 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                disabled={saving}
+                            >
+                                إلغاء
+                            </button>
+                            <button
+                                on:click={saveProfile}
+                                class="px-4 py-1 text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50"
+                                disabled={saving}
+                            >
+                                {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
+                            </button>
+                        </div>
+                    {/if}
                 </div>
 
-                <div class="mt-6">
-                    <p class="text-sm text-gray-500 mb-1">نبذة شخصية</p>
-                    <p class="font-medium text-gray-900 leading-relaxed">
-                        {profile.bio || "-"}
-                    </p>
-                </div>
+                {#if isEditing}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >الاسم</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.displayName}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >العمر</label
+                            >
+                            <input
+                                type="number"
+                                bind:value={editForm.age}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >الجنس</label
+                            >
+                            <select
+                                bind:value={editForm.gender}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+                                <option value="male">ذكر</option>
+                                <option value="female">أنثى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >المدينة</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.city}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >الدولة</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.country}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >الحالة الاجتماعية</label
+                            >
+                            <select
+                                bind:value={editForm.maritalStatus}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+                                <option value="single">أعزب/عزباء</option>
+                                <option value="divorced">مطلق/مطلقة</option>
+                                <option value="widowed">أرمل/أرملة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >التعليم</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.education}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >المهنة</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.occupation}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1"
+                                >الديانة</label
+                            >
+                            <input
+                                type="text"
+                                bind:value={editForm.religion}
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-sm text-gray-500 mb-1"
+                            >نبذة شخصية</label
+                        >
+                        <textarea
+                            bind:value={editForm.bio}
+                            rows="4"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        ></textarea>
+                    </div>
+                {:else}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">العمر</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.age || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">الجنس</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.gender === "male" ? "ذكر" : "أنثى"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">الموقع</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.city || ""}, {profile.country || ""}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">
+                                الحالة الاجتماعية
+                            </p>
+                            <p class="font-medium text-gray-900">
+                                {profile.maritalStatus || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">التعليم</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.education || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">المهنة</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.occupation || "-"}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">الديانة</p>
+                            <p class="font-medium text-gray-900">
+                                {profile.religion || "-"}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <p class="text-sm text-gray-500 mb-1">نبذة شخصية</p>
+                        <p class="font-medium text-gray-900 leading-relaxed">
+                            {profile.bio || "-"}
+                        </p>
+                    </div>
+                {/if}
             </div>
 
             <!-- Photos -->

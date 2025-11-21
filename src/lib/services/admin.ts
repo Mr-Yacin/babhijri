@@ -416,9 +416,20 @@ export const AdminService = {
             const profileRef = doc(db, PROFILES_COLLECTION, uid);
             await deleteDoc(profileRef);
 
-            // Note: This only deletes the profile. The user auth account
-            // would need to be deleted via Firebase Admin SDK on the backend
-            // or the user can delete their own account through the settings page
+            // Delete user document
+            const userRef = doc(db, USERS_COLLECTION, uid);
+            await deleteDoc(userRef);
+
+            // Delete user settings
+            const settingsRef = doc(db, 'userSettings', uid);
+            await deleteDoc(settingsRef);
+
+            // Delete user stats
+            const statsRef = doc(db, STATS_COLLECTION, uid);
+            await deleteDoc(statsRef);
+
+            // Note: The user auth account still exists in Firebase Auth
+            // and must be deleted via Admin SDK or by the user.
         } catch (error) {
             console.error('Error deleting user account:', error);
             throw error;

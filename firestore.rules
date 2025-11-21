@@ -2,18 +2,57 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 12, 20);
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection - basic account info
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Dating profiles - public to authenticated users
+    match /profiles/{uid} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid) || isAdmin();
+      allow delete: if isOwner(uid) || isAdmin();
+    }
+    
+    // User settings - private
+    match /userSettings/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+    
+    // Profile stats - read by owner/admin, write by admin only
+    match /profileStats/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // User activity logs - admin only
+    match /userActivity/{activityId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Admin stats - admin only
+    match /adminStats/{document=**} {
+      allow read, write: if isAdmin();
     }
   }
 }
