@@ -6,11 +6,11 @@ import UserDetail from "../../../../components/admin/UserDetail.svelte";
 import { SITE_CONFIG } from "../../../../config";
 
 export const prerender = false;
+
+const uid = Astro.url.searchParams.get("uid");
 ---
 
 <script>
-  const url = new URL(Astro.request.url);
-  const uid = url.searchParams.get("uid");
   import { requireAdmin } from "../../../../lib/utils/auth-guard";
   requireAdmin();
 </script>
@@ -23,7 +23,8 @@ export const prerender = false;
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
           <a href="/app/admin" class="hover:text-indigo-600">لوحة الإدارة</a>
           <span>/</span>
-          <a href="/app/admin/users" class="hover:text-indigo-600">المستخدمين</a>
+          <a href="/app/admin/users" class="hover:text-indigo-600">المستخدمين</a
+          >
           <span>/</span>
           <span class="text-gray-900">تفاصيل المستخدم</span>
         </div>
@@ -31,11 +32,13 @@ export const prerender = false;
       </div>
     </section>
     <div class="container mx-auto px-4 py-8">
-      {#if uid}
-        <UserDetail client:only="svelte" uid={uid} />
-      {:else}
-        <p class="text-red-600">معرف المستخدم غير موجود.</p>
-      {/if}
+      {
+        uid ? (
+          <UserDetail client:only="svelte" uid={uid} />
+        ) : (
+          <p class="text-red-600">معرف المستخدم غير موجود.</p>
+        )
+      }
     </div>
   </main>
   <Footer />
