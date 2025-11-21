@@ -16,6 +16,7 @@ import {
     QueryConstraint
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import { ProfileService } from './profile';
 import type { AdminStats, UserListItem, UserActivity, AdminFilters, DatingProfile } from '../types/user';
 
 const USERS_COLLECTION = 'users';
@@ -211,7 +212,7 @@ export const AdminService = {
                         createdAt: (profileData.createdAt as any) instanceof Timestamp
                             ? (profileData.createdAt as any).toMillis()
                             : profileData.createdAt,
-                        profileCompletion: this.calculateCompletion(profileData)
+                        profileCompletion: ProfileService.calculateProfileCompletion(profileData)
                     };
                 } else {
                     // Data is from users collection
@@ -238,7 +239,7 @@ export const AdminService = {
                         createdAt: (userData.createdAt as any) instanceof Timestamp
                             ? (userData.createdAt as any).toMillis()
                             : userData.createdAt,
-                        profileCompletion: profileData ? this.calculateCompletion(profileData as DatingProfile) : 0
+                        profileCompletion: profileData ? ProfileService.calculateProfileCompletion(profileData as DatingProfile) : 0
                     };
                 }
 
@@ -276,29 +277,7 @@ export const AdminService = {
         }
     },
 
-    /**
-     * Calculate profile completion percentage
-     */
-    calculateCompletion(profile: DatingProfile): number {
-        const fields = [
-            'displayName', 'age', 'gender', 'city', 'country',
-            'bio', 'interests', 'education', 'occupation',
-            'lookingFor', 'maritalStatus', 'religion', 'languages', 'photos'
-        ];
 
-        let completed = 0;
-
-        fields.forEach(field => {
-            const value = profile[field as keyof DatingProfile];
-            if (Array.isArray(value)) {
-                if (value.length > 0) completed++;
-            } else if (value) {
-                completed++;
-            }
-        });
-
-        return Math.round((completed / fields.length) * 100);
-    },
 
     /**
      * Get recently joined users
@@ -328,7 +307,7 @@ export const AdminService = {
                     createdAt: (data.createdAt as any) instanceof Timestamp
                         ? (data.createdAt as any).toMillis()
                         : data.createdAt,
-                    profileCompletion: this.calculateCompletion(data)
+                    profileCompletion: ProfileService.calculateProfileCompletion(data)
                 });
             });
 
@@ -469,7 +448,7 @@ export const AdminService = {
                         createdAt: (data.createdAt as any) instanceof Timestamp
                             ? (data.createdAt as any).toMillis()
                             : data.createdAt,
-                        profileCompletion: this.calculateCompletion(data)
+                        profileCompletion: ProfileService.calculateProfileCompletion(data)
                     });
                 }
             });
