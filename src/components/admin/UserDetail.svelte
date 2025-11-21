@@ -3,6 +3,8 @@
     import { AdminService } from "../../lib/services/admin";
     import { ProfileService } from "../../lib/services/profile";
     import { userService } from "../../lib/services/user";
+    import Modal from "../common/Modal.svelte";
+    import Toast from "../common/Toast.svelte";
     import type {
         DatingProfile,
         UserProfile,
@@ -21,6 +23,16 @@
     let isEditing = false;
     let editForm: Partial<DatingProfile> = {};
     let saving = false;
+
+    // Modal State
+    let modalOpen = false;
+    let modalTitle = "";
+    let modalMessage = "";
+    let modalVariant: "danger" | "warning" | "info" | "success" = "info";
+    let modalAction: (() => void) | null = null;
+
+    // Toast
+    let toastComponent: Toast;
 
     onMount(async () => {
         if (!uid) {
@@ -72,10 +84,10 @@
             await ProfileService.updateProfile(uid, editForm);
             await loadUserData();
             isEditing = false;
-            alert("تم تحديث الملف الشخصي بنجاح");
+            toastComponent.show("تم تحديث الملف الشخصي بنجاح", "success");
         } catch (e) {
             console.error("Error updating profile:", e);
-            alert("حدث خطأ أثناء تحديث الملف الشخصي");
+            toastComponent.show("حدث خطأ أثناء تحديث الملف الشخصي", "error");
         } finally {
             saving = false;
         }
@@ -92,56 +104,91 @@
         return map[action] || action;
     }
 
-    async function toggleStatus() {
+    function confirmToggleStatus() {
         if (!profile || !uid) return;
-        if (
-            !confirm(
-                profile.isActive
-                    ? "هل تريد تعطيل هذا المستخدم؟"
-                    : "هل تريد تفعيل هذا المستخدم؟",
-            )
-        )
-            return;
+        modalTitle = profile.isActive ? "تعطيل المستخدم" : "تفعيل المستخدم";
+        modalMessage = profile.isActive
+            ? "هل تريد تعطيل هذا المستخدم؟ لن يتمكن من الوصول إلى حسابه."
+            : "هل تريد تفعيل هذا المستخدم؟ سيتمكن من الوصول إلى حسابه مرة أخرى.";
+        modalVariant = "warning";
+        modalAction = executeToggleStatus;
+        modalOpen = true;
+    }
 
+    async function executeToggleStatus() {
+        if (!profile || !uid) return;
         try {
             await AdminService.toggleUserStatus(uid, !profile.isActive);
-            loadUserData(); // Reload
+            await loadUserData();
+            toastComponent.show(
+                profile.isActive
+                    ? "تم تعطيل المستخدم بنجاح"
+                    : "تم تفعيل المستخدم بنجاح",
+                "success",
+            );
         } catch (e) {
-            alert("حدث خطأ أثناء تحديث الحالة");
+            console.error("Error toggling status:", e);
+            toastComponent.show("حدث خطأ أثناء تحديث الحالة", "error");
         }
     }
 
-    async function deleteUser() {
+    function confirmDeleteUser() {
         if (!uid) return;
-        if (!confirm("هل أنت متأكد تماماً؟ هذا الإجراء لا يمكن التراجع عنه."))
-            return;
+        modalTitle = "حذف المستخدم";
+        modalMessage =
+            "هل أنت متأكد تماماً؟ سيتم حذف جميع بيانات المستخدم نهائياً ولا يمكن التراجع عن هذا الإجراء.";
+        modalVariant = "danger";
+        modalAction = executeDeleteUser;
+        modalOpen = true;
+    }
 
+    async function executeDeleteUser() {
+        if (!uid) return;
         try {
             await AdminService.deleteUserAccount(uid);
-            window.location.href = "/app/admin/users";
+            toastComponent.show("تم حذف المستخدم بنجاح", "success", 2000);
+            setTimeout(() => {
+                window.location.href = "/app/admin/users";
+            }, 2000);
         } catch (e) {
-            alert("حدث خطأ أثناء حذف المستخدم");
+            console.error("Error deleting user:", e);
+            toastComponent.show("حدث خطأ أثناء حذف المستخدم", "error");
         }
     }
 
-    async function toggleRole() {
+    function confirmToggleRole() {
         if (!userAccount || !uid) return;
         const newRole = userAccount.role === "admin" ? "user" : "admin";
-        if (
-            !confirm(
-                `هل تريد تغيير دور المستخدم إلى ${newRole === "admin" ? "مشرف" : "مستخدم"}؟`,
-            )
-        )
-            return;
+        modalTitle = "تغيير دور المستخدم";
+        modalMessage = `هل تريد تغيير دور المستخدم إلى ${newRole === "admin" ? "مشرف" : "مستخدم"}؟`;
+        modalVariant = "info";
+        modalAction = executeToggleRole;
+        modalOpen = true;
+    }
 
+    async function executeToggleRole() {
+        if (!userAccount || !uid) return;
+        const newRole = userAccount.role === "admin" ? "user" : "admin";
         try {
             await AdminService.updateUserRole(uid, newRole);
-            loadUserData();
+            await loadUserData();
+            toastComponent.show("تم تحديث دور المستخدم بنجاح", "success");
         } catch (e) {
-            alert("حدث خطأ أثناء تحديث الدور");
+            console.error("Error updating role:", e);
+            toastComponent.show("حدث خطأ أثناء تحديث الدور", "error");
         }
     }
 </script>
+
+<Modal
+    bind:isOpen={modalOpen}
+    title={modalTitle}
+    message={modalMessage}
+    variant={modalVariant}
+    on:confirm={() => modalAction && modalAction()}
+/>
+
+<Toast bind:this={toastComponent} />
 
 {#if loading}
     <div class="flex justify-center py-12">
@@ -218,19 +265,19 @@
                         </button>
                     {/if}
                     <button
-                        on:click={toggleStatus}
+                        on:click={confirmToggleStatus}
                         class="w-full py-2 px-4 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors font-medium"
                     >
                         تغيير الحالة (تفعيل/تعطيل)
                     </button>
                     <button
-                        on:click={toggleRole}
+                        on:click={confirmToggleRole}
                         class="w-full py-2 px-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
                     >
                         تغيير الدور (مشرف/مستخدم)
                     </button>
                     <button
-                        on:click={deleteUser}
+                        on:click={confirmDeleteUser}
                         class="w-full py-2 px-4 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium"
                     >
                         حذف الحساب
