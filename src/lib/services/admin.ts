@@ -13,7 +13,8 @@ import {
     serverTimestamp,
     Timestamp,
     DocumentSnapshot,
-    QueryConstraint
+    QueryConstraint,
+    writeBatch
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { ProfileService } from './profile';
@@ -391,21 +392,26 @@ export const AdminService = {
      */
     async deleteUserAccount(uid: string): Promise<void> {
         try {
+            const batch = writeBatch(db);
+
             // Delete profile
             const profileRef = doc(db, PROFILES_COLLECTION, uid);
-            await deleteDoc(profileRef);
+            batch.delete(profileRef);
 
             // Delete user document
             const userRef = doc(db, USERS_COLLECTION, uid);
-            await deleteDoc(userRef);
+            batch.delete(userRef);
 
             // Delete user settings
             const settingsRef = doc(db, 'userSettings', uid);
-            await deleteDoc(settingsRef);
+            batch.delete(settingsRef);
 
             // Delete user stats
             const statsRef = doc(db, STATS_COLLECTION, uid);
-            await deleteDoc(statsRef);
+            batch.delete(statsRef);
+
+            // Commit the batch
+            await batch.commit();
 
             // Note: The user auth account still exists in Firebase Auth
             // and must be deleted via Admin SDK or by the user.

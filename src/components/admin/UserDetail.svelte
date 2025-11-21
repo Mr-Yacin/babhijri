@@ -143,16 +143,28 @@
     }
 
     async function executeDeleteUser() {
-        if (!uid) return;
+        console.log("Executing delete user for UID:", uid);
+        if (!uid) {
+            console.error("No UID found for deletion");
+            toastComponent.show(
+                "خطأ: لم يتم العثور على معرف المستخدم",
+                "error",
+            );
+            return;
+        }
         try {
             await AdminService.deleteUserAccount(uid);
+            console.log("User deleted successfully");
             toastComponent.show("تم حذف المستخدم بنجاح", "success", 2000);
             setTimeout(() => {
                 window.location.href = "/app/admin/users";
             }, 2000);
-        } catch (e) {
+        } catch (e: any) {
             console.error("Error deleting user:", e);
-            toastComponent.show("حدث خطأ أثناء حذف المستخدم", "error");
+            toastComponent.show(
+                "حدث خطأ أثناء حذف المستخدم: " + (e.message || e),
+                "error",
+            );
         }
     }
 

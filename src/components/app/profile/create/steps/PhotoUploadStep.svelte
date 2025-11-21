@@ -53,12 +53,16 @@
     const removePhoto = async (url: string) => {
         if (!confirm("هل أنت متأكد من حذف هذه الصورة؟")) return;
 
+        console.log("Attempting to delete photo:", url);
+        console.log("Current User UID:", $authStore.user?.uid);
+
         try {
             await ProfileService.deleteProfilePhoto(url);
             const newPhotos = formData.photos.filter((p: string) => p !== url);
             formData.photos = newPhotos;
             dispatch("update", { photos: newPhotos });
         } catch (err: any) {
+            console.error("Delete error details:", err);
             error = err.message || "فشل حذف الصورة";
         }
     };
@@ -108,6 +112,7 @@
 
                     <!-- Delete button (always visible or on hover) -->
                     <button
+                        type="button"
                         on:click={() => removePhoto(photo)}
                         class="absolute top-2 right-2 p-1.5 bg-red-600/90 text-white rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-red-700 shadow-sm"
                         title="حذف الصورة"

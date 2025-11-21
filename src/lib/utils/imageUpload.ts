@@ -112,9 +112,14 @@ export const ImageUploadService = {
         try {
             const storageRef = ref(storage, photoUrl);
             await deleteObject(storageRef);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error deleting image:', error);
-            throw new Error('فشل حذف الصورة');
+            // If the object is not found, we can consider it deleted from storage
+            // and proceed to remove it from the profile
+            if (error.code === 'storage/object-not-found') {
+                return;
+            }
+            throw new Error(error.message || 'فشل حذف الصورة');
         }
     },
 
