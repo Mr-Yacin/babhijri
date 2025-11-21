@@ -23,6 +23,9 @@
 - ✅ **User Profiles** - Create and manage dating profiles
 - ✅ **Blog System** - Immigration guides and articles
 - ✅ **Modern UI** - Beautiful, responsive design with Tailwind CSS
+- ✅ **Admin Panel** - Complete user management dashboard
+- ✅ **Security Rules** - Role-based access control (RBAC)
+- ✅ **Custom Modals** - Beautiful confirmation dialogs and toasts
 - 🔄 **Matching System** - Coming soon
 - 🔄 **Messaging** - Coming soon
 
@@ -148,14 +151,20 @@ babhijri/
 
 ### ✅ Completed
 - Basic authentication (login/signup)
-- User profile creation in Firestore
+- User profile creation and management
 - Landing page with hero section
 - Blog system with content collections
 - Profile card UI components
 - RTL support and Arabic typography
+- **Admin Panel** with user management
+- **Security Rules** with RBAC
+- Custom Modal and Toast components
+- User status and role management
+- Profile editing from admin panel
 
 ### 🔄 In Progress
-- Profile management system
+- Profile creation flow (multi-step form)
+- Photo upload system
 - Matching algorithm
 - Messaging system
 
@@ -163,7 +172,8 @@ babhijri/
 - Advanced filters and search
 - Email verification
 - Password reset
-- Admin panel
+- Content moderation
+- Analytics dashboard
 - Premium features
 - Mobile app
 
@@ -180,8 +190,12 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 5. Copy your config to `.env`
 
 ### Firestore Collections
-- `users` - User profiles
-- `profiles` - Extended dating profiles (coming soon)
+- `users` - User account information and roles
+- `profiles` - Dating profiles with photos and preferences
+- `userSettings` - User preferences and privacy settings
+- `profileStats` - Profile views, likes, and matches
+- `userActivity` - Activity logs for admin monitoring
+- `adminStats` - Platform statistics
 - `matches` - User matches (coming soon)
 - `messages` - Chat messages (coming soon)
 

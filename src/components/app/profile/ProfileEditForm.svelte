@@ -107,6 +107,14 @@
         formData = { ...formData, ...event.detail };
     }
 
+    async function handlePhotoUpdate(
+        event: CustomEvent<Partial<ProfileFormData>>,
+    ) {
+        formData = { ...formData, ...event.detail };
+        // Auto-save for photos to prevent data loss
+        await handleSave();
+    }
+
     // Mock next/back for reused components (they expect these events)
     function noop() {}
 </script>
@@ -213,7 +221,7 @@
                         <PhotoUploadStep
                             {formData}
                             isLoading={isSaving}
-                            on:update={handleUpdate}
+                            on:update={handlePhotoUpdate}
                             on:submit={handleSave}
                             on:back={noop}
                         />

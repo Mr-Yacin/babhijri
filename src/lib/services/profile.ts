@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { DatingProfile, ProfileFormData, UserSettings, ProfileStats } from '../types/user';
+import { ImageUploadService } from '../utils/imageUpload';
 
 const COLLECTION_NAME = 'profiles';
 const SETTINGS_COLLECTION = 'userSettings';
@@ -314,6 +315,20 @@ export const ProfileService = {
             console.error('Error initializing settings:', error);
             // Don't throw - settings can be created later
         }
+    },
+
+    /**
+     * Upload a profile photo
+     */
+    async uploadProfilePhoto(uid: string, file: File): Promise<string> {
+        return ImageUploadService.uploadProfilePhoto(uid, file);
+    },
+
+    /**
+     * Delete a profile photo
+     */
+    async deleteProfilePhoto(photoUrl: string): Promise<void> {
+        return ImageUploadService.deleteProfilePhoto(photoUrl);
     }
 };
 

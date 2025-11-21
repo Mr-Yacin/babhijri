@@ -1,13 +1,14 @@
 ---
-import '../styles/global.css';
-import { SITE_CONFIG } from '../config';
+import "../styles/global.css";
+import { SITE_CONFIG } from "../config";
 
 interface Props {
 	title?: string;
 	description?: string;
 }
 
-const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } = Astro.props;
+const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } =
+	Astro.props;
 ---
 
 <!doctype html>
@@ -16,19 +17,44 @@ const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } = Astr
 		<meta charset="UTF-8" />
 		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="apple-touch-icon" href="/favicon.png" />
+
+		<!-- Open Graph / Social Media -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={SITE_CONFIG.url} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={`${SITE_CONFIG.url}/og-image.png`} />
+		<meta property="og:site_name" content={SITE_CONFIG.name} />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={SITE_CONFIG.url} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta
+			name="twitter:image"
+			content={`${SITE_CONFIG.url}/og-image.png`}
+		/>
+
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		
+
 		<!-- Google Fonts: Noto Sans Arabic -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
 	<body class="bg-gray-50 text-gray-900 font-sans antialiased">
 		<slot />
 		<script>
-			import { authStore } from '../lib/stores/auth';
+			import { authStore } from "../lib/stores/auth";
 			authStore.init();
 		</script>
 	</body>
@@ -36,9 +62,11 @@ const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } = Astr
 
 <style is:global>
 	:root {
-		--font-sans: 'Noto Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		--font-sans:
+			"Noto Sans Arabic", system-ui, -apple-system, BlinkMacSystemFont,
+			"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	}
-	
+
 	html {
 		font-family: var(--font-sans);
 	}
