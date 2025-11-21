@@ -50,9 +50,14 @@ export const userService = {
     async updateUserProfile(uid: string, data: Partial<UserProfile>) {
         if (!uid) return;
         try {
+            // Create a mutable copy and remove the 'role' property to prevent privilege escalation.
+            // Role changes should only be handled by specific admin functions.
+            const updateData = { ...data };
+            delete (updateData as any).role;
+
             const userRef = doc(db, 'users', uid);
             await updateDoc(userRef, {
-                ...data,
+                ...updateData,
                 updatedAt: Date.now()
             });
         } catch (error) {
