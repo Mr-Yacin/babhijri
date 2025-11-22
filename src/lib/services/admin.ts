@@ -121,9 +121,8 @@ export const AdminService = {
 
     /**
      * Get all users with pagination and filters
-     */
-    /**
-     * Get all users with pagination and filters
+     * Implements recursive fetching to ensure pageSize is met even with client-side filtering
+     * ALWAYS queries the 'users' collection to ensure consistency
      */
     async getAllUsers(
         filters: AdminFilters = {},
@@ -131,95 +130,53 @@ export const AdminService = {
         lastDoc?: DocumentSnapshot
     ): Promise<{ users: UserListItem[], lastDoc: DocumentSnapshot | null, hasMore: boolean }> {
         try {
-            // Determine which collection to query based on filters
-            // If filtering by profile-specific fields, query profiles. Otherwise query users.
-            const queryProfiles = filters.status || filters.verified;
-            const targetCollection = queryProfiles ? PROFILES_COLLECTION : USERS_COLLECTION;
+            const accumulatedUsers: { data: UserListItem, doc: DocumentSnapshot }[] = [];
+            let currentLastDoc = lastDoc || null;
+            let hasMoreInDb = true;
+            let iterations = 0;
+            const MAX_ITERATIONS = 10; // Increased limit for deeper searches
+            const FETCH_SIZE = 50; // Fetch larger batches
 
-            const collectionRef = collection(db, targetCollection);
-            const constraints: QueryConstraint[] = [];
+            // ALWAYS query the users collection
+            const collectionRef = collection(db, USERS_COLLECTION);
 
-            // Apply filters
-            if (filters.status === 'active') {
-                constraints.push(where('isActive', '==', true));
-            } else if (filters.status === 'inactive') {
-                constraints.push(where('isActive', '==', false));
-            }
+            while (accumulatedUsers.length < pageSize && hasMoreInDb && iterations < MAX_ITERATIONS) {
+                iterations++;
+                const constraints: QueryConstraint[] = [];
 
-            if (filters.verified === 'verified') {
-                constraints.push(where('verified', '==', true));
-            } else if (filters.verified === 'unverified') {
-                constraints.push(where('verified', '==', false));
-            }
-
-            if (filters.role) {
-                // Role is in 'users' collection. 
-                // If we are querying 'profiles', we can't filter by role efficiently without an index or denormalization.
-                // For now, if querying profiles, we'll filter role client-side (or assume role filtering implies querying users if possible)
-                if (!queryProfiles) {
+                // Apply User-level filters (Role)
+                if (filters.role && filters.role !== 'all') {
                     constraints.push(where('role', '==', filters.role));
                 }
-            }
 
-            // Order by creation date (newest first)
-            constraints.push(orderBy('createdAt', 'desc'));
+                // Order and Pagination
+                constraints.push(orderBy('createdAt', 'desc'));
+                constraints.push(limit(FETCH_SIZE));
 
-            // Pagination
-            constraints.push(limit(pageSize + 1));
+                if (currentLastDoc) {
+                    constraints.push(startAfter(currentLastDoc));
+                }
 
-            if (lastDoc) {
-                constraints.push(startAfter(lastDoc));
-            }
+                const q = query(collectionRef, ...constraints);
+                const querySnapshot = await getDocs(q);
 
-            const q = query(collectionRef, ...constraints);
-            const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    hasMoreInDb = false;
+                    break;
+                }
 
-            const users: UserListItem[] = [];
-            let newLastDoc: DocumentSnapshot | null = null;
-            let hasMore = false;
+                // Update currentLastDoc for the next iteration
+                currentLastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-            // Process results
-            const processPromises = querySnapshot.docs.map(async (docSnapshot, index) => {
-                if (index >= pageSize) return null; // Skip extra doc used for hasMore check
+                if (querySnapshot.docs.length < FETCH_SIZE) {
+                    hasMoreInDb = false;
+                }
 
-                const data = docSnapshot.data();
-                let userItem: UserListItem;
-
-                if (queryProfiles) {
-                    // Data is from profiles collection
-                    const profileData = data as DatingProfile;
-                    // Fetch user data for email/role
-                    let userData: any = {};
-                    try {
-                        const userDoc = await getDoc(doc(db, USERS_COLLECTION, profileData.uid));
-                        if (userDoc.exists()) {
-                            userData = userDoc.data();
-                        }
-                    } catch (e) {
-                        console.error(`Error fetching user data for ${profileData.uid}`, e);
-                    }
-
-                    // Filter by role if needed (client-side fallback)
-                    if (filters.role && userData.role !== filters.role) return null;
-
-                    userItem = {
-                        uid: profileData.uid,
-                        email: userData.email || '',
-                        displayName: profileData.displayName || userData.displayName || 'Unknown',
-                        photoURL: profileData.photos?.[0] || userData.photoURL,
-                        role: userData.role || 'user',
-                        isActive: profileData.isActive,
-                        verified: profileData.verified,
-                        createdAt: (profileData.createdAt as any) instanceof Timestamp
-                            ? (profileData.createdAt as any).toMillis()
-                            : profileData.createdAt,
-                        profileCompletion: ProfileService.calculateProfileCompletion(profileData)
-                    };
-                } else {
-                    // Data is from users collection
-                    const userData = data;
-                    // Fetch profile data for status/verified/photos
+                // Process results
+                const processPromises = querySnapshot.docs.map(async (docSnapshot) => {
+                    const userData = docSnapshot.data();
                     let profileData: any = null;
+
                     try {
                         const profileDoc = await getDoc(doc(db, PROFILES_COLLECTION, userData.uid));
                         if (profileDoc.exists()) {
@@ -229,7 +186,23 @@ export const AdminService = {
                         console.error(`Error fetching profile data for ${userData.uid}`, e);
                     }
 
-                    userItem = {
+                    // Client-side filtering for Profile fields
+
+                    // Status Filter
+                    if (filters.status && filters.status !== 'all') {
+                        const isActive = profileData?.isActive || false;
+                        if (filters.status === 'active' && !isActive) return null;
+                        if (filters.status === 'inactive' && isActive) return null;
+                    }
+
+                    // Verified Filter
+                    if (filters.verified && filters.verified !== 'all') {
+                        const isVerified = profileData?.verified || false;
+                        if (filters.verified === 'verified' && !isVerified) return null;
+                        if (filters.verified === 'unverified' && isVerified) return null;
+                    }
+
+                    const userItem: UserListItem = {
                         uid: userData.uid,
                         email: userData.email || '',
                         displayName: userData.displayName || 'Unknown',
@@ -242,43 +215,48 @@ export const AdminService = {
                             : userData.createdAt,
                         profileCompletion: profileData ? ProfileService.calculateProfileCompletion(profileData as DatingProfile) : 0
                     };
-                }
 
-                // Client-side search filter
-                if (filters.search) {
-                    const searchLower = filters.search.toLowerCase();
-                    const nameMatch = userItem.displayName?.toLowerCase().includes(searchLower);
-                    const emailMatch = userItem.email?.toLowerCase().includes(searchLower);
+                    // Search Filter
+                    if (filters.search) {
+                        const searchLower = filters.search.toLowerCase();
+                        const nameMatch = userItem.displayName?.toLowerCase().includes(searchLower);
+                        const emailMatch = userItem.email?.toLowerCase().includes(searchLower);
 
-                    if (!nameMatch && !emailMatch) {
-                        return null;
+                        if (!nameMatch && !emailMatch) {
+                            return null;
+                        }
                     }
-                }
 
-                return userItem;
-            });
+                    return { data: userItem, doc: docSnapshot };
+                });
 
-            const results = await Promise.all(processPromises);
-
-            // Filter out nulls (skipped items)
-            const validUsers = results.filter(u => u !== null) as UserListItem[];
-            users.push(...validUsers);
-
-            if (querySnapshot.docs.length > pageSize) {
-                hasMore = true;
-                newLastDoc = querySnapshot.docs[pageSize - 1]; // The last valid doc
-            } else {
-                newLastDoc = querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+                const results = await Promise.all(processPromises);
+                const validResults = results.filter(r => r !== null) as { data: UserListItem, doc: DocumentSnapshot }[];
+                accumulatedUsers.push(...validResults);
             }
 
-            return { users, lastDoc: newLastDoc, hasMore };
+            // Prepare final result
+            let finalUsers: UserListItem[] = [];
+            let finalLastDoc: DocumentSnapshot | null = null;
+            let finalHasMore = false;
+
+            if (accumulatedUsers.length > pageSize) {
+                const sliced = accumulatedUsers.slice(0, pageSize);
+                finalUsers = sliced.map(x => x.data);
+                finalLastDoc = sliced[sliced.length - 1].doc;
+                finalHasMore = true;
+            } else {
+                finalUsers = accumulatedUsers.map(x => x.data);
+                finalLastDoc = currentLastDoc;
+                finalHasMore = hasMoreInDb;
+            }
+
+            return { users: finalUsers, lastDoc: finalLastDoc, hasMore: finalHasMore };
         } catch (error) {
             console.error('Error getting all users:', error);
             throw error;
         }
     },
-
-
 
     /**
      * Get recently joined users
