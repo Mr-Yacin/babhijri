@@ -1,0 +1,56 @@
+---
+// This component should be added to all admin pages
+// It provides a client-side check in addition to middleware
+
+const ADMIN_EMAILS = (import.meta.env.ADMIN_EMAILS || '')
+    .split(',')
+    .map((email: string) => email.trim().toLowerCase())
+    .filter((email: string) => email.length > 0);
+---
+
+<script define:vars={{ ADMIN_EMAILS }}>
+    import { getFirebaseAuth } from '../../lib/firebase';
+    
+    // Client-side admin check
+    const auth = getFirebaseAuth();
+    
+    if (auth) {
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                console.log('[AdminCheck] No user logged in, redirecting...');
+                window.location.href = '/app/login';
+                return;
+            }
+            
+            const userEmail = user.email?.toLowerCase();
+            console.log('[AdminCheck] Current user:', userEmail);
+            console.log('[AdminCheck] Admin emails:', ADMIN_EMAILS);
+            
+            if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
+                console.log('[AdminCheck] User is not admin, redirecting to dashboard...');
+                alert('Access Denied: You do not have admin privileges');
+                window.location.href = '/app/dashboard';
+            } else {
+                console.log('[AdminCheck] ✓ Admin access confirmed');
+            }
+        });
+    }
+</script>
+
+<!-- Visual indicator while checking -->
+<div id="admin-check-loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+        <div class="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-600">Verifying admin access...</p>
+    </div>
+</div>
+
+<script>
+    // Hide loader after auth check
+    setTimeout(() => {
+        const loader = document.getElementById('admin-check-loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }, 1000);
+</script>

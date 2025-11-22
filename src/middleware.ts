@@ -58,17 +58,39 @@ export const onRequest = defineMiddleware(async (context, next) => {
         // For admin routes, verify the user is an admin
         if (isAdminRoute) {
             try {
+                console.log('[Auth Middleware] Checking admin access...');
+                console.log('[Auth Middleware] Admin emails configured:', ADMIN_EMAILS);
+                console.log('[Auth Middleware] Session cookie length:', sessionCookie.length);
+                
                 // Decode the session cookie to get user email
                 // The session cookie is a JWT token from Firebase
-                const payload = JSON.parse(atob(sessionCookie.split('.')[1]));
+                const parts = sessionCookie.split('.');
+                if (parts.length !== 3) {
+                    console.error('[Auth Middleware] Invalid JWT format - not 3 parts:', parts.length);
+                    return redirect('/app/login');
+                }
+                
+                const payload = JSON.parse(atob(parts[1]));
+                console.log('[Auth Middleware] Decoded payload:', { 
+                    email: payload.email, 
+                    uid: payload.uid,
+                    hasEmail: !!payload.email 
+                });
+                
                 const userEmail = payload.email?.toLowerCase();
 
-                if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
-                    console.log(`[Auth Middleware] Blocking admin access to ${pathname} - User ${userEmail} is not an admin`);
+                if (!userEmail) {
+                    console.log('[Auth Middleware] No email in token');
                     return redirect('/app/dashboard');
                 }
 
-                console.log(`[Auth Middleware] Admin access granted to ${pathname} for ${userEmail}`);
+                if (!ADMIN_EMAILS.includes(userEmail)) {
+                    console.log(`[Auth Middleware] Blocking admin access - User ${userEmail} is not in admin list`);
+                    console.log('[Auth Middleware] Admin list:', ADMIN_EMAILS);
+                    return redirect('/app/dashboard');
+                }
+
+                console.log(`[Auth Middleware] ✓ Admin access granted to ${pathname} for ${userEmail}`);
             } catch (error) {
                 console.error('[Auth Middleware] Error decoding session cookie:', error);
                 return redirect('/app/login');
