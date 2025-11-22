@@ -3,6 +3,9 @@ import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== 'undefined';
+
 const firebaseConfig = {
     apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -19,8 +22,9 @@ let _db: Firestore | undefined;
 let _storage: FirebaseStorage | undefined;
 
 function initializeFirebase() {
-    // Skip initialization during SSR/build
-    if (typeof window === 'undefined') {
+    // Only initialize in browser
+    if (!isBrowser) {
+        console.warn('Firebase initialization skipped - not in browser context');
         return;
     }
     
@@ -33,37 +37,37 @@ function initializeFirebase() {
 }
 
 // Initialize on first import in browser
-if (typeof window !== 'undefined') {
+if (isBrowser) {
     initializeFirebase();
 }
 
 // Export getter functions that ensure initialization
-export function getFirebaseApp(): FirebaseApp {
+export function getFirebaseApp(): FirebaseApp | null {
+    if (!isBrowser) return null;
     if (!_app) initializeFirebase();
-    if (!_app) throw new Error('Firebase not initialized - running in SSR context');
-    return _app;
+    return _app || null;
 }
 
-export function getFirebaseAuth(): Auth {
+export function getFirebaseAuth(): Auth | null {
+    if (!isBrowser) return null;
     if (!_auth) initializeFirebase();
-    if (!_auth) throw new Error('Firebase Auth not initialized - running in SSR context');
-    return _auth;
+    return _auth || null;
 }
 
-export function getFirebaseDb(): Firestore {
+export function getFirebaseDb(): Firestore | null {
+    if (!isBrowser) return null;
     if (!_db) initializeFirebase();
-    if (!_db) throw new Error('Firebase Firestore not initialized - running in SSR context');
-    return _db;
+    return _db || null;
 }
 
-export function getFirebaseStorage(): FirebaseStorage {
+export function getFirebaseStorage(): FirebaseStorage | null {
+    if (!isBrowser) return null;
     if (!_storage) initializeFirebase();
-    if (!_storage) throw new Error('Firebase Storage not initialized - running in SSR context');
-    return _storage;
+    return _storage || null;
 }
 
-// Legacy exports for backward compatibility - these will be undefined during SSR
-export const app = _app;
-export const auth = _auth;
-export const db = _db;
-export const storage = _storage;
+// Safe exports that won't break SSR
+export const app = isBrowser ? _app : null;
+export const auth = isBrowser ? _auth : null;
+export const db = isBrowser ? _db : null;
+export const storage = isBrowser ? _storage : null;
