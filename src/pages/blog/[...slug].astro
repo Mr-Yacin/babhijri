@@ -4,18 +4,19 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/common/Header.astro";
 import Footer from "../../components/common/Footer.astro";
 
+import RelatedArticles from "../../components/blog/RelatedArticles.svelte";
+
 export const prerender = true;
 
 export async function getStaticPaths() {
 	const posts = await getCollection("blog");
 	return posts.map((post) => ({
 		params: { slug: post.slug },
-		props: post,
+		props: { post, allPosts: posts },
 	}));
 }
-type Props = CollectionEntry<"blog">;
 
-const post = Astro.props;
+const { post, allPosts } = Astro.props;
 const { Content } = await post.render();
 ---
 
@@ -24,30 +25,58 @@ const { Content } = await post.render();
 
 	<main class="min-h-screen bg-gray-50">
 		<!-- Article Header -->
-		<section
-			class="bg-gradient-to-r from-teal-900 to-teal-700 text-white py-16"
-		>
-			<div class="container mx-auto px-4 max-w-4xl">
-				<div class="flex gap-2 mb-4 justify-center flex-wrap">
-					{
-						post.data.tags.map((tag) => (
-							<span class="text-xs bg-white/20 text-white px-3 py-1 rounded-full font-medium backdrop-blur-sm">
-								{tag}
-							</span>
-						))
-					}
+		<section class="relative bg-teal-900 text-white py-24 overflow-hidden">
+			<div class="absolute inset-0 opacity-10">
+				<svg
+					class="w-full h-full"
+					viewBox="0 0 100 100"
+					preserveAspectRatio="none"
+				>
+					<path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"></path>
+				</svg>
+			</div>
+			<div class="container mx-auto px-4 max-w-4xl relative z-10">
+				<div class="flex gap-2 mb-6 justify-center flex-wrap">
+					<span
+						class="text-sm bg-teal-500/20 text-teal-200 px-4 py-1.5 rounded-full font-semibold border border-teal-500/30 backdrop-blur-sm"
+					>
+						{post.data.category || "General"}
+					</span>
 				</div>
 				<h1
-					class="text-3xl md:text-5xl font-bold mb-6 text-center leading-tight"
+					class="text-3xl md:text-5xl font-bold mb-8 text-center leading-tight"
 				>
 					{post.data.title}
 				</h1>
 				<div
-					class="flex items-center justify-center gap-4 text-teal-100"
+					class="flex items-center justify-center gap-6 text-teal-100 text-sm md:text-base"
 				>
-					<span class="font-medium">{post.data.author}</span>
-					<span>•</span>
-					<time datetime={post.data.pubDate.toISOString()}>
+					<div class="flex items-center gap-2">
+						<div
+							class="w-8 h-8 rounded-full bg-teal-800 flex items-center justify-center text-xs font-bold border border-teal-700"
+						>
+							{post.data.author.charAt(0)}
+						</div>
+						<span class="font-medium">{post.data.author}</span>
+					</div>
+					<span class="text-teal-700">•</span>
+					<time
+						datetime={post.data.pubDate.toISOString()}
+						class="flex items-center gap-2"
+					>
+						<svg
+							class="w-5 h-5"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							></path>
+						</svg>
 						{
 							post.data.pubDate.toLocaleDateString("ar-EG", {
 								year: "numeric",
@@ -61,53 +90,154 @@ const { Content } = await post.render();
 		</section>
 
 		<!-- Article Content -->
-		<section class="py-12">
+		<section class="py-12 -mt-10 relative z-20">
 			<div class="container mx-auto px-4">
 				<article
-					class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+					class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl shadow-gray-200/50 overflow-hidden"
 				>
 					{
 						post.data.heroImage && (
-							<img
-								src={post.data.heroImage}
-								alt={post.data.title}
-								class="w-full h-64 md:h-96 object-cover"
-							/>
+							<div class="relative h-64 md:h-[500px]">
+								<img
+									src={post.data.heroImage}
+									alt={post.data.title}
+									class="w-full h-full object-cover"
+								/>
+							</div>
 						)
 					}
 
-					<div class="p-8 md:p-12">
+					<div class="p-8 md:p-16">
 						<div
-							class="prose prose-lg prose-teal max-w-none text-gray-800"
+							class="prose prose-lg prose-teal max-w-none text-gray-800 leading-relaxed"
 						>
 							<Content />
 						</div>
+
+						<!-- Tags -->
+						<div class="mt-12 pt-8 border-t border-gray-100">
+							<div class="flex flex-wrap gap-2">
+								{
+									post.data.tags.map((tag) => (
+										<a
+											href={`/blog?tag=${tag}`}
+											class="text-sm bg-gray-50 text-gray-600 hover:bg-teal-50 hover:text-teal-700 px-4 py-2 rounded-lg transition-colors"
+										>
+											#{tag}
+										</a>
+									))
+								}
+							</div>
+						</div>
 					</div>
 				</article>
-
-				<!-- Back to Blog Link -->
-				<div class="max-w-4xl mx-auto mt-8">
-					<a
-						href="/blog"
-						class="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-semibold transition-colors"
-					>
-						<svg
-							class="w-5 h-5"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M15 19l-7-7 7-7"></path>
-						</svg>
-						العودة إلى المدونة
-					</a>
-				</div>
 			</div>
 		</section>
+
+		<!-- FAQs Section -->
+		{
+			post.data.faqs && post.data.faqs.length > 0 && (
+				<section class="py-12 bg-white border-t border-gray-100">
+					<div class="container mx-auto px-4 max-w-3xl">
+						<h2 class="text-3xl font-bold mb-8 text-center text-gray-900">
+							أسئلة شائعة
+						</h2>
+						<div class="space-y-6">
+							{post.data.faqs.map((faq) => (
+								<div class="bg-gray-50 rounded-xl p-6">
+									<h3 class="font-bold text-lg text-gray-900 mb-2">
+										{faq.question}
+									</h3>
+									<p class="text-gray-600 leading-relaxed">
+										{faq.answer}
+									</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		<!-- Related Articles -->
+		<RelatedArticles currentPost={post} allPosts={allPosts} />
+
+		<!-- Schema.org JSON-LD -->
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				"@context": "https://schema.org",
+				"@graph": [
+					{
+						"@type": "BlogPosting",
+						headline: post.data.title,
+						image: post.data.heroImage
+							? [
+									new URL(
+										post.data.heroImage,
+										Astro.site || Astro.url.origin,
+									).toString(),
+								]
+							: [],
+						datePublished: post.data.pubDate.toISOString(),
+						dateModified: post.data.updatedDate
+							? post.data.updatedDate.toISOString()
+							: post.data.pubDate.toISOString(),
+						author: [
+							{
+								"@type": "Person",
+								name: post.data.author,
+								url: Astro.site || Astro.url.origin,
+							},
+						],
+					},
+					{
+						"@type": "BreadcrumbList",
+						itemListElement: [
+							{
+								"@type": "ListItem",
+								position: 1,
+								name: "الرئيسية",
+								item: Astro.site || Astro.url.origin,
+							},
+							{
+								"@type": "ListItem",
+								position: 2,
+								name: "المدونة",
+								item: new URL(
+									"/blog",
+									Astro.site || Astro.url.origin,
+								).toString(),
+							},
+							{
+								"@type": "ListItem",
+								position: 3,
+								name: post.data.title,
+								item: new URL(
+									Astro.url.pathname,
+									Astro.site || Astro.url.origin,
+								).toString(),
+							},
+						],
+					},
+					...(post.data.faqs && post.data.faqs.length > 0
+						? [
+								{
+									"@type": "FAQPage",
+									mainEntity: post.data.faqs.map((faq) => ({
+										"@type": "Question",
+										name: faq.question,
+										acceptedAnswer: {
+											"@type": "Answer",
+											text: faq.answer,
+										},
+									})),
+								},
+							]
+						: []),
+				],
+			})}
+		/>
 	</main>
 
 	<Footer />
