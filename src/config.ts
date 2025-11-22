@@ -116,7 +116,7 @@ export const ANALYTICS_CONFIG = {
             // Blog post ad placements (create as In-article ad units)
             blogTop: '1964007296',          // Replace with real slot ID
             blogMiddle: '1772435607',       // Replace with real slot ID
-            blogBottom: '1964007296',       // Replace with real slot ID
+            blogBottom: '7664601128',       // Replace with real slot ID
             
             // App page ad placements
             appSidebar: '8529399737',       // Replace with real slot ID
