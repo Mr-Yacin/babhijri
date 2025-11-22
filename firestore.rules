@@ -31,9 +31,9 @@ service cloud.firestore {
       }
     }
     
-    // Dating profiles - public to authenticated users
+    // Dating profiles - public to authenticated users, or active profiles for everyone
     match /profiles/{uid} {
-      allow read: if isAuthenticated();
+      allow read: if isAuthenticated() || resource.data.isActive == true;
       allow create: if isOwner(uid);
       allow update: if isOwner(uid) || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();

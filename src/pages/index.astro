@@ -1,65 +1,419 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/common/Header.astro';
-import Footer from '../components/common/Footer.astro';
-import { SITE_CONFIG } from '../config';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/common/Header.astro";
+import Footer from "../components/common/Footer.astro";
+import FeaturedProfiles from "../components/home/FeaturedProfiles.svelte";
+import { SITE_CONFIG } from "../config";
+import { getCollection } from "astro:content";
+
+// Fetch latest 3 blog posts
+const allPosts = await getCollection("blog");
+const latestPosts = allPosts
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
 ---
 
 <Layout title={`الرئيسية | ${SITE_CONFIG.name}`}>
 	<Header />
-	
+
 	<main>
 		<!-- Hero Section -->
-		<section class="relative bg-teal-900 text-white py-20 overflow-hidden">
-			<div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+		<section
+			class="relative bg-teal-900 text-white py-24 lg:py-32 overflow-hidden"
+		>
+			<div
+				class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"
+			>
+			</div>
+			<!-- Gradient Overlay -->
+			<div
+				class="absolute inset-0 bg-gradient-to-b from-teal-900/50 to-teal-900/90"
+			>
+			</div>
+
 			<div class="container mx-auto px-4 relative z-10 text-center">
-				<h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-					بوابتك نحو <span class="text-amber-400">الهجرة</span> و <span class="text-pink-400">الحب</span>
-				</h1>
-				<p class="text-xl md:text-2xl text-teal-100 mb-10 max-w-2xl mx-auto">
-					{SITE_CONFIG.description}. نساعدك في بناء مستقبلك وإيجاد شريك حياتك في الغربة.
-				</p>
-				<div class="flex flex-col sm:flex-row gap-4 justify-center">
-					<a href="/blog" class="bg-amber-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-amber-600 transition-colors">
-						اقرأ مقالات الهجرة
+				<div class="animate-fade-in-up">
+					<span
+						class="inline-block py-1 px-3 rounded-full bg-teal-800/50 border border-teal-700 text-teal-200 text-sm font-medium mb-6 backdrop-blur-sm"
+					>
+						المنصة الأولى للعرب في المهجر
+					</span>
+					<h1
+						class="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight"
+					>
+						بوابتك نحو <span class="text-amber-400">الهجرة</span> و <span
+							class="text-pink-400">الحب</span
+						>
+					</h1>
+					<p
+						class="text-xl md:text-2xl text-teal-100 mb-12 max-w-3xl mx-auto leading-relaxed"
+					>
+						{SITE_CONFIG.description}. نساعدك في بناء مستقبلك المهني
+						وإيجاد شريك حياتك المناسب في الغربة، كل ذلك في منصة
+						واحدة آمنة وموثوقة.
+					</p>
+
+					<div
+						class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+					>
+						<a
+							href="/app"
+							class="w-full sm:w-auto bg-pink-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-pink-700 transition-all shadow-lg hover:shadow-pink-500/30 flex items-center justify-center"
+						>
+							<span>ابحث عن شريك حياتك</span>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5 mr-2"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+									clip-rule="evenodd"></path>
+							</svg>
+						</a>
+						<a
+							href="/blog"
+							class="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center"
+						>
+							<span>اقرأ مقالات الهجرة</span>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5 mr-2"
+								viewBox="0 0 20 20"
+								fill="currentColor"
+							>
+								<path
+									d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"
+								></path>
+							</svg>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Wave Separator -->
+			<div
+				class="absolute bottom-0 left-0 w-full overflow-hidden leading-none"
+			>
+				<svg
+					class="relative block w-full h-[50px] md:h-[100px]"
+					data-name="Layer 1"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 1200 120"
+					preserveAspectRatio="none"
+				>
+					<path
+						d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+						class="fill-gray-50"></path>
+				</svg>
+			</div>
+		</section>
+
+		<!-- Stats Section (Trusted By) -->
+		<section class="bg-gray-50 py-10 border-b border-gray-200">
+			<div class="container mx-auto px-4">
+				<div
+					class="flex flex-wrap justify-center gap-8 md:gap-16 text-center"
+				>
+					<div>
+						<p class="text-3xl font-bold text-teal-800">+5000</p>
+						<p class="text-gray-600 text-sm">عضو مسجل</p>
+					</div>
+					<div>
+						<p class="text-3xl font-bold text-pink-600">+200</p>
+						<p class="text-gray-600 text-sm">قصة نجاح</p>
+					</div>
+					<div>
+						<p class="text-3xl font-bold text-amber-600">+50</p>
+						<p class="text-gray-600 text-sm">مقال حصري</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Featured Profiles Section -->
+		<section class="py-20 bg-gray-50">
+			<div class="container mx-auto px-4">
+				<div class="text-center mb-16">
+					<span
+						class="text-pink-600 font-semibold tracking-wider uppercase text-sm"
+						>تعارف جاد</span
+					>
+					<h2
+						class="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4"
+					>
+						أعضاء يبحثون عن شريك الحياة
+					</h2>
+					<p class="text-gray-600 max-w-2xl mx-auto">
+						تصفح ملفات أعضاء جادين يبحثون عن الزواج والاستقرار.
+						مجتمعنا يضم نخبة من العرب في أوروبا وأمريكا وكندا.
+					</p>
+				</div>
+
+				<FeaturedProfiles client:visible />
+			</div>
+		</section>
+
+		<!-- Features Section -->
+		<section class="py-20 bg-white">
+			<div class="container mx-auto px-4">
+				<div class="text-center mb-16">
+					<span
+						class="text-teal-600 font-semibold tracking-wider uppercase text-sm"
+						>لماذا نحن؟</span
+					>
+					<h2
+						class="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4"
+					>
+						كل ما تحتاجه في مكان واحد
+					</h2>
+					<p class="text-gray-600 max-w-2xl mx-auto">
+						نقدم لك خدمات متكاملة تساعدك في رحلة الهجرة والاستقرار
+						وبناء حياة سعيدة.
+					</p>
+				</div>
+
+				<div class="grid md:grid-cols-3 gap-8">
+					<!-- Feature 1 -->
+					<div
+						class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300 border border-gray-100 text-center group"
+					>
+						<div
+							class="w-20 h-20 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-10 h-10"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S12 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S12 3 12 3m0-18a18 18 0 0 1 12 12c0 1.042-.055 2.065-.159 3.07M12 3a18 18 0 0 0-12 12c0 1.042.055 2.065.159 3.07M12 3a18 18 0 0 1 12 12c0 1.042-.055 2.065-.159 3.07m-9.159 3.07a9.003 9.003 0 0 1 0-18.14"
+								></path>
+							</svg>
+						</div>
+						<h3 class="text-xl font-bold mb-3 text-gray-800">
+							دليل الهجرة الشامل
+						</h3>
+						<p class="text-gray-600 leading-relaxed">
+							معلومات دقيقة ومحدثة عن تأشيرات العمل والدراسة
+							واللجوء في أهم دول المهجر.
+						</p>
+					</div>
+
+					<!-- Feature 2 -->
+					<div
+						class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300 border border-gray-100 text-center group"
+					>
+						<div
+							class="w-20 h-20 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-10 h-10"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+								></path>
+							</svg>
+						</div>
+						<h3 class="text-xl font-bold mb-3 text-gray-800">
+							زواج وتعارف جاد
+						</h3>
+						<p class="text-gray-600 leading-relaxed">
+							بيئة آمنة ومحترمة للبحث عن شريك الحياة المناسب، مع
+							التركيز على الخصوصية والجدية.
+						</p>
+					</div>
+
+					<!-- Feature 3 -->
+					<div
+						class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300 border border-gray-100 text-center group"
+					>
+						<div
+							class="w-20 h-20 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-10 h-10"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+								></path>
+							</svg>
+						</div>
+						<h3 class="text-xl font-bold mb-3 text-gray-800">
+							مجتمع داعم
+						</h3>
+						<p class="text-gray-600 leading-relaxed">
+							تواصل مع أشخاص يشاركونك نفس الاهتمامات والتحديات،
+							وتبادل الخبرات والنصائح.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Latest Blog Posts Section -->
+		<section class="py-20 bg-gray-50">
+			<div class="container mx-auto px-4">
+				<div
+					class="flex flex-col md:flex-row justify-between items-end mb-12"
+				>
+					<div class="text-center md:text-right mb-6 md:mb-0">
+						<span
+							class="text-amber-600 font-semibold tracking-wider uppercase text-sm"
+							>المدونة</span
+						>
+						<h2
+							class="text-3xl md:text-4xl font-bold text-gray-900 mt-2"
+						>
+							أحدث المقالات والنصائح
+						</h2>
+					</div>
+					<a
+						href="/blog"
+						class="hidden md:inline-flex items-center text-teal-700 font-bold hover:text-teal-900 transition-colors"
+					>
+						عرض كل المقالات
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+								clip-rule="evenodd"></path>
+						</svg>
 					</a>
-					<a href="/app" class="bg-white text-teal-900 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
-						ابحث عن شريك حياتك
+				</div>
+
+				<div class="grid md:grid-cols-3 gap-8">
+					{
+						latestPosts.map((post) => (
+							<article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col h-full">
+								<a
+									href={`/blog/${post.slug}`}
+									class="block aspect-video overflow-hidden"
+								>
+									<img
+										src={post.data.heroImage}
+										alt={post.data.title}
+										class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+									/>
+								</a>
+								<div class="p-6 flex-grow flex flex-col">
+									<div class="flex items-center text-sm text-gray-500 mb-3">
+										<time
+											datetime={post.data.pubDate.toISOString()}
+										>
+											{post.data.pubDate.toLocaleDateString(
+												"ar-EG",
+												{
+													year: "numeric",
+													month: "long",
+													day: "numeric",
+												},
+											)}
+										</time>
+									</div>
+									<h3 class="text-xl font-bold text-gray-900 mb-3 leading-tight">
+										<a
+											href={`/blog/${post.slug}`}
+											class="hover:text-teal-700 transition-colors"
+										>
+											{post.data.title}
+										</a>
+									</h3>
+									<p class="text-gray-600 line-clamp-3 mb-4 flex-grow">
+										{post.data.description}
+									</p>
+									<a
+										href={`/blog/${post.slug}`}
+										class="inline-flex items-center text-teal-600 font-bold hover:text-teal-800 text-sm mt-auto"
+									>
+										اقرأ المزيد
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="h-4 w-4 mr-1"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+												clip-rule="evenodd"
+											/>
+										</svg>
+									</a>
+								</div>
+							</article>
+						))
+					}
+				</div>
+
+				<div class="mt-8 text-center md:hidden">
+					<a
+						href="/blog"
+						class="inline-flex items-center text-teal-700 font-bold hover:text-teal-900 transition-colors"
+					>
+						عرض كل المقالات
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+								clip-rule="evenodd"></path>
+						</svg>
 					</a>
 				</div>
 			</div>
 		</section>
 
-		<!-- Features Section -->
-		<section class="py-16 bg-gray-50">
-			<div class="container mx-auto px-4">
-				<div class="grid md:grid-cols-2 gap-12">
-					<!-- Feature 1 -->
-					<div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
-						<div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S12 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S12 3 12 3m0-18a18 18 0 0 1 12 12c0 1.042-.055 2.065-.159 3.07M12 3a18 18 0 0 0-12 12c0 1.042.055 2.065.159 3.07M12 3a18 18 0 0 1 12 12c0 1.042-.055 2.065-.159 3.07m-9.159 3.07a9.003 9.003 0 0 1 0-18.14" />
-							</svg>
-						</div>
-						<h2 class="text-2xl font-bold mb-4 text-gray-800">دليل الهجرة الشامل</h2>
-						<p class="text-gray-600 leading-relaxed">
-							مقالات مفصلة ومحدثة حول تأشيرات العمل، الدراسة، واللجوء في أوروبا، أمريكا، وكندا.
-						</p>
-					</div>
-
-					<!-- Feature 2 -->
-					<div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
-						<div class="w-16 h-16 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-							</svg>
-						</div>
-						<h2 class="text-2xl font-bold mb-4 text-gray-800">تعارف جاد للزواج</h2>
-						<p class="text-gray-600 leading-relaxed">
-							منصة آمنة ومحترمة للتعارف بهدف الزواج، تجمع العرب في المهجر والوطن العربي.
-						</p>
-					</div>
-				</div>
+		<!-- CTA Section -->
+		<section class="py-20 bg-teal-900 text-white relative overflow-hidden">
+			<div
+				class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"
+			>
+			</div>
+			<div class="container mx-auto px-4 relative z-10 text-center">
+				<h2 class="text-3xl md:text-5xl font-bold mb-6">
+					جاهز للبدء في رحلتك؟
+				</h2>
+				<p class="text-xl text-teal-100 mb-10 max-w-2xl mx-auto">
+					انضم إلى آلاف الأعضاء الذين وجدوا طريقهم نحو النجاح والحب من
+					خلال منصتنا.
+				</p>
+				<a
+					href="app/signup"
+					class="inline-block bg-amber-500 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all shadow-lg hover:shadow-amber-500/30 transform hover:-translate-y-1"
+				>
+					سجل مجاناً الآن
+				</a>
 			</div>
 		</section>
 	</main>
