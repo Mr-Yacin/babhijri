@@ -26,6 +26,18 @@ import MessagesApp from "../../components/messaging/MessagesApp.svelte";
             </div>
         </section>
 
+        <!-- Top Banner Ad -->
+        <section class="bg-gray-50 py-4">
+            <div class="container mx-auto px-4">
+                <AdUnit
+                    slot={ANALYTICS_CONFIG.adsense.slots.homepageTop}
+                    format="horizontal"
+                    responsive={true}
+                    className="messages-top-banner"
+                />
+            </div>
+        </section>
+
         <!-- Messages Section -->
         <section class="py-8">
             <div class="container mx-auto px-4">
@@ -34,7 +46,7 @@ import MessagesApp from "../../components/messaging/MessagesApp.svelte";
                     <div class="flex-1">
                         <div
                             class="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col"
-                            style="height: calc(100vh - 250px); min-height: 600px;"
+                            style="height: calc(100vh - 400px); min-height: 600px;"
                         >
                             <MessagesApp client:only="svelte" />
                         </div>
@@ -51,6 +63,16 @@ import MessagesApp from "../../components/messaging/MessagesApp.svelte";
                             />
                         </div>
                     </aside>
+                </div>
+
+                <!-- Bottom Banner Ad (Desktop/Tablet) -->
+                <div class="hidden lg:block mt-6">
+                    <AdUnit
+                        slot={ANALYTICS_CONFIG.adsense.slots.homepageFooter}
+                        format="horizontal"
+                        responsive={true}
+                        className="messages-bottom-banner"
+                    />
                 </div>
 
                 <!-- Bottom Sticky Ad (Mobile Only) -->
