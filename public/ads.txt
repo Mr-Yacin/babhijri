@@ -1,0 +1,6 @@
+# ads.txt file for authorized digital sellers
+# Add your advertising partners here
+# Format: <FIELD #1>, <FIELD #2>, <FIELD #3>, <FIELD #4>
+# Example: google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+
+google.com, pub-6323375086153079, DIRECT, f08c47fec0942fa0
