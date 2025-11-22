@@ -1,16 +1,14 @@
-# Deploy to Vercel (RECOMMENDED)
+# Deploy to Vercel
 
-## Why Vercel Instead of Cloudflare?
+## Why Vercel?
 
-**Your app uses Firebase + SSR = Vercel is the right choice**
+**Your app uses Firebase + SSR = Vercel is the perfect choice**
 
-| Feature | Cloudflare Pages | Vercel |
-|---------|-----------------|--------|
-| Runtime | Edge (V8 isolates) | Node.js |
-| Firebase Client SDK | ❌ Breaks SSR | ✅ Works perfectly |
-| Firebase in Services | ❌ Not supported | ✅ Full support |
-| Deployment | Complex setup | One command |
-| **Verdict** | ❌ Not compatible | ✅ **RECOMMENDED** |
+- ✅ Node.js runtime with full Firebase support
+- ✅ Works perfectly with Firebase Client SDK
+- ✅ Full support for Firebase in services
+- ✅ Simple one-command deployment
+- ✅ Automatic SSL and custom domains
 
 ## Quick Deploy to Vercel
 
@@ -72,24 +70,20 @@ export default defineConfig({
 });
 ```
 
-## Why This Fixes Your 500 Error
-
-The 500 error happens because:
-1. Your services import Firebase at the top level
-2. Cloudflare's edge runtime can't handle Firebase initialization during SSR
-3. Vercel uses Node.js which fully supports Firebase
-
 ## After Deployment
 
 Your app will work perfectly on Vercel because:
 - ✅ Firebase works in both SSR and client-side
 - ✅ All your services work without modification
-- ✅ No more 500 errors
-- ✅ Better performance for your use case
+- ✅ Excellent performance with global edge network
+- ✅ Automatic preview deployments for branches
 
-## Cost Comparison
+## Vercel Free Tier
 
-- **Vercel Free Tier:** 100GB bandwidth, unlimited sites
-- **Cloudflare Pages Free:** Unlimited bandwidth, but doesn't work with your stack
+- 100GB bandwidth per month
+- Unlimited sites and deployments
+- Automatic SSL certificates
+- Global CDN
+- Preview deployments for every branch
 
-**Verdict: Use Vercel** 🚀
+**Perfect for your Firebase + SSR app** 🚀

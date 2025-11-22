@@ -196,19 +196,13 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 4. Enable **Storage**
 5. Copy your config to `.env`
 
-## ☁️ Cloudflare Pages Deployment
+## 🚀 Deployment
 
-> **🎉 DEPLOYED!** Your site is live! See [`QUICK_ENV_SETUP.md`](./QUICK_ENV_SETUP.md) to add environment variables.
+See [`DEPLOY_TO_VERCEL.md`](./DEPLOY_TO_VERCEL.md) for deployment instructions.
 
-> **Quick Start**: See [`doc/guides/QUICK_DEPLOY_GUIDE.md`](./doc/guides/QUICK_DEPLOY_GUIDE.md) for a 5-minute deployment guide.
+### Environment Variables
 
-### Environment Variables Setup
-
-This project uses `wrangler.toml` for environment variables. Edit the `[vars]` section in `wrangler.toml` with your Firebase credentials:
-
-1. Go to your Cloudflare Pages project
-2. Navigate to **Settings** → **Environment variables**
-3. Add the following variables for **Production** and **Preview** environments:
+Add these environment variables in your deployment platform:
 
 ```
 PUBLIC_FIREBASE_API_KEY=your_api_key
@@ -226,13 +220,12 @@ PUBLIC_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
 
 - **Build command**: `npm run build`
 - **Build output directory**: `dist`
-- **Root directory**: `/` (default)
 - **Node version**: 18 or higher
 
 ### Important Notes
 
-- Environment variables are **not** available during the build process on Cloudflare Pages
-- Firebase initialization is deferred to runtime (browser) to avoid build errors
+- Environment variables are injected at runtime (browser)
+- Firebase initialization is deferred to runtime to avoid build errors
 - All Firebase-related code runs client-side only
 
 ### Firestore Collections

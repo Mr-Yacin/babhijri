@@ -2,7 +2,7 @@
 
 ## Problem
 
-When deploying to Cloudflare Pages, the build fails with:
+When deploying with SSR, the build can fail with:
 
 ```
 Firebase: Error (auth/invalid-api-key)
@@ -10,7 +10,7 @@ Firebase: Error (auth/invalid-api-key)
 
 This occurs during the prerendering phase because:
 1. Firebase is initialized at module load time (top-level)
-2. Environment variables are not available during Cloudflare Pages build
+2. Environment variables may not be available during build
 3. Firebase tries to validate the API key during SSR/prerendering
 
 ## Solution
@@ -74,7 +74,7 @@ export const storage = _storage;
 
 #### 2. Updated `astro.config.mjs`
 
-Added Firebase to SSR externals and configured image service:
+Added Firebase to SSR externals:
 
 ```javascript
 export default defineConfig({
@@ -85,9 +85,7 @@ export default defineConfig({
       external: ['firebase', 'firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
     }
   },
-  adapter: cloudflare({
-    imageService: 'compile'
-  })
+  adapter: vercel()
 });
 ```
 
@@ -99,7 +97,7 @@ export default defineConfig({
    - No API key validation occurs
    - Build completes successfully
 
-2. **In Browser**:
+2. **In Browser (Runtime)**:
    - `typeof window !== 'undefined'` is true
    - Firebase initializes on first import
    - Environment variables are available
@@ -122,14 +120,14 @@ To verify the fix works:
    npm run preview
    ```
 
-2. **Cloudflare Pages**:
+2. **Production Deployment**:
    - Push to your repository
-   - Cloudflare will build and deploy
+   - Platform will build and deploy
    - Check build logs for success
 
 ## Important Notes
 
-- Environment variables must be set in Cloudflare Pages dashboard
+- Environment variables must be set in your deployment platform
 - Variables are only available at runtime, not during build
 - All Firebase operations must run client-side (in browser)
 - Server-side Firebase operations require Firebase Admin SDK
@@ -138,11 +136,11 @@ To verify the fix works:
 
 - `src/lib/firebase.ts` - Firebase initialization
 - `astro.config.mjs` - Astro configuration
-- `doc/guides/CLOUDFLARE_DEPLOYMENT.md` - Deployment guide
+- `DEPLOY_TO_VERCEL.md` - Deployment guide
 - `README.md` - Updated with deployment instructions
 
 ## References
 
 - [Astro SSR Guide](https://docs.astro.build/en/guides/server-side-rendering/)
-- [Cloudflare Pages Environment Variables](https://developers.cloudflare.com/pages/platform/build-configuration/#environment-variables)
+- [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables)
 - [Firebase Web Setup](https://firebase.google.com/docs/web/setup)
