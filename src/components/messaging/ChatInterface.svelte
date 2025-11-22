@@ -8,6 +8,7 @@
         subscribeToMessages,
         markConversationAsRead,
     } from "../../lib/services/messaging";
+    import { analytics } from "../../lib/utils/analytics";
 
     export let conversationId: string;
     export let currentUserId: string;
@@ -62,6 +63,10 @@
                 content,
                 currentUserPhoto,
             );
+            
+            // Track message sent event
+            analytics.sendMessage();
+            
             scrollToBottom();
         } catch (error) {
             console.error("Error sending message:", error);

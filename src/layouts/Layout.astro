@@ -1,6 +1,9 @@
 ---
 import "../styles/global.css";
 import { SITE_CONFIG } from "../config";
+import GoogleAnalytics from "../components/analytics/GoogleAnalytics.astro";
+import AdSenseScript from "../components/ads/AdSenseScript.astro";
+import ConsentBanner from "../components/analytics/ConsentBanner.svelte";
 
 interface Props {
 	title?: string;
@@ -43,16 +46,31 @@ const { title = SITE_CONFIG.name, description = SITE_CONFIG.description } =
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		<!-- Google Fonts: Noto Sans Arabic -->
+		<!-- Resource Hints for Performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preconnect" href="https://www.googletagmanager.com" />
+		<link rel="preconnect" href="https://www.google-analytics.com" />
+		<link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+		
+		<!-- Google Fonts: Noto Sans Arabic -->
 		<link
 			href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap"
 			rel="stylesheet"
 		/>
+
+		<!-- Google Analytics -->
+		<GoogleAnalytics />
+
+		<!-- Google AdSense -->
+		<AdSenseScript />
 	</head>
 	<body class="bg-gray-50 text-gray-900 font-sans antialiased">
 		<slot />
+		
+		<!-- Consent Banner -->
+		<ConsentBanner client:load />
+		
 		<script>
 			import { authStore } from "../lib/stores/auth";
 			authStore.init();

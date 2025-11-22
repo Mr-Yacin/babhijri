@@ -10,6 +10,7 @@
         getProfileById,
     } from "../../lib/services/dating";
     import { authStore } from "../../lib/stores/auth";
+    import { analytics } from "../../lib/utils/analytics";
     import type { DatingProfile } from "../../lib/types/user";
     import { MOCK_PROFILES } from "../../lib/data/mockProfiles";
 
@@ -157,6 +158,11 @@
     function handleProfileClick(event: CustomEvent) {
         const profileId = event.detail.id;
         selectedProfile = profiles.find((p) => p.uid === profileId) || null;
+        
+        // Track profile view
+        if (selectedProfile) {
+            analytics.viewProfile(profileId);
+        }
     }
 
     function closeModal() {

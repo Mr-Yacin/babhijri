@@ -5,6 +5,7 @@ import Footer from "../components/common/Footer.astro";
 import FeaturedProfilesSection from "../components/home/FeaturedProfilesSection.svelte";
 import HeroCTA from "../components/home/HeroCTA.svelte";
 import BottomCTA from "../components/home/BottomCTA.svelte";
+import AdUnit from "../components/ads/AdUnit.astro";
 import { SITE_CONFIG } from "../config";
 import { getCollection } from "astro:content";
 
@@ -76,6 +77,7 @@ const latestPosts = allPosts
 					>
 						<a
 							href="/blog"
+							id="hero-blog-cta"
 							class="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center"
 						>
 							<span>اقرأ مقالات الهجرة</span>
@@ -131,6 +133,18 @@ const latestPosts = allPosts
 						<p class="text-gray-600 text-sm">مقال حصري</p>
 					</div>
 				</div>
+			</div>
+		</section>
+
+		<!-- Ad Unit - Below Hero Section -->
+		<section class="bg-gray-50 py-4">
+			<div class="container mx-auto px-4">
+				<AdUnit 
+					slot="1234567890"
+					format="auto"
+					responsive={true}
+					className="homepage-top-ad"
+				/>
 			</div>
 		</section>
 
@@ -379,6 +393,18 @@ const latestPosts = allPosts
 			</div>
 		</section>
 
+		<!-- Ad Unit - Footer Area -->
+		<section class="bg-white py-8 border-t border-gray-200">
+			<div class="container mx-auto px-4">
+				<AdUnit 
+					slot="0987654321"
+					format="horizontal"
+					responsive={true}
+					className="homepage-footer-ad"
+				/>
+			</div>
+		</section>
+
 		<!-- CTA Section -->
 		<section class="py-20 bg-gradient-to-br from-teal-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
 			<div
@@ -398,3 +424,15 @@ const latestPosts = allPosts
 
 	<Footer />
 </Layout>
+
+<script>
+	import { analytics } from "../lib/utils/analytics";
+	
+	// Track blog CTA click
+	const blogCTA = document.getElementById('hero-blog-cta');
+	if (blogCTA) {
+		blogCTA.addEventListener('click', () => {
+			analytics.clickButton('hero-blog-cta', 'اقرأ مقالات الهجرة');
+		});
+	}
+</script>

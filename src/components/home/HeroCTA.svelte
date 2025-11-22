@@ -1,5 +1,10 @@
 <script lang="ts">
     import { authStore } from "../../lib/stores/auth";
+    import { analytics } from "../../lib/utils/analytics";
+    
+    function handleCTAClick(buttonId: string, buttonText: string) {
+        analytics.clickButton(buttonId, buttonText);
+    }
 </script>
 
 <!-- Auth CTA Box - Changes based on login status -->
@@ -20,6 +25,7 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
                 href="/app"
+                on:click={() => handleCTAClick('hero-browse-profiles-logged-in', 'تصفح الملفات الشخصية')}
                 class="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-purple-600 text-white px-10 py-5 rounded-full font-bold text-xl hover:from-pink-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-pink-500/50 flex items-center justify-center transform hover:scale-105"
             >
                 <span>تصفح الملفات الشخصية</span>
@@ -29,6 +35,7 @@
             </a>
             <a
                 href="/app/dashboard"
+                on:click={() => handleCTAClick('hero-dashboard-logged-in', 'لوحة التحكم')}
                 class="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 px-10 py-5 rounded-full font-bold text-xl hover:bg-white/30 transition-all flex items-center justify-center"
             >
                 <span>لوحة التحكم</span>
@@ -51,6 +58,7 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
                 href="/app/signup"
+                on:click={() => handleCTAClick('hero-signup', 'إنشاء حساب جديد')}
                 class="w-full sm:w-auto bg-pink-600 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-pink-700 transition-all shadow-lg hover:shadow-pink-500/50 flex items-center justify-center transform hover:scale-105"
             >
                 <span>إنشاء حساب جديد</span>
@@ -60,6 +68,7 @@
             </a>
             <a
                 href="/app/login"
+                on:click={() => handleCTAClick('hero-login', 'تسجيل الدخول')}
                 class="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 px-10 py-5 rounded-full font-bold text-xl hover:bg-white/30 transition-all flex items-center justify-center"
             >
                 <span>تسجيل الدخول</span>

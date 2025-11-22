@@ -1,0 +1,193 @@
+---
+import AdUnit from './AdUnit.astro';
+
+interface Props {
+    slot: string;
+    position?: 'top' | 'middle' | 'bottom';
+}
+
+const { slot, position = 'middle' } = Astro.props;
+---
+
+<div class={`in-content-ad in-content-ad--${position}`}>
+    <span class="ad-label">إعلان</span>
+    <AdUnit 
+        slot={slot} 
+        format="fluid"
+        style="in-article"
+        className="in-content-ad__unit"
+    />
+</div>
+
+<style>
+    .in-content-ad {
+        margin: 3rem 0;
+        padding: 1.5rem;
+        background: linear-gradient(to bottom, #f9fafb, #ffffff);
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+    
+    /* Position variants */
+    .in-content-ad--top {
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+    }
+    
+    .in-content-ad--middle {
+        margin: 3rem 0;
+    }
+    
+    .in-content-ad--bottom {
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Ad label styling */
+    .ad-label {
+        display: block;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    /* Remove default margins from nested AdUnit */
+    .in-content-ad :global(.ad-container) {
+        margin: 0;
+    }
+    
+    /* Graceful collapse when ads fail to load */
+    .in-content-ad:has(.adsbygoogle[data-ad-status="unfilled"]) {
+        display: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+    
+    /* Alternative collapse method for browsers that don't support :has() */
+    .in-content-ad:empty {
+        display: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Tablet responsive design */
+    @media (max-width: 1024px) {
+        .in-content-ad {
+            margin: 2.5rem 0;
+            padding: 1.25rem;
+        }
+        
+        .in-content-ad--top {
+            margin-top: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .in-content-ad--bottom {
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+    }
+    
+    /* Mobile responsive design */
+    @media (max-width: 768px) {
+        .in-content-ad {
+            margin: 2rem -1rem;
+            padding: 1rem;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            background: linear-gradient(to bottom, #fafafa, #ffffff);
+        }
+        
+        .in-content-ad--top {
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .in-content-ad--middle {
+            margin: 2rem -1rem;
+        }
+        
+        .in-content-ad--bottom {
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ad-label {
+            font-size: 0.7rem;
+            margin-bottom: 0.75rem;
+        }
+    }
+    
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .in-content-ad {
+            margin: 1.5rem -0.75rem;
+            padding: 0.875rem;
+        }
+        
+        .in-content-ad--top {
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .in-content-ad--middle {
+            margin: 1.5rem -0.75rem;
+        }
+        
+        .in-content-ad--bottom {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ad-label {
+            font-size: 0.65rem;
+        }
+    }
+    
+    /* Print styles - hide ads when printing */
+    @media print {
+        .in-content-ad {
+            display: none !important;
+        }
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        .in-content-ad {
+            border: 2px solid #000;
+            background: #fff;
+        }
+        
+        .ad-label {
+            color: #000;
+            font-weight: 700;
+        }
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        .in-content-ad {
+            transition: none;
+        }
+    }
+    
+    /* Dark mode support (if site implements dark mode) */
+    @media (prefers-color-scheme: dark) {
+        .in-content-ad {
+            background: linear-gradient(to bottom, #1f2937, #111827);
+            border-color: #374151;
+        }
+        
+        .ad-label {
+            color: #9ca3af;
+        }
+    }
+</style>

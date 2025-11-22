@@ -26,6 +26,8 @@
 - ✅ **Admin Panel** - Complete user management dashboard
 - ✅ **Security Rules** - Role-based access control (RBAC)
 - ✅ **Custom Modals** - Beautiful confirmation dialogs and toasts
+- ✅ **Google Analytics 4** - Track user behavior and engagement
+- ✅ **Google AdSense** - Professional ad placements for revenue
 - 🔄 **Matching System** - Coming soon
 - 🔄 **Messaging** - Coming soon
 
@@ -55,7 +57,9 @@
    cp .env.example .env
    ```
    
-   Edit `.env` and add your Firebase credentials:
+   Edit `.env` and add your credentials:
+   
+   **Firebase Configuration** (Required):
    ```env
    PUBLIC_FIREBASE_API_KEY=your_api_key
    PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
@@ -63,6 +67,18 @@
    PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
    PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
    PUBLIC_FIREBASE_APP_ID=your_app_id
+   ```
+   
+   **Google Analytics 4** (Optional):
+   ```env
+   PUBLIC_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+   PUBLIC_GA4_ENABLED=true
+   ```
+   
+   **Google AdSense** (Optional):
+   ```env
+   PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX
+   PUBLIC_ADSENSE_ENABLED=true
    ```
 
 4. **Start development server**
@@ -196,6 +212,222 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 4. Enable **Storage**
 5. Copy your config to `.env`
 
+---
+
+## 📊 Google Analytics & AdSense Setup
+
+### Google Analytics 4 (GA4)
+
+**Setup Instructions:**
+
+1. **Create a GA4 Property**
+   - Go to [Google Analytics](https://analytics.google.com/)
+   - Create a new property or use an existing one
+   - Get your Measurement ID (format: `G-XXXXXXXXXX`)
+
+2. **Add to Environment Variables**
+   ```env
+   PUBLIC_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+   PUBLIC_GA4_ENABLED=true
+   ```
+
+3. **Analytics Features**
+   - ✅ Automatic page view tracking
+   - ✅ Custom event tracking
+   - ✅ Route-based filtering (excludes admin, login, signup pages)
+   - ✅ Privacy-compliant with consent banner
+
+**Tracking Custom Events:**
+
+```typescript
+import { analytics } from '@/lib/utils/analytics';
+
+// Track button clicks
+analytics.clickButton('cta-hero', 'Get Started');
+
+// Track form submissions
+analytics.submitForm('contact');
+
+// Track profile views
+analytics.viewProfile('user123');
+
+// Track custom events
+import { trackEvent } from '@/lib/utils/analytics';
+trackEvent('custom_event', {
+  category: 'engagement',
+  label: 'feature_used',
+  value: 1
+});
+```
+
+**Pages with Analytics:**
+- ✅ Homepage, Blog, App pages, Messages
+- ❌ Admin, Profile, Dashboard, Login, Signup (excluded for privacy)
+
+### Google AdSense
+
+**Setup Instructions:**
+
+1. **Create AdSense Account**
+   - Go to [Google AdSense](https://www.google.com/adsense/)
+   - Apply for an account and get approved
+   - Get your Publisher ID (format: `ca-pub-XXXXXXXXXXXXXXXX`)
+
+2. **Add to Environment Variables**
+   ```env
+   PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX
+   PUBLIC_ADSENSE_ENABLED=true
+   ```
+
+3. **Create Ad Units**
+   - In AdSense dashboard, create ad units
+   - Copy the ad slot IDs for each placement
+   - Update ad placements in your pages (see below)
+
+**Adding New Ad Placements:**
+
+Use the pre-built ad components for consistent styling:
+
+```astro
+---
+// For standard ad units
+import AdUnit from '@/components/ads/AdUnit.astro';
+
+// For in-content blog ads
+import InContentAd from '@/components/ads/InContentAd.astro';
+---
+
+<!-- Standard Ad Unit -->
+<AdUnit 
+  slot="1234567890"
+  format="auto"
+  responsive={true}
+/>
+
+<!-- Rectangle Ad -->
+<AdUnit 
+  slot="1234567890"
+  format="rectangle"
+  responsive={true}
+/>
+
+<!-- In-Content Ad (for blog posts) -->
+<InContentAd 
+  slot="1234567890"
+  position="middle"
+/>
+```
+
+**Ad Component Props:**
+
+`AdUnit.astro`:
+- `slot` (required): Your AdSense ad slot ID
+- `format`: `'auto'` | `'fluid'` | `'rectangle'` | `'vertical'` | `'horizontal'` (default: `'auto'`)
+- `responsive`: `boolean` (default: `true`)
+- `style`: `'display'` | `'in-article'` | `'in-feed'` (default: `'display'`)
+- `className`: Additional CSS classes
+
+`InContentAd.astro`:
+- `slot` (required): Your AdSense ad slot ID
+- `position`: `'top'` | `'middle'` | `'bottom'` (default: `'middle'`)
+
+**Pages with Ads:**
+- ✅ Homepage, Blog posts, App/Index, Messages
+- ❌ Admin, Profile, Dashboard, Login, Signup, Settings, Contact, Help, Privacy, Terms
+
+**Ad Placement Best Practices:**
+- Maintain 3:1 content-to-ad ratio
+- Place ads at natural content breaks
+- Use `InContentAd` for blog posts (professional styling)
+- Ads automatically collapse when blocked or fail to load
+- Fully responsive on all devices
+
+### Configuration
+
+All analytics and ad settings are centralized in `src/config.ts`:
+
+```typescript
+export const ANALYTICS_CONFIG = {
+    // Google Analytics 4
+    ga4: {
+        measurementId: import.meta.env.PUBLIC_GA4_MEASUREMENT_ID || '',
+        enabled: import.meta.env.PUBLIC_GA4_ENABLED !== 'false',
+    },
+    
+    // Google AdSense
+    adsense: {
+        publisherId: import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID || '',
+        enabled: import.meta.env.PUBLIC_ADSENSE_ENABLED !== 'false',
+    },
+    
+    // Page routing rules
+    routes: {
+        // Pages where ads should be displayed
+        adEnabledPages: [
+            '/',
+            '/blog',
+            '/blog/',
+            '/app',
+            '/app/',
+            '/app/messages',
+        ],
+        
+        // Pages where ads should NOT be displayed
+        adExcludedPages: [
+            '/app/admin',
+            '/app/profile',
+            '/app/dashboard',
+            '/app/login',
+            '/app/signup',
+            '/app/settings',
+            '/contact',
+            '/help',
+            '/privacy',
+            '/terms',
+        ],
+        
+        // Pages where analytics should NOT track
+        analyticsExcludedPages: [
+            '/app/admin',
+            '/app/profile',
+            '/app/dashboard',
+            '/app/login',
+            '/app/signup',
+        ],
+    },
+};
+```
+
+**Customizing Routes:**
+
+To add or remove pages from tracking/ads, edit the arrays in `src/config.ts`:
+
+```typescript
+// Add a new page to ad-enabled pages
+adEnabledPages: [
+    '/',
+    '/blog',
+    '/your-new-page',  // Add here
+],
+
+// Exclude a page from analytics
+analyticsExcludedPages: [
+    '/app/admin',
+    '/your-private-page',  // Add here
+],
+```
+
+### Privacy & Consent
+
+The platform includes a consent banner that:
+- Appears on first visit
+- Stores user preferences in local storage
+- Allows users to accept or decline tracking
+- Links to privacy policy
+- Reloads page after consent to initialize analytics
+
+Users can manage their consent at any time through browser settings or by clearing local storage.
+
 ## 🚀 Deployment
 
 See [`DEPLOY_TO_VERCEL.md`](./DEPLOY_TO_VERCEL.md) for deployment instructions.
@@ -204,6 +436,7 @@ See [`DEPLOY_TO_VERCEL.md`](./DEPLOY_TO_VERCEL.md) for deployment instructions.
 
 Add these environment variables in your deployment platform:
 
+**Required:**
 ```
 PUBLIC_FIREBASE_API_KEY=your_api_key
 PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
@@ -211,9 +444,21 @@ PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
 PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+**Optional (Email notifications):**
+```
 PUBLIC_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
 PUBLIC_EMAILJS_SERVICE_ID=your_emailjs_service_id
 PUBLIC_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+```
+
+**Optional (Analytics & Ads):**
+```
+PUBLIC_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+PUBLIC_GA4_ENABLED=true
+PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX
+PUBLIC_ADSENSE_ENABLED=true
 ```
 
 ### Build Configuration

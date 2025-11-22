@@ -1,5 +1,10 @@
 <script lang="ts">
     import { authStore } from "../../lib/stores/auth";
+    import { analytics } from "../../lib/utils/analytics";
+    
+    function handleCTAClick(buttonId: string, buttonText: string) {
+        analytics.clickButton(buttonId, buttonText);
+    }
 </script>
 
 <div class="container mx-auto px-4 relative z-10 text-center">
@@ -29,6 +34,7 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a
                     href="/app"
+                    on:click={() => handleCTAClick('bottom-browse-profiles-logged-in', 'تصفح الملفات')}
                     class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-pink-600 text-white px-12 py-5 rounded-full font-bold text-xl hover:from-amber-600 hover:to-pink-700 transition-all shadow-2xl hover:shadow-pink-500/50 transform hover:scale-105 flex items-center justify-center"
                 >
                     <span>تصفح الملفات</span>
@@ -38,6 +44,7 @@
                 </a>
                 <a
                     href="/app/messages"
+                    on:click={() => handleCTAClick('bottom-messages-logged-in', 'الرسائل')}
                     class="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-12 py-5 rounded-full font-bold text-xl hover:bg-white/20 transition-all flex items-center justify-center"
                 >
                     <span>الرسائل</span>
@@ -89,6 +96,7 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a
                     href="/app/signup"
+                    on:click={() => handleCTAClick('bottom-signup', 'سجل مجاناً الآن')}
                     class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-pink-600 text-white px-12 py-5 rounded-full font-bold text-xl hover:from-amber-600 hover:to-pink-700 transition-all shadow-2xl hover:shadow-pink-500/50 transform hover:scale-105 flex items-center justify-center"
                 >
                     <span>سجل مجاناً الآن</span>
@@ -98,6 +106,7 @@
                 </a>
                 <a
                     href="/app/login"
+                    on:click={() => handleCTAClick('bottom-login', 'تسجيل الدخول')}
                     class="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-12 py-5 rounded-full font-bold text-xl hover:bg-white/20 transition-all flex items-center justify-center"
                 >
                     <span>تسجيل الدخول</span>

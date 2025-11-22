@@ -1,5 +1,6 @@
 import { db } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { analytics } from '../lib/utils/analytics';
 
 // Handle form submission
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,6 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log('✅ Saved to Firestore with ID:', docRef.id);
             console.log('📧 Email will be sent automatically to info@babhijra.com');
+
+            // Track form submission
+            analytics.submitForm('contact');
 
             // Show success message
             formMessage.className = 'p-4 bg-green-50 border border-green-200 rounded-lg text-green-800';

@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/common/Header.astro";
 import Footer from "../../components/common/Footer.astro";
 import ProfileGrid from "../../components/dating/ProfileGrid.svelte";
+import AdUnit from "../../components/ads/AdUnit.astro";
 import { SITE_CONFIG } from "../../config";
 ---
 
@@ -28,6 +29,9 @@ import { SITE_CONFIG } from "../../config";
 		<!-- Profile Grid Section with Auth Check -->
 		<section class="py-12 relative">
 			<div class="container mx-auto px-4">
+				<div class="flex flex-col lg:flex-row gap-6">
+					<!-- Main Content Area -->
+					<div class="flex-1">
 				<!-- Auth Overlay (shown when not logged in) -->
 				<div id="auth-overlay" class="hidden">
 					<div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
@@ -107,9 +111,31 @@ import { SITE_CONFIG } from "../../config";
 					</div>
 				</div>
 
-				<!-- Profile Grid (will be blurred if not logged in) -->
-				<div id="profile-grid-container">
-					<ProfileGrid client:only="svelte" />
+						<!-- Profile Grid (will be blurred if not logged in) -->
+						<div id="profile-grid-container">
+							<ProfileGrid client:only="svelte" />
+						</div>
+					</div>
+
+					<!-- Sidebar Ad (Desktop Only) -->
+					<aside class="hidden lg:block lg:w-80 flex-shrink-0">
+						<div class="sticky top-24">
+							<AdUnit 
+								slot="1234567890"
+								format="vertical"
+								className="sidebar-ad"
+							/>
+						</div>
+					</aside>
+				</div>
+
+				<!-- Bottom Sticky Ad (Mobile Only) -->
+				<div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white shadow-lg border-t border-gray-200">
+					<AdUnit 
+						slot="0987654321"
+						format="horizontal"
+						className="mobile-sticky-ad"
+					/>
 				</div>
 			</div>
 		</section>
@@ -147,6 +173,26 @@ import { SITE_CONFIG } from "../../config";
 			}
 		});
 	</script>
+
+	<style>
+		/* Sidebar ad styling */
+		:global(.sidebar-ad) {
+			margin: 0;
+		}
+
+		/* Mobile sticky ad styling */
+		:global(.mobile-sticky-ad) {
+			margin: 0;
+			padding: 0.5rem;
+		}
+
+		/* Ensure mobile sticky ad doesn't overlap content */
+		@media (max-width: 1023px) {
+			main {
+				padding-bottom: 120px;
+			}
+		}
+	</style>
 
 	<Footer />
 </Layout>
