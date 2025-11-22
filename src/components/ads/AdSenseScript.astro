@@ -1,17 +1,28 @@
 ---
-import { ANALYTICS_CONFIG } from '../../config';
-import { isAdEnabledPage } from '../../lib/utils/ads';
+import { ANALYTICS_CONFIG } from "../../config";
+import { isAdEnabledPage } from "../../lib/utils/ads";
 
 const { publisherId, enabled } = ANALYTICS_CONFIG.adsense;
 const currentPath = Astro.url.pathname;
 const shouldLoadAds = enabled && publisherId && isAdEnabledPage(currentPath);
 ---
 
-{shouldLoadAds && (
-    <script 
-        is:inline
-        async 
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
-        crossorigin="anonymous"
-    ></script>
-)}
+{
+    shouldLoadAds && (
+        <>
+            <script
+                is:inline
+                async
+                src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
+                crossorigin="anonymous"
+                onload={`console.log('[AdSense] Script loaded successfully for publisher: ${publisherId}')`}
+                onerror="console.error('[AdSense] Failed to load AdSense script')"
+            />
+            <script is:inline define:vars={{ publisherId }}>
+                console.log('[AdSense] Initializing on page:',
+                window.location.pathname); console.log('[AdSense] Publisher
+                ID:', publisherId);
+            </script>
+        </>
+    )
+}

@@ -1,53 +1,75 @@
 ---
-import { ANALYTICS_CONFIG } from '../../config';
+import { ANALYTICS_CONFIG } from "../../config";
 
 interface Props {
     slot: string;
-    format?: 'auto' | 'fluid' | 'rectangle' | 'vertical' | 'horizontal';
+    format?: "auto" | "fluid" | "rectangle" | "vertical" | "horizontal";
     responsive?: boolean;
     className?: string;
-    style?: 'display' | 'in-article' | 'in-feed';
+    style?: "display" | "in-article" | "in-feed";
 }
 
-const { 
-    slot, 
-    format = 'auto', 
+const {
+    slot,
+    format = "auto",
     responsive = true,
-    className = '',
-    style = 'display'
+    className = "",
+    style = "display",
 } = Astro.props;
 
 const { publisherId } = ANALYTICS_CONFIG.adsense;
 
 // Determine layout key based on style
 let layoutKey: string | undefined;
-if (style === 'in-article') {
-    layoutKey = '-fb+5w+4e-db+86';
-} else if (style === 'in-feed') {
-    layoutKey = '-fb+5w+4e-db+86';
+if (style === "in-article") {
+    layoutKey = "-fb+5w+4e-db+86";
+} else if (style === "in-feed") {
+    layoutKey = "-fb+5w+4e-db+86";
 }
 
 // Determine display style based on format
-let displayStyle = 'display:block';
-if (format === 'fluid') {
-    displayStyle = 'display:block;width:100%';
+let displayStyle = "display:block";
+if (format === "fluid") {
+    displayStyle = "display:block;width:100%";
 }
 ---
 
 <div class={`ad-container ${className}`}>
-    <ins 
+    <ins
         class="adsbygoogle"
         style={displayStyle}
         data-ad-client={publisherId}
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive.toString()}
-        data-ad-layout-key={layoutKey}
-    ></ins>
+        data-ad-layout-key={layoutKey}></ins>
 </div>
 
-<script>
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
+<script
+    define:vars={{ slot, format, responsive, style, publisherId, className }}
+>
+    // Debug logging
+    console.log("[AdSense AdUnit] Initializing ad unit:", {
+        slot: slot,
+        format: format,
+        responsive: responsive,
+        style: style,
+        publisherId: publisherId,
+        className: className,
+        timestamp: new Date().toISOString(),
+    });
+
+    try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        console.log("[AdSense AdUnit] Ad unit pushed to queue - Slot:", slot);
+    } catch (error) {
+        console.error(
+            "[AdSense AdUnit] Error initializing ad unit:",
+            error,
+            "Slot:",
+            slot,
+        );
+    }
 </script>
 
 <style>
@@ -57,16 +79,16 @@ if (format === 'fluid') {
         text-align: center;
         overflow: hidden;
     }
-    
+
     .adsbygoogle {
         min-height: 100px;
     }
-    
+
     /* Graceful collapse when ads fail to load or are blocked */
     .adsbygoogle[data-ad-status="unfilled"] {
         display: none !important;
     }
-    
+
     @media (max-width: 768px) {
         .ad-container {
             margin: 1.5rem auto;

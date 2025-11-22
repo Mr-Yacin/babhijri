@@ -6,6 +6,7 @@ import FeaturedProfilesSection from "../components/home/FeaturedProfilesSection.
 import HeroCTA from "../components/home/HeroCTA.svelte";
 import BottomCTA from "../components/home/BottomCTA.svelte";
 import AdUnit from "../components/ads/AdUnit.astro";
+import InContentAd from "../components/ads/InContentAd.astro";
 import { SITE_CONFIG, ANALYTICS_CONFIG } from "../config";
 import { getCollection } from "astro:content";
 
@@ -26,21 +27,29 @@ const latestPosts = allPosts
 		>
 			<!-- Blurred Profiles Background -->
 			<div class="absolute inset-0 overflow-hidden">
-				<div class="absolute inset-0 grid grid-cols-4 md:grid-cols-6 gap-4 p-4 opacity-20">
+				<div
+					class="absolute inset-0 grid grid-cols-4 md:grid-cols-6 gap-4 p-4 opacity-20"
+				>
 					<!-- Mock profile cards in background -->
-					{[1,2,3,4,5,6,7,8,9,10,11,12].map((i) => (
-						<div class="aspect-square rounded-2xl bg-gradient-to-br from-pink-400 to-purple-600 animate-pulse" style={`animation-delay: ${i * 0.2}s`}></div>
-					))}
+					{
+						[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+							<div
+								class="aspect-square rounded-2xl bg-gradient-to-br from-pink-400 to-purple-600 animate-pulse"
+								style={`animation-delay: ${i * 0.2}s`}
+							/>
+						))
+					}
 				</div>
 				<!-- Heavy blur overlay -->
-				<div class="absolute inset-0 backdrop-blur-3xl bg-teal-900/80"></div>
+				<div class="absolute inset-0 backdrop-blur-3xl bg-teal-900/80">
+				</div>
 			</div>
 
 			<div
 				class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"
 			>
 			</div>
-			
+
 			<!-- Gradient Overlay -->
 			<div
 				class="absolute inset-0 bg-gradient-to-b from-teal-900/50 to-teal-900/90"
@@ -139,7 +148,7 @@ const latestPosts = allPosts
 		<!-- Ad Unit - Below Hero Section -->
 		<section class="bg-gray-50 py-4">
 			<div class="container mx-auto px-4">
-				<AdUnit 
+				<AdUnit
 					slot={ANALYTICS_CONFIG.adsense.slots.homepageTop}
 					format="auto"
 					responsive={true}
@@ -152,6 +161,16 @@ const latestPosts = allPosts
 		<section class="py-20 bg-gray-50 relative">
 			<div class="container mx-auto px-4">
 				<FeaturedProfilesSection client:load />
+			</div>
+		</section>
+
+		<!-- Ad Unit - Middle Content -->
+		<section class="bg-gray-50 py-4">
+			<div class="container mx-auto px-4">
+				<InContentAd
+					slot={ANALYTICS_CONFIG.adsense.slots.blogMiddle}
+					position="middle"
+				/>
 			</div>
 		</section>
 
@@ -396,7 +415,7 @@ const latestPosts = allPosts
 		<!-- Ad Unit - Footer Area -->
 		<section class="bg-white py-8 border-t border-gray-200">
 			<div class="container mx-auto px-4">
-				<AdUnit 
+				<AdUnit
 					slot={ANALYTICS_CONFIG.adsense.slots.homepageFooter}
 					format="horizontal"
 					responsive={true}
@@ -406,17 +425,26 @@ const latestPosts = allPosts
 		</section>
 
 		<!-- CTA Section -->
-		<section class="py-20 bg-gradient-to-br from-teal-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+		<section
+			class="py-20 bg-gradient-to-br from-teal-900 via-purple-900 to-pink-900 text-white relative overflow-hidden"
+		>
 			<div
 				class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"
 			>
 			</div>
 			<!-- Animated background elements -->
 			<div class="absolute inset-0 overflow-hidden">
-				<div class="absolute top-10 left-10 w-72 h-72 bg-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
-				<div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+				<div
+					class="absolute top-10 left-10 w-72 h-72 bg-pink-500/20 rounded-full blur-3xl animate-pulse"
+				>
+				</div>
+				<div
+					class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"
+					style="animation-delay: 1s;"
+				>
+				</div>
 			</div>
-			
+
 			<!-- Dynamic Bottom CTA -->
 			<BottomCTA client:load />
 		</section>
@@ -427,12 +455,12 @@ const latestPosts = allPosts
 
 <script>
 	import { analytics } from "../lib/utils/analytics";
-	
+
 	// Track blog CTA click
-	const blogCTA = document.getElementById('hero-blog-cta');
+	const blogCTA = document.getElementById("hero-blog-cta");
 	if (blogCTA) {
-		blogCTA.addEventListener('click', () => {
-			analytics.clickButton('hero-blog-cta', 'اقرأ مقالات الهجرة');
+		blogCTA.addEventListener("click", () => {
+			analytics.clickButton("hero-blog-cta", "اقرأ مقالات الهجرة");
 		});
 	}
 </script>

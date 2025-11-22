@@ -2,7 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/common/Header.astro";
 import Footer from "../components/common/Footer.astro";
-import { SITE_CONFIG } from "../config";
+import AdUnit from "../components/ads/AdUnit.astro";
+import { SITE_CONFIG, ANALYTICS_CONFIG } from "../config";
 ---
 
 <Layout
@@ -181,6 +182,16 @@ import { SITE_CONFIG } from "../config";
                             >الاتصال بنا</a
                         >
                     </div>
+                </div>
+
+                <!-- Ad Unit - Bottom -->
+                <div class="mt-8">
+                    <AdUnit
+                        slot={ANALYTICS_CONFIG.adsense.slots.homepageTop}
+                        format="auto"
+                        responsive={true}
+                        className="404-ad"
+                    />
                 </div>
 
                 <!-- Decorative floating elements -->
