@@ -23,7 +23,10 @@ Set the following build configuration:
 - **Build command**: `npm run build`
 - **Build output directory**: `dist`
 - **Root directory**: `/` (leave empty)
+- **Deploy command**: Leave empty (Pages handles deployment automatically)
 - **Node version**: 18 or higher
+
+⚠️ **Important**: Do NOT set a deploy command. Cloudflare Pages automatically deploys after the build completes.
 
 ## Step 3: Add Environment Variables
 
@@ -75,6 +78,16 @@ This error occurs when Firebase tries to initialize during the build process wit
 - Ensure variables are added to **both** Production and Preview environments
 - Variable names must start with `PUBLIC_` to be accessible in the browser
 - Redeploy after adding/changing environment variables
+
+### Deploy Error: "Missing entry-point to Worker script"
+
+This error occurs when Cloudflare tries to run `wrangler versions upload` as a deploy command.
+
+**Solution**: 
+1. Go to **Settings** → **Builds & deployments** in Cloudflare Pages
+2. Clear/remove the **Deploy command** field (leave it empty)
+3. Cloudflare Pages will automatically deploy after the build completes
+4. Redeploy your project
 
 ### Build Fails with "Module not found"
 

@@ -19,6 +19,7 @@ Use this checklist to ensure successful deployment of BabHijra to Cloudflare Pag
 - [ ] Build settings configured:
   - Build command: `npm run build`
   - Build output directory: `dist`
+  - Deploy command: **EMPTY** (leave blank)
   - Node version: 18+
 
 ## Environment Variables
@@ -68,6 +69,11 @@ Add these in Cloudflare Pages → Settings → Environment variables:
 - [ ] Enable Cloudflare WAF (optional)
 
 ## Troubleshooting
+
+If you see "Missing entry-point to Worker script":
+- [ ] Go to Settings → Builds & deployments
+- [ ] Clear the Deploy command field (leave it empty)
+- [ ] Redeploy
 
 If build fails:
 - [ ] Check build logs for specific error
