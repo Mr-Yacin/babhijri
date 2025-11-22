@@ -67,6 +67,7 @@
         class="flex-1 py-2 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
         on:click={(e) => {
           e.stopPropagation();
+          dispatch("message", { id });
         }}
       >
         مراسلة

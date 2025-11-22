@@ -7,6 +7,7 @@
         getUserLikes,
         toggleLike,
         filterProfilesByRegion,
+        getProfileById,
     } from "../../lib/services/dating";
     import { authStore } from "../../lib/stores/auth";
     import type { DatingProfile } from "../../lib/types/user";
@@ -20,11 +21,25 @@
     let filter = "all";
     let selectedProfile: DatingProfile | null = null;
     let currentUserId = "";
+    let currentUserGender: "male" | "female" | null = null;
 
     // Subscribe to auth state
-    const unsubscribe = authStore.subscribe((state) => {
+    const unsubscribe = authStore.subscribe(async (state) => {
         if (state.user) {
             currentUserId = state.user.uid;
+            // Fetch user's gender
+            try {
+                const userProfile = await getProfileById(currentUserId);
+                if (userProfile) {
+                    currentUserGender = userProfile.gender;
+                    // Re-apply filters if profiles are already loaded
+                    if (profiles.length > 0) {
+                        applyFilters();
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching user profile:", err);
+            }
         }
     });
 
@@ -41,7 +56,7 @@
                 profiles = firestoreProfiles;
             }
 
-            filteredProfiles = profiles;
+            applyFilters();
 
             // Fetch user's likes if logged in
             if (currentUserId) {
@@ -63,7 +78,7 @@
             );
             // Fallback to mock profiles if Firestore fails
             profiles = MOCK_PROFILES;
-            filteredProfiles = profiles;
+            applyFilters();
             loading = false;
         }
     });
@@ -72,9 +87,37 @@
         unsubscribe();
     });
 
+    let availableProfilesCount = 0;
+
+    function applyFilters() {
+        let tempProfiles = profiles;
+
+        // 1. Exclude current user
+        if (currentUserId) {
+            tempProfiles = tempProfiles.filter((p) => p.uid !== currentUserId);
+        }
+
+        // 2. Filter by Gender (Opposite gender)
+        if (currentUserGender) {
+            const targetGender =
+                currentUserGender === "male" ? "female" : "male";
+            tempProfiles = tempProfiles.filter(
+                (p) => p.gender === targetGender,
+            );
+        }
+
+        // Store the count of available profiles (before region filtering)
+        availableProfilesCount = tempProfiles.length;
+
+        // 3. Filter by Region
+        tempProfiles = filterProfilesByRegion(tempProfiles, filter);
+
+        filteredProfiles = tempProfiles;
+    }
+
     function handleFilterChange(newFilter: string) {
         filter = newFilter;
-        filteredProfiles = filterProfilesByRegion(profiles, filter);
+        applyFilters();
     }
 
     async function handleToggleLike(event: CustomEvent) {
@@ -127,6 +170,11 @@
             } as CustomEvent);
         }
     }
+
+    function handleMessage(event: CustomEvent) {
+        const profileId = event.detail.id;
+        window.location.href = `/app/messages?profile=${profileId}`;
+    }
 </script>
 
 <!-- Filter Buttons -->
@@ -138,7 +186,7 @@
             : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}"
         on:click={() => handleFilterChange("all")}
     >
-        الكل ({profiles.length})
+        الكل ({availableProfilesCount})
     </button>
     <button
         class="px-4 py-2 rounded-full font-medium whitespace-nowrap transition-colors {filter ===
@@ -180,9 +228,7 @@
     </div>
 {:else}
     <!-- Profile Grid -->
-    <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-    >
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {#each filteredProfiles as profile (profile.uid)}
             <ProfileCard
                 id={profile.uid}
@@ -195,6 +241,7 @@
                 liked={likedProfileIds.has(profile.uid)}
                 on:click={handleProfileClick}
                 on:toggleLike={handleToggleLike}
+                on:message={handleMessage}
             />
         {/each}
     </div>
