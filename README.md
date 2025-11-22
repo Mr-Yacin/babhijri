@@ -140,10 +140,17 @@ babhijri/
 
 ## 📚 Documentation
 
+### Deployment Guides 🚀
+- **[DEPLOY NOW](./DEPLOY_NOW.md)** - ⚡ Quick 3-step deployment
+- **[Quick Deploy Guide](./doc/guides/QUICK_DEPLOY_GUIDE.md)** - 5-minute comprehensive guide
+- **[Deployment Summary](./DEPLOYMENT_SUMMARY.md)** - What was fixed and next steps
+- **[All Deployment Guides](./doc/guides/README.md)** - Complete guide index
+
+### Project Documentation
 - **[DOCUMENTATION.md](./doc/status/DOCUMENTATION.md)** - Complete application documentation
 - **[ROADMAP.md](./doc/status/ROADMAP.md)** - Development roadmap and feature planning
 - **[TASKS.md](./doc/status/TASKS.md)** - Current tasks and sprint planning
-- **[Guides](./doc/guides/)** - Setup guides and tutorials
+- **[Setup Guides](./doc/guides/)** - Firebase, Email, and other setup guides
 
 ---
 
@@ -190,6 +197,8 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 5. Copy your config to `.env`
 
 ## ☁️ Cloudflare Pages Deployment
+
+> **Quick Start**: See [`doc/guides/QUICK_DEPLOY_GUIDE.md`](./doc/guides/QUICK_DEPLOY_GUIDE.md) for a 5-minute deployment guide.
 
 ### Environment Variables Setup
 
