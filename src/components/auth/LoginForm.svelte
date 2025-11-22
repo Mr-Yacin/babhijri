@@ -1,6 +1,6 @@
 <script lang="ts">
     import { signInWithEmailAndPassword } from "firebase/auth";
-    import { auth } from "../../lib/firebase";
+    import { getFirebaseAuth } from "../../lib/firebase";
 
     let email = "";
     let password = "";
@@ -11,7 +11,32 @@
         error = "";
         loading = true;
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const auth = getFirebaseAuth();
+            if (!auth) {
+                error = "خطأ في تهيئة المصادقة";
+                loading = false;
+                return;
+            }
+            
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            
+            // Get the ID token
+            const idToken = await userCredential.user.getIdToken();
+            
+            // Create session cookie via API
+            const response = await fetch('/api/auth/session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idToken })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create session');
+            }
+
+            // Redirect to app
             window.location.href = "/app";
         } catch (e: any) {
             console.error(e);

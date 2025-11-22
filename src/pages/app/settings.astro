@@ -688,6 +688,11 @@ import { SITE_CONFIG } from "../../config";
                     await deleteUser(user);
                 }
 
+                // Clear session cookie
+                await fetch('/api/auth/session', {
+                    method: 'DELETE'
+                });
+
                 // Redirect to home
                 window.location.href = "/";
             } catch (error: any) {

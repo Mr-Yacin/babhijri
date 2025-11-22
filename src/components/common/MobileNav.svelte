@@ -44,6 +44,12 @@
 
     async function handleLogout() {
         try {
+            // Clear session cookie first
+            await fetch('/api/auth/session', {
+                method: 'DELETE'
+            });
+            
+            // Then sign out from Firebase
             await signOut(auth);
             closeMenu();
             window.location.href = "/";

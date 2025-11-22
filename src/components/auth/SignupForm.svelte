@@ -3,7 +3,7 @@
         createUserWithEmailAndPassword,
         updateProfile,
     } from "firebase/auth";
-    import { auth } from "../../lib/firebase";
+    import { getFirebaseAuth } from "../../lib/firebase";
     import { userService } from "../../lib/services/user";
 
     let name = "";
@@ -28,6 +28,13 @@
 
         loading = true;
         try {
+            const auth = getFirebaseAuth();
+            if (!auth) {
+                error = "خطأ في تهيئة المصادقة";
+                loading = false;
+                return;
+            }
+            
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 email,
@@ -41,6 +48,21 @@
             await userService.createUserProfile(userCredential.user, {
                 displayName: name,
             });
+
+            // Get the ID token and create session
+            const idToken = await userCredential.user.getIdToken();
+            
+            const response = await fetch('/api/auth/session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idToken })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create session');
+            }
 
             window.location.href = "/app";
         } catch (e: any) {
