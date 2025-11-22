@@ -70,7 +70,8 @@
         {/each}
     </div>
 
-    <div class="mt-12 text-center">
+    <!-- Hidden on index page as we show CTA overlay instead -->
+    <div class="mt-12 text-center hidden">
         <a
             href="/app"
             class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700 md:py-4 md:text-lg md:px-10 transition-all shadow-lg hover:shadow-xl"

@@ -2,7 +2,6 @@ import { defineMiddleware } from 'astro:middleware';
 
 // Protected routes that require authentication
 const PROTECTED_ROUTES = [
-    '/app',
     '/app/dashboard',
     '/app/profile',
     '/app/settings',
@@ -12,6 +11,7 @@ const PROTECTED_ROUTES = [
 
 // Public routes within /app that don't require auth
 const PUBLIC_APP_ROUTES = [
+    '/app',
     '/app/login',
     '/app/signup'
 ];
