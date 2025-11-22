@@ -8,8 +8,12 @@ const ADMIN_EMAILS = (import.meta.env.ADMIN_EMAILS || '')
     .filter((email: string) => email.length > 0);
 ---
 
-<script define:vars={{ ADMIN_EMAILS }}>
+<script>
     import { getFirebaseAuth } from '../../lib/firebase';
+    
+    // Get admin emails from data attribute
+    const adminCheckEl = document.getElementById('admin-check-loader');
+    const ADMIN_EMAILS = adminCheckEl?.dataset.adminEmails?.split(',') || [];
     
     // Client-side admin check
     const auth = getFirebaseAuth();
@@ -38,7 +42,7 @@ const ADMIN_EMAILS = (import.meta.env.ADMIN_EMAILS || '')
 </script>
 
 <!-- Visual indicator while checking -->
-<div id="admin-check-loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+<div id="admin-check-loader" data-admin-emails={ADMIN_EMAILS.join(',')} class="fixed inset-0 bg-white z-50 flex items-center justify-center">
     <div class="text-center">
         <div class="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
         <p class="text-gray-600">Verifying admin access...</p>

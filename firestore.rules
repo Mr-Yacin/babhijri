@@ -14,16 +14,24 @@ service cloud.firestore {
     
     function isAdmin() {
       return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Admin emails - hardcoded for now (should match ADMIN_EMAILS in .env)
+    function isAdminEmail() {
+      return isAuthenticated() && 
+             request.auth.token.email in ['admin@babhijra.com'];
     }
     
     // Users collection - basic account info
     match /users/{uid} {
-      allow read: if isOwner(uid) || isAdmin();
+      // Allow admins to read all users for dashboard stats
+      allow read: if isOwner(uid) || isAdmin() || isAdminEmail();
       allow create: if isOwner(uid);
       // Owners can update their doc but cannot change their role. Admins can change anything.
-      allow update: if isAdmin() || (isOwner(uid) && request.resource.data.role == resource.data.role);
-      allow delete: if isAdmin();
+      allow update: if isAdmin() || isAdminEmail() || (isOwner(uid) && request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin() || isAdminEmail();
       
       // User likes subcollection - users can only access their own likes
       match /likes/{profileId} {
@@ -35,8 +43,8 @@ service cloud.firestore {
     match /profiles/{uid} {
       allow read: if isAuthenticated() || resource.data.isActive == true;
       allow create: if isOwner(uid);
-      allow update: if isOwner(uid) || isAdmin();
-      allow delete: if isOwner(uid) || isAdmin();
+      allow update: if isOwner(uid) || isAdmin() || isAdminEmail();
+      allow delete: if isOwner(uid) || isAdmin() || isAdminEmail();
     }
     
     // User settings - private
@@ -52,8 +60,8 @@ service cloud.firestore {
     
     // User activity logs - admin only
     match /userActivity/{activityId} {
-      allow read: if isAdmin();
-      allow write: if isAdmin();
+      allow read: if isAdmin() || isAdminEmail();
+      allow write: if isAdmin() || isAdminEmail();
     }
     
     // Conversations - users can only access conversations they're part of
@@ -89,7 +97,7 @@ service cloud.firestore {
     
     // Admin stats - admin only
     match /adminStats/{document=**} {
-      allow read, write: if isAdmin();
+      allow read, write: if isAdmin() || isAdminEmail();
     }
   }
 }
