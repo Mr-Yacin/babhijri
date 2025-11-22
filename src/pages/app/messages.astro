@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/common/Header.astro";
 import Footer from "../../components/common/Footer.astro";
 import AdUnit from "../../components/ads/AdUnit.astro";
-import { SITE_CONFIG } from "../../config";
+import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 import MessagesApp from "../../components/messaging/MessagesApp.svelte";
 ---
 
@@ -43,7 +43,7 @@ import MessagesApp from "../../components/messaging/MessagesApp.svelte";
                     <aside class="hidden lg:block lg:w-80 flex-shrink-0">
                         <div class="sticky top-24">
                             <AdUnit 
-                                slot="1122334455"
+                                slot={ANALYTICS_CONFIG.adsense.slots.messagesTop}
                                 format="vertical"
                                 className="sidebar-ad"
                             />
@@ -54,7 +54,7 @@ import MessagesApp from "../../components/messaging/MessagesApp.svelte";
                 <!-- Bottom Sticky Ad (Mobile Only) -->
                 <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white shadow-lg border-t border-gray-200">
                     <AdUnit 
-                        slot="5544332211"
+                        slot={ANALYTICS_CONFIG.adsense.slots.messagesTop}
                         format="horizontal"
                         className="mobile-sticky-ad"
                     />

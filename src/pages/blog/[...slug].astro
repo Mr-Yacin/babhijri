@@ -6,6 +6,7 @@ import Footer from "../../components/common/Footer.astro";
 
 import RelatedArticles from "../../components/blog/RelatedArticles.svelte";
 import InContentAd from "../../components/ads/InContentAd.astro";
+import { ANALYTICS_CONFIG } from "../../config";
 
 export const prerender = true;
 
@@ -110,7 +111,7 @@ const { Content } = await post.render();
 
 					<div class="p-8 md:p-16">
 						<!-- Ad placement: Top of content -->
-						<InContentAd slot="blog-top-ad" position="top" />
+						<InContentAd slot={ANALYTICS_CONFIG.adsense.slots.blogTop} position="top" />
 
 						<div
 							class="prose prose-lg prose-teal max-w-none text-gray-800 leading-relaxed"
@@ -119,7 +120,7 @@ const { Content } = await post.render();
 						</div>
 
 						<!-- Ad placement: Middle/End of content -->
-						<InContentAd slot="blog-middle-ad" position="middle" />
+						<InContentAd slot={ANALYTICS_CONFIG.adsense.slots.blogMiddle} position="middle" />
 
 						<!-- Tags -->
 						<div class="mt-12 pt-8 border-t border-gray-100">
@@ -138,7 +139,7 @@ const { Content } = await post.render();
 						</div>
 
 						<!-- Ad placement: Bottom of post -->
-						<InContentAd slot="blog-bottom-ad" position="bottom" />
+						<InContentAd slot={ANALYTICS_CONFIG.adsense.slots.blogBottom} position="bottom" />
 					</div>
 				</article>
 			</div>

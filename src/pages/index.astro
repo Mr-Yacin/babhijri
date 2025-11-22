@@ -6,7 +6,7 @@ import FeaturedProfilesSection from "../components/home/FeaturedProfilesSection.
 import HeroCTA from "../components/home/HeroCTA.svelte";
 import BottomCTA from "../components/home/BottomCTA.svelte";
 import AdUnit from "../components/ads/AdUnit.astro";
-import { SITE_CONFIG } from "../config";
+import { SITE_CONFIG, ANALYTICS_CONFIG } from "../config";
 import { getCollection } from "astro:content";
 
 // Fetch latest 3 blog posts
@@ -140,7 +140,7 @@ const latestPosts = allPosts
 		<section class="bg-gray-50 py-4">
 			<div class="container mx-auto px-4">
 				<AdUnit 
-					slot="1234567890"
+					slot={ANALYTICS_CONFIG.adsense.slots.homepageTop}
 					format="auto"
 					responsive={true}
 					className="homepage-top-ad"
@@ -397,7 +397,7 @@ const latestPosts = allPosts
 		<section class="bg-white py-8 border-t border-gray-200">
 			<div class="container mx-auto px-4">
 				<AdUnit 
-					slot="0987654321"
+					slot={ANALYTICS_CONFIG.adsense.slots.homepageFooter}
 					format="horizontal"
 					responsive={true}
 					className="homepage-footer-ad"

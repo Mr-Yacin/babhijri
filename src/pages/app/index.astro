@@ -4,7 +4,7 @@ import Header from "../../components/common/Header.astro";
 import Footer from "../../components/common/Footer.astro";
 import ProfileGrid from "../../components/dating/ProfileGrid.svelte";
 import AdUnit from "../../components/ads/AdUnit.astro";
-import { SITE_CONFIG } from "../../config";
+import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 ---
 
 <Layout title={`تعارف | ${SITE_CONFIG.name}`}>
@@ -121,7 +121,7 @@ import { SITE_CONFIG } from "../../config";
 					<aside class="hidden lg:block lg:w-80 flex-shrink-0">
 						<div class="sticky top-24">
 							<AdUnit 
-								slot="1234567890"
+								slot={ANALYTICS_CONFIG.adsense.slots.appSidebar}
 								format="vertical"
 								className="sidebar-ad"
 							/>
@@ -132,7 +132,7 @@ import { SITE_CONFIG } from "../../config";
 				<!-- Bottom Sticky Ad (Mobile Only) -->
 				<div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white shadow-lg border-t border-gray-200">
 					<AdUnit 
-						slot="0987654321"
+						slot={ANALYTICS_CONFIG.adsense.slots.appMobileSticky}
 						format="horizontal"
 						className="mobile-sticky-ad"
 					/>

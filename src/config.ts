@@ -94,6 +94,37 @@ export const ANALYTICS_CONFIG = {
         // Enable/disable ads globally
         // Set PUBLIC_ADSENSE_ENABLED=false in .env to disable
         enabled: import.meta.env.PUBLIC_ADSENSE_ENABLED !== 'false',
+        
+        /**
+         * Ad Slot IDs
+         * 
+         * Replace these placeholder values with real slot IDs from your AdSense dashboard.
+         * To get slot IDs:
+         * 1. Go to AdSense → Ads → By ad unit
+         * 2. Create ad units for each placement
+         * 3. Copy the slot ID (10-digit number) for each ad unit
+         * 
+         * Ad Unit Types to Create:
+         * - Display ads: homepage, sidebar, mobile sticky
+         * - In-article ads: blog content ads
+         */
+        slots: {
+            // Homepage ad placements
+            homepageTop: '1964007296',      // Replace with real slot ID
+            homepageFooter: '7664601128',   // Replace with real slot ID
+            
+            // Blog post ad placements (create as In-article ad units)
+            blogTop: '1964007296',          // Replace with real slot ID
+            blogMiddle: '1772435607',       // Replace with real slot ID
+            blogBottom: '1964007296',       // Replace with real slot ID
+            
+            // App page ad placements
+            appSidebar: '8529399737',       // Replace with real slot ID
+            appMobileSticky: '7124818724',  // Replace with real slot ID
+            
+            // Messages page ad placement
+            messagesTop: '5811737056',      // Replace with real slot ID
+        },
     },
     
     /**
