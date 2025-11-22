@@ -29,10 +29,20 @@ function initializeFirebase() {
     }
     
     if (!_app) {
+        console.log('Initializing Firebase...', {
+            hasApiKey: !!firebaseConfig.apiKey,
+            hasProjectId: !!firebaseConfig.projectId,
+            projectId: firebaseConfig.projectId
+        });
         _app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
         _auth = getAuth(_app);
         _db = getFirestore(_app);
         _storage = getStorage(_app);
+        console.log('Firebase initialized successfully', {
+            hasAuth: !!_auth,
+            hasDb: !!_db,
+            hasStorage: !!_storage
+        });
     }
 }
 
@@ -55,9 +65,20 @@ export function getFirebaseAuth(): Auth | null {
 }
 
 export function getFirebaseDb(): Firestore | null {
-    if (!isBrowser) return null;
-    if (!_db) initializeFirebase();
-    return _db || null;
+    if (!isBrowser) {
+        console.warn('getFirebaseDb called in non-browser context');
+        return null;
+    }
+    if (!_db) {
+        console.log('Firestore not initialized, initializing now...');
+        initializeFirebase();
+    }
+    if (!_db) {
+        console.error('Failed to initialize Firestore');
+        return null;
+    }
+    console.log('Firestore instance retrieved successfully');
+    return _db;
 }
 
 export function getFirebaseStorage(): FirebaseStorage | null {

@@ -40,14 +40,19 @@
                 email,
                 password,
             );
+            console.log('User created in Firebase Auth:', userCredential.user.uid);
+            
             await updateProfile(userCredential.user, {
                 displayName: name,
             });
+            console.log('Display name updated');
 
             // Create user profile in Firestore
+            console.log('Creating user profile in Firestore...');
             await userService.createUserProfile(userCredential.user, {
                 displayName: name,
             });
+            console.log('User profile creation completed');
 
             // Get the ID token and create session
             const idToken = await userCredential.user.getIdToken();
