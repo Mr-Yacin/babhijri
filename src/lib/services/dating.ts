@@ -1,4 +1,4 @@
-import { db } from '../firebase';
+import { getFirebaseDb } from '../firebase';
 import {
     collection,
     doc,
@@ -18,6 +18,11 @@ import type { DatingProfile } from '../types/user';
  */
 export async function getProfiles(): Promise<DatingProfile[]> {
     try {
+        const db = getFirebaseDb();
+        if (!db) {
+            throw new Error('Firebase not initialized');
+        }
+        
         const profilesRef = collection(db, 'profiles');
         const q = query(
             profilesRef,
@@ -44,6 +49,11 @@ export async function getProfiles(): Promise<DatingProfile[]> {
  */
 export async function getProfileById(uid: string): Promise<DatingProfile | null> {
     try {
+        const db = getFirebaseDb();
+        if (!db) {
+            throw new Error('Firebase not initialized');
+        }
+        
         const profileRef = doc(db, 'profiles', uid);
         const profileSnap = await getDoc(profileRef);
 
@@ -66,6 +76,11 @@ export async function getProfileById(uid: string): Promise<DatingProfile | null>
  */
 export async function toggleLike(userId: string, profileId: string): Promise<boolean> {
     try {
+        const db = getFirebaseDb();
+        if (!db) {
+            throw new Error('Firebase not initialized');
+        }
+        
         const likeRef = doc(db, 'users', userId, 'likes', profileId);
         const likeSnap = await getDoc(likeRef);
 
@@ -92,6 +107,11 @@ export async function toggleLike(userId: string, profileId: string): Promise<boo
  */
 export async function getUserLikes(userId: string): Promise<string[]> {
     try {
+        const db = getFirebaseDb();
+        if (!db) {
+            throw new Error('Firebase not initialized');
+        }
+        
         const likesRef = collection(db, 'users', userId, 'likes');
         const querySnapshot = await getDocs(likesRef);
 
@@ -112,6 +132,11 @@ export async function getUserLikes(userId: string): Promise<string[]> {
  */
 export async function isProfileLiked(userId: string, profileId: string): Promise<boolean> {
     try {
+        const db = getFirebaseDb();
+        if (!db) {
+            throw new Error('Firebase not initialized');
+        }
+        
         const likeRef = doc(db, 'users', userId, 'likes', profileId);
         const likeSnap = await getDoc(likeRef);
 
