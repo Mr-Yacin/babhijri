@@ -15,12 +15,10 @@
 
     let isDismissed = false;
     let isVisible = true;
-    let publisherId = "";
+    // Initialize publisher ID immediately
+    const publisherId = import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID || "";
 
     onMount(() => {
-        // Get publisher ID from environment
-        publisherId = import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID || "";
-
         // Check if ad was previously dismissed
         try {
             const dismissed = localStorage.getItem(storageKey);

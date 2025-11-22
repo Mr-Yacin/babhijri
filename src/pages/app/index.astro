@@ -4,6 +4,7 @@ import Header from "../../components/common/Header.astro";
 import Footer from "../../components/common/Footer.astro";
 import ProfileGrid from "../../components/dating/ProfileGrid.svelte";
 import AdUnit from "../../components/ads/AdUnit.astro";
+import LoggedInAdBanner from "../../components/ads/LoggedInAdBanner.svelte";
 import DismissableAd from "../../components/ads/DismissableAd.svelte";
 import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 ---
@@ -217,14 +218,7 @@ import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 						</div>
 
 						<!-- Logged-in Only Ad Banner -->
-						<div id="logged-in-ad-banner" class="hidden mt-8">
-							<AdUnit
-								slot={ANALYTICS_CONFIG.adsense.slots.blogMiddle}
-								format="horizontal"
-								responsive={true}
-								className="app-middle-banner"
-							/>
-						</div>
+						<LoggedInAdBanner client:only="svelte" />
 					</div>
 
 					<!-- Sidebar Ad (Desktop Only) -->
@@ -255,9 +249,8 @@ import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 
 		const overlay = document.getElementById("auth-overlay");
 		const gridContainer = document.getElementById("profile-grid-container");
-		const adBanner = document.getElementById("logged-in-ad-banner");
 
-		const unsubscribe = authStore.subscribe((state) => {
+		authStore.subscribe((state) => {
 			if (!state.loading) {
 				if (!state.isLoggedIn) {
 					// Show overlay and blur profiles
@@ -269,9 +262,6 @@ import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 						gridContainer.style.pointerEvents = "none";
 						gridContainer.style.userSelect = "none";
 					}
-					if (adBanner) {
-						adBanner.classList.add("hidden");
-					}
 				} else {
 					// Hide overlay and remove blur
 					if (overlay) {
@@ -281,9 +271,6 @@ import { SITE_CONFIG, ANALYTICS_CONFIG } from "../../config";
 						gridContainer.style.filter = "none";
 						gridContainer.style.pointerEvents = "auto";
 						gridContainer.style.userSelect = "auto";
-					}
-					if (adBanner) {
-						adBanner.classList.remove("hidden");
 					}
 				}
 			}
