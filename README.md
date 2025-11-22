@@ -198,11 +198,13 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 
 ## ☁️ Cloudflare Pages Deployment
 
+> **🎉 DEPLOYED!** Your site is live! See [`QUICK_ENV_SETUP.md`](./QUICK_ENV_SETUP.md) to add environment variables.
+
 > **Quick Start**: See [`doc/guides/QUICK_DEPLOY_GUIDE.md`](./doc/guides/QUICK_DEPLOY_GUIDE.md) for a 5-minute deployment guide.
 
 ### Environment Variables Setup
 
-When deploying to Cloudflare Pages, you need to add your Firebase environment variables in the Cloudflare dashboard:
+This project uses `wrangler.toml` for environment variables. Edit the `[vars]` section in `wrangler.toml` with your Firebase credentials:
 
 1. Go to your Cloudflare Pages project
 2. Navigate to **Settings** → **Environment variables**
