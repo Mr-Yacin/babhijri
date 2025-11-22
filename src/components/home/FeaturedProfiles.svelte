@@ -16,10 +16,13 @@
 
             // If Firestore is empty, use mock profiles
             if (firestoreProfiles.length === 0) {
-                profiles = MOCK_PROFILES.slice(0, 4);
+                // Get only female profiles
+                const femaleProfiles = MOCK_PROFILES.filter(p => p.gender === 'female');
+                profiles = femaleProfiles.slice(0, 4);
             } else {
-                // Get 4 random profiles or just the first 4
-                profiles = firestoreProfiles.slice(0, 4);
+                // Get only female profiles from Firestore
+                const femaleProfiles = firestoreProfiles.filter(p => p.gender === 'female');
+                profiles = femaleProfiles.slice(0, 4);
             }
             loading = false;
         } catch (err) {
@@ -27,8 +30,9 @@
                 "Error loading profiles from Firestore, using mock data:",
                 err,
             );
-            // Fallback to mock profiles if Firestore fails
-            profiles = MOCK_PROFILES.slice(0, 4);
+            // Fallback to mock profiles - only females
+            const femaleProfiles = MOCK_PROFILES.filter(p => p.gender === 'female');
+            profiles = femaleProfiles.slice(0, 4);
             loading = false;
         }
     });
