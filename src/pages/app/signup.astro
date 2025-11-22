@@ -7,7 +7,14 @@ import SignupForm from '../../components/auth/SignupForm.svelte';
 
 <Layout title={`إنشاء حساب | ${SITE_CONFIG.name}`}>
 	<main class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-		<div class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+		<!-- Loading state while checking auth -->
+		<div id="auth-check-loader" class="max-w-md w-full text-center">
+			<div class="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+			<p class="text-gray-600">جاري التحقق...</p>
+		</div>
+
+		<!-- Signup form (hidden initially) -->
+		<div id="signup-form-container" class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hidden">
 			<div class="text-center">
 				<h2 class="mt-6 text-3xl font-extrabold text-gray-900">
 					انضم إلى {SITE_CONFIG.name}
@@ -20,6 +27,27 @@ import SignupForm from '../../components/auth/SignupForm.svelte';
 			<SignupForm client:load />
 		</div>
 	</main>
+
+	<script>
+		import { authStore } from "../../lib/stores/auth";
+
+		const loader = document.getElementById("auth-check-loader");
+		const formContainer = document.getElementById("signup-form-container");
+
+		// Redirect to dashboard if already logged in
+		const unsubscribe = authStore.subscribe((state) => {
+			if (!state.loading) {
+				if (state.isLoggedIn) {
+					// User is logged in, redirect to dashboard
+					window.location.href = "/app/dashboard";
+				} else {
+					// User is not logged in, show the form
+					if (loader) loader.style.display = "none";
+					if (formContainer) formContainer.classList.remove("hidden");
+				}
+			}
+		});
+	</script>
 
 	<Footer />
 </Layout>
