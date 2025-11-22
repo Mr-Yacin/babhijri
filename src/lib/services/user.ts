@@ -1,11 +1,17 @@
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { getFirebaseDb } from '../firebase';
 import type { UserProfile } from '../types/user';
 import type { User } from 'firebase/auth';
 
 export const userService = {
     async createUserProfile(user: User, additionalData: Partial<UserProfile> = {}) {
         if (!user) return;
+
+        const db = getFirebaseDb();
+        if (!db) {
+            console.error('Firestore not initialized');
+            throw new Error('Firestore not initialized');
+        }
 
         const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
@@ -25,15 +31,25 @@ export const userService = {
                     updatedAt: createdAt,
                     ...additionalData
                 });
+                console.log('User profile created successfully in Firestore:', user.uid);
             } catch (error) {
                 console.error('Error creating user profile', error);
                 throw error;
             }
+        } else {
+            console.log('User profile already exists:', user.uid);
         }
     },
 
     async getUserProfile(uid: string): Promise<UserProfile | null> {
         if (!uid) return null;
+        
+        const db = getFirebaseDb();
+        if (!db) {
+            console.error('Firestore not initialized');
+            return null;
+        }
+
         try {
             const userRef = doc(db, 'users', uid);
             const snapshot = await getDoc(userRef);
@@ -49,6 +65,13 @@ export const userService = {
 
     async updateUserProfile(uid: string, data: Partial<UserProfile>) {
         if (!uid) return;
+        
+        const db = getFirebaseDb();
+        if (!db) {
+            console.error('Firestore not initialized');
+            throw new Error('Firestore not initialized');
+        }
+
         try {
             // Create a mutable copy and remove the 'role' property to prevent privilege escalation.
             // Role changes should only be handled by specific admin functions.
