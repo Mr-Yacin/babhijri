@@ -155,10 +155,10 @@
         </div>
     </div>
 {:else}
-    <div class="grid grid-cols-1 lg:grid-cols-3 h-full">
+    <div class="grid grid-cols-1 lg:grid-cols-3 h-full overflow-hidden">
         <!-- Conversation List -->
         <div
-            class="lg:col-span-1 border-r border-gray-200 {showChatOnMobile
+            class="lg:col-span-1 border-r border-gray-200 h-full overflow-hidden {showChatOnMobile
                 ? 'hidden lg:block'
                 : 'block'}"
         >
@@ -172,7 +172,7 @@
 
         <!-- Chat Interface -->
         <div
-            class="lg:col-span-2 {showChatOnMobile
+            class="lg:col-span-2 h-full overflow-hidden {showChatOnMobile
                 ? 'block'
                 : 'hidden lg:block'}"
         >

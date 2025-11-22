@@ -53,14 +53,14 @@
     }
 </script>
 
-<div class="h-full flex flex-col bg-white border-l border-gray-200">
+<div class="h-full flex flex-col bg-white border-l border-gray-200 overflow-hidden">
     <!-- Header -->
-    <div class="p-4 border-b border-gray-200">
+    <div class="p-4 border-b border-gray-200 flex-shrink-0">
         <h2 class="text-xl font-bold text-gray-800">الرسائل</h2>
     </div>
 
     <!-- Conversations List -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
         {#if conversations.length === 0}
             <div class="p-8 text-center">
                 <svg
