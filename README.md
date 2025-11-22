@@ -189,6 +189,41 @@ See [ROADMAP.md](./doc/status/ROADMAP.md) for detailed feature planning.
 4. Enable **Storage**
 5. Copy your config to `.env`
 
+## ☁️ Cloudflare Pages Deployment
+
+### Environment Variables Setup
+
+When deploying to Cloudflare Pages, you need to add your Firebase environment variables in the Cloudflare dashboard:
+
+1. Go to your Cloudflare Pages project
+2. Navigate to **Settings** → **Environment variables**
+3. Add the following variables for **Production** and **Preview** environments:
+
+```
+PUBLIC_FIREBASE_API_KEY=your_api_key
+PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+PUBLIC_FIREBASE_APP_ID=your_app_id
+PUBLIC_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+PUBLIC_EMAILJS_SERVICE_ID=your_emailjs_service_id
+PUBLIC_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+```
+
+### Build Configuration
+
+- **Build command**: `npm run build`
+- **Build output directory**: `dist`
+- **Root directory**: `/` (default)
+- **Node version**: 18 or higher
+
+### Important Notes
+
+- Environment variables are **not** available during the build process on Cloudflare Pages
+- Firebase initialization is deferred to runtime (browser) to avoid build errors
+- All Firebase-related code runs client-side only
+
 ### Firestore Collections
 - `users` - User account information and roles
 - `profiles` - Dating profiles with photos and preferences

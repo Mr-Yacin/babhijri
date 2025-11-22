@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { auth } from '../firebase';
+import { getFirebaseAuth } from '../firebase';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 
 interface AuthState {
@@ -18,7 +18,14 @@ function createAuthStore() {
     return {
         subscribe,
         init: () => {
+            // Only initialize in browser
+            if (typeof window === 'undefined') {
+                console.warn('Auth store init called during SSR - skipping');
+                return;
+            }
+            
             console.log('Initializing Auth Store...');
+            const auth = getFirebaseAuth();
             onAuthStateChanged(auth, (user) => {
                 console.log('Auth State Changed:', user ? 'User logged in' : 'No user');
                 set({

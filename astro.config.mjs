@@ -12,7 +12,12 @@ export default defineConfig({
   integrations: [svelte()],
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    ssr: {
+      external: ['firebase', 'firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
+    }
   },
-  adapter: cloudflare()
+  adapter: cloudflare({
+    imageService: 'compile'
+  })
 });
