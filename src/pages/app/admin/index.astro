@@ -1,0 +1,180 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="لوحة التحكم">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">لوحة التحكم</h1>
+        <p class="text-gray-600">
+            مرحبًا بك في لوحة التحكم - إدارة تطبيقك بكفاءة وأمان
+        </p>
+    </div>
+
+    <!-- Stats -->
+    <div id="dashboard-stats"></div>
+
+    <!-- Quick Actions Grid -->
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">الإجراءات السريعة</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a
+                href="/app/admin/users"
+                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-teal-500 hover:shadow-md transition-all p-6 group"
+            >
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div
+                        class="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center group-hover:bg-teal-200 transition-colors"
+                    >
+                        <span class="text-3xl">👥</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">
+                            إدارة المستخدمين
+                        </h3>
+                        <p class="text-sm text-gray-500">عرض جميع المستخدمين</p>
+                    </div>
+                </div>
+            </a>
+
+            <a
+                href="/app/admin/profiles"
+                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-pink-500 hover:shadow-md transition-all p-6 group"
+            >
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div
+                        class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center group-hover:bg-pink-200 transition-colors"
+                    >
+                        <span class="text-3xl">❤️</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">الملفات الشخصية</h3>
+                        <p class="text-sm text-gray-500">
+                            إدارة ملفات المواعدة
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <a
+                href="/app/admin/seed-profiles"
+                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-green-500 hover:shadow-md transition-all p-6 group"
+            >
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div
+                        class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center group-hover:bg-green-200 transition-colors"
+                    >
+                        <span class="text-3xl">🌱</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">
+                            إضافة بيانات تجريبية
+                        </h3>
+                        <p class="text-sm text-gray-500">
+                            إضافة بيانات للاختبار
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <a
+                href="/app"
+                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-blue-500 hover:shadow-md transition-all p-6 group"
+            >
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div
+                        class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center group-hover:bg-blue-200 transition-colors"
+                    >
+                        <span class="text-3xl">🏠</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900">عرض التطبيق</h3>
+                        <p class="text-sm text-gray-500">
+                            الانتقال للتطبيق الرئيسي
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h2
+                class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+            >
+                <span>📋</span>
+                معلومات النظام
+            </h2>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">البيئة</span>
+                    <span class="font-medium text-gray-900">تطوير</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">قاعدة البيانات</span>
+                    <span class="font-medium text-gray-900">Firestore</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">الحالة</span>
+                    <span
+                        class="font-medium text-green-600 flex items-center gap-1"
+                    >
+                        <span
+                            class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                        ></span>
+                        متصل
+                    </span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span class="text-gray-600">الإصدار</span>
+                    <span class="font-medium text-gray-900">1.0.0</span>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl shadow-sm border border-teal-200 p-6"
+        >
+            <h2
+                class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+            >
+                <span>🔒</span>
+                نصائح الأمان
+            </h2>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600 mt-0.5">✓</span>
+                    <span
+                        >فقط المستخدمون المسؤولون يمكنهم الوصول لهذه اللوحة</span
+                    >
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600 mt-0.5">✓</span>
+                    <span>راجع قواعد أمان Firestore بانتظام</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600 mt-0.5">✓</span>
+                    <span>راقب نشاط المستخدمين والتغييرات في الملفات</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600 mt-0.5">✓</span>
+                    <span>احفظ بيانات الوصول بشكل آمن</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        import { mount } from "svelte";
+        import DashboardStats from "../../../components/admin/DashboardStats.svelte";
+
+        const container = document.getElementById("dashboard-stats");
+        if (container) {
+            mount(DashboardStats, {
+                target: container,
+            });
+        }
+    </script>
+</AdminLayout>

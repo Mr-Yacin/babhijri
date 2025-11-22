@@ -1,0 +1,26 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="إدارة الملفات الشخصية">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            الملفات الشخصية للمواعدة
+        </h1>
+        <p class="text-gray-600">عرض وتعديل وإدارة جميع الملفات الشخصية</p>
+    </div>
+
+    <div id="profiles-container"></div>
+
+    <script>
+        import { mount } from "svelte";
+        import ProfilesList from "../../../components/admin/ProfilesList.svelte";
+
+        const container = document.getElementById("profiles-container");
+        if (container) {
+            mount(ProfilesList, {
+                target: container,
+            });
+        }
+    </script>
+</AdminLayout>

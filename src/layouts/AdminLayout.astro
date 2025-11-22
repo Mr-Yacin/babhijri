@@ -1,0 +1,247 @@
+---
+import "../styles/global.css";
+import { SITE_CONFIG } from "../config";
+
+interface Props {
+    title?: string;
+}
+
+const { title = "لوحة التحكم" } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+    { label: "لوحة التحكم", href: "/app/admin", icon: "📊" },
+    { label: "المستخدمين", href: "/app/admin/users", icon: "👥" },
+    { label: "الملفات الشخصية", href: "/app/admin/profiles", icon: "❤️" },
+    {
+        label: "إضافة بيانات تجريبية",
+        href: "/app/admin/seed-profiles",
+        icon: "🌱",
+    },
+];
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title} | {SITE_CONFIG.name}</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="bg-gray-50 font-sans antialiased">
+        <div class="min-h-screen flex">
+            <!-- Sidebar -->
+            <aside
+                class="w-64 bg-gradient-to-b from-teal-800 to-teal-900 text-white hidden lg:flex flex-col fixed h-full z-30 shadow-2xl"
+                style="right: 0;"
+            >
+                <!-- Logo -->
+                <div class="p-6 border-b border-teal-700">
+                    <a href="/app/admin" class="block">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
+                            >
+                                <span class="text-2xl">🚪</span>
+                            </div>
+                            <div>
+                                <h1 class="text-lg font-bold">
+                                    {SITE_CONFIG.name}
+                                </h1>
+                                <p class="text-xs text-teal-300">لوحة التحكم</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                    {
+                        navItems.map((item) => {
+                            const isActive =
+                                currentPath === item.href ||
+                                (item.href !== "/app/admin" &&
+                                    currentPath.startsWith(item.href));
+                            return (
+                                <a
+                                    href={item.href}
+                                    class={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
+                                        isActive
+                                            ? "bg-white text-teal-900 shadow-lg"
+                                            : "text-teal-100 hover:bg-teal-700 hover:text-white"
+                                    }`}
+                                >
+                                    <span class="text-xl">{item.icon}</span>
+                                    <span>{item.label}</span>
+                                </a>
+                            );
+                        })
+                    }
+                </nav>
+
+                <!-- Footer -->
+                <div class="p-4 border-t border-teal-700">
+                    <a
+                        href="/app"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-300 hover:bg-teal-700 hover:text-white transition-all"
+                    >
+                        <span class="text-lg">←</span>
+                        <span class="text-sm">العودة للتطبيق</span>
+                    </a>
+                    <div class="mt-3 px-4 text-xs text-teal-400">
+                        <p>الإصدار 1.0.0</p>
+                        <p class="mt-1">
+                            &copy; {new Date().getFullYear()}
+                            {SITE_CONFIG.name}
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Mobile Header -->
+            <div
+                class="lg:hidden fixed w-full bg-gradient-to-r from-teal-800 to-teal-900 text-white z-20 shadow-lg"
+            >
+                <div class="p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🚪</span>
+                        <span class="font-bold">{SITE_CONFIG.name}</span>
+                    </div>
+                    <button
+                        id="mobile-menu-btn"
+                        class="p-2 hover:bg-teal-700 rounded-lg transition-colors"
+                    >
+                        <svg
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Overlay -->
+            <div
+                id="mobile-menu"
+                class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+            >
+                <div
+                    class="fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-teal-800 to-teal-900 shadow-2xl"
+                >
+                    <div
+                        class="p-4 flex justify-between items-center border-b border-teal-700"
+                    >
+                        <span class="font-bold text-white">القائمة</span>
+                        <button
+                            id="mobile-menu-close"
+                            class="p-2 hover:bg-teal-700 rounded-lg transition-colors text-white"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    <nav class="p-4 space-y-1">
+                        {
+                            navItems.map((item) => {
+                                const isActive = currentPath === item.href;
+                                return (
+                                    <a
+                                        href={item.href}
+                                        class={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
+                                            isActive
+                                                ? "bg-white text-teal-900"
+                                                : "text-teal-100 hover:bg-teal-700"
+                                        }`}
+                                    >
+                                        <span class="text-xl">{item.icon}</span>
+                                        <span>{item.label}</span>
+                                    </a>
+                                );
+                            })
+                        }
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="flex-1 lg:mr-64 min-h-screen">
+                <!-- Top Bar -->
+                <div
+                    class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm"
+                >
+                    <div
+                        class="px-4 lg:px-8 py-4 flex items-center justify-between"
+                    >
+                        <h2 class="text-2xl font-bold text-gray-900">
+                            {title}
+                        </h2>
+                        <div class="flex items-center gap-4">
+                            <a
+                                href="/app"
+                                class="hidden md:flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors"
+                            >
+                                <span>👤</span>
+                                <span class="text-sm font-medium"
+                                    >عرض التطبيق</span
+                                >
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="p-4 lg:p-8 mt-16 lg:mt-0">
+                    <slot />
+                </div>
+            </main>
+        </div>
+
+        <script>
+            import { authStore } from "../lib/stores/auth";
+            authStore.init();
+
+            // Mobile menu toggle
+            const menuBtn = document.getElementById("mobile-menu-btn");
+            const mobileMenu = document.getElementById("mobile-menu");
+            const menuClose = document.getElementById("mobile-menu-close");
+
+            menuBtn?.addEventListener("click", () => {
+                mobileMenu?.classList.remove("hidden");
+            });
+
+            menuClose?.addEventListener("click", () => {
+                mobileMenu?.classList.add("hidden");
+            });
+
+            mobileMenu?.addEventListener("click", (e) => {
+                if (e.target === mobileMenu) {
+                    mobileMenu.classList.add("hidden");
+                }
+            });
+        </script>
+    </body>
+</html>
+
+<style is:global>
+    body {
+        font-family:
+            "Noto Sans Arabic",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+    }
+</style>

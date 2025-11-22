@@ -1,0 +1,31 @@
+---
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import { SITE_CONFIG } from "../../../../config";
+
+const { id } = Astro.params;
+---
+
+<AdminLayout title="Edit Profile">
+    <main class="min-h-screen bg-gray-50">
+        <div class="container mx-auto px-4 py-8">
+            <div id="profile-edit-container" data-profile-id={id}></div>
+        </div>
+    </main>
+
+    <script>
+        import { mount } from "svelte";
+        import ProfileEdit from "../../../../components/admin/ProfileEdit.svelte";
+
+        const container = document.getElementById("profile-edit-container");
+        const profileId = container?.dataset.profileId;
+
+        if (container && profileId) {
+            mount(ProfileEdit, {
+                target: container,
+                props: {
+                    profileId,
+                },
+            });
+        }
+    </script>
+</AdminLayout>
