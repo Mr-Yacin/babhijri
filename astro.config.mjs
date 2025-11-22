@@ -8,10 +8,16 @@ import cloudflare from '@astrojs/cloudflare';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://babhijri.com',
-  output: 'static', // Changed from 'server' to 'static' since we use client-side Firebase
+  output: 'server',
   integrations: [svelte()],
 
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+    ssr: {
+      external: ['firebase', 'firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
+    }
+  },
+  adapter: cloudflare({
+    imageService: 'compile'
+  })
 });
