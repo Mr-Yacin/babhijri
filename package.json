@@ -16,7 +16,6 @@
     "@tailwindcss/vite": "^4.1.17",
     "astro": "^5.16.0",
     "firebase": "^12.6.0",
-    "firebase-admin": "^13.6.0",
     "svelte": "^5.43.12",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"

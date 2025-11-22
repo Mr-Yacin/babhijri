@@ -9,7 +9,7 @@
     function viewUser(uid: string) {
         dispatch("view", { uid });
         // navigate to user detail page
-        window.location.href = `/app/admin/users/detail?uid=${uid}`;
+        window.location.href = `/app/admin/users/${uid}`;
     }
 
     function toggleActive(uid: string, isActive: boolean) {
