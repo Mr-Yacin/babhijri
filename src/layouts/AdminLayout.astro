@@ -15,9 +15,14 @@ const navItems = [
     { label: "المستخدمين", href: "/app/admin/users", icon: "👥" },
     { label: "الملفات الشخصية", href: "/app/admin/profiles", icon: "❤️" },
     {
-        label: "إضافة بيانات تجريبية",
+        label: "إضافة بيانات",
         href: "/app/admin/seed-profiles",
         icon: "🌱",
+    },
+    {
+        label: "إصلاح البيانات",
+        href: "/app/admin/fix-data",
+        icon: "🔧",
     },
 ];
 ---
@@ -31,38 +36,58 @@ const navItems = [
         <meta name="generator" content={Astro.generator} />
         <title>{title} | {SITE_CONFIG.name}</title>
         <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
             rel="stylesheet"
         />
     </head>
-    <body class="bg-gray-50 font-sans antialiased">
-        <div class="min-h-screen flex">
+    <body
+        class="bg-gray-50 font-sans antialiased selection:bg-teal-500 selection:text-white"
+    >
+        <!-- App Shell - Hidden by default for security -->
+        <div
+            id="admin-app-shell"
+            class="min-h-screen flex opacity-0 transition-opacity duration-500"
+            style="display: none;"
+        >
             <!-- Sidebar -->
             <aside
-                class="w-64 bg-gradient-to-b from-teal-800 to-teal-900 text-white hidden lg:flex flex-col fixed h-full z-30 shadow-2xl"
+                class="w-72 bg-slate-900 text-white hidden lg:flex flex-col fixed h-full z-30 shadow-2xl transition-all duration-300"
                 style="right: 0;"
             >
                 <!-- Logo -->
-                <div class="p-6 border-b border-teal-700">
-                    <a href="/app/admin" class="block">
-                        <div class="flex items-center gap-3">
+                <div class="p-8 border-b border-slate-800/50">
+                    <a href="/app/admin" class="block group">
+                        <div class="flex items-center gap-4">
                             <div
-                                class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
+                                class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-teal-500/20 transition-all duration-300 group-hover:scale-105"
                             >
-                                <span class="text-2xl">🚪</span>
+                                <span class="text-2xl">🛡️</span>
                             </div>
                             <div>
-                                <h1 class="text-lg font-bold">
+                                <h1
+                                    class="text-xl font-bold tracking-tight text-white"
+                                >
                                     {SITE_CONFIG.name}
                                 </h1>
-                                <p class="text-xs text-teal-300">لوحة التحكم</p>
+                                <p
+                                    class="text-xs font-medium text-teal-400 tracking-wide uppercase"
+                                >
+                                    لوحة الإدارة
+                                </p>
                             </div>
                         </div>
                     </a>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <nav
+                    class="flex-1 p-6 space-y-2 overflow-y-auto custom-scrollbar"
+                >
+                    <div
+                        class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-2"
+                    >
+                        القائمة الرئيسية
+                    </div>
                     {
                         navItems.map((item) => {
                             const isActive =
@@ -72,14 +97,26 @@ const navItems = [
                             return (
                                 <a
                                     href={item.href}
-                                    class={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
+                                    class={`flex items-center gap-4 px-4 py-3.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${
                                         isActive
-                                            ? "bg-white text-teal-900 shadow-lg"
-                                            : "text-teal-100 hover:bg-teal-700 hover:text-white"
+                                            ? "bg-teal-600 text-white shadow-lg shadow-teal-900/20"
+                                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                     }`}
                                 >
-                                    <span class="text-xl">{item.icon}</span>
-                                    <span>{item.label}</span>
+                                    {isActive && (
+                                        <div class="absolute inset-0 bg-gradient-to-r from-teal-500 to-teal-600 opacity-100 -z-10" />
+                                    )}
+                                    <span
+                                        class={`text-xl transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"}`}
+                                    >
+                                        {item.icon}
+                                    </span>
+                                    <span class="relative z-10">
+                                        {item.label}
+                                    </span>
+                                    {isActive && (
+                                        <span class="mr-auto w-1.5 h-1.5 bg-white rounded-full shadow-glow" />
+                                    )}
                                 </a>
                             );
                         })
@@ -87,36 +124,51 @@ const navItems = [
                 </nav>
 
                 <!-- Footer -->
-                <div class="p-4 border-t border-teal-700">
+                <div class="p-6 border-t border-slate-800/50 bg-slate-900/50">
                     <a
                         href="/app"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-teal-300 hover:bg-teal-700 hover:text-white transition-all"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 group"
                     >
-                        <span class="text-lg">←</span>
-                        <span class="text-sm">العودة للتطبيق</span>
+                        <span
+                            class="p-1.5 bg-slate-800 rounded-lg group-hover:bg-slate-700 transition-colors"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                ></path>
+                            </svg>
+                        </span>
+                        <span class="text-sm font-medium">العودة للتطبيق</span>
                     </a>
-                    <div class="mt-3 px-4 text-xs text-teal-400">
-                        <p>الإصدار 1.0.0</p>
-                        <p class="mt-1">
-                            &copy; {new Date().getFullYear()}
-                            {SITE_CONFIG.name}
-                        </p>
-                    </div>
                 </div>
             </aside>
 
             <!-- Mobile Header -->
             <div
-                class="lg:hidden fixed w-full bg-gradient-to-r from-teal-800 to-teal-900 text-white z-20 shadow-lg"
+                class="lg:hidden fixed w-full bg-slate-900 text-white z-20 shadow-lg"
             >
-                <div class="p-4 flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <span class="text-2xl">🚪</span>
-                        <span class="font-bold">{SITE_CONFIG.name}</span>
+                <div class="px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center"
+                        >
+                            <span class="text-sm">🛡️</span>
+                        </div>
+                        <span class="font-bold text-lg">{SITE_CONFIG.name}</span
+                        >
                     </div>
                     <button
                         id="mobile-menu-btn"
-                        class="p-2 hover:bg-teal-700 rounded-lg transition-colors"
+                        class="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-300 hover:text-white"
                     >
                         <svg
                             class="w-6 h-6"
@@ -137,33 +189,47 @@ const navItems = [
             <!-- Mobile Menu Overlay -->
             <div
                 id="mobile-menu"
-                class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+                class="lg:hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 hidden transition-opacity duration-300"
             >
                 <div
-                    class="fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-teal-800 to-teal-900 shadow-2xl"
+                    class="fixed right-0 top-0 bottom-0 w-72 bg-slate-900 shadow-2xl transform transition-transform duration-300 translate-x-full"
+                    id="mobile-menu-panel"
                 >
                     <div
-                        class="p-4 flex justify-between items-center border-b border-teal-700"
+                        class="p-6 flex justify-between items-center border-b border-slate-800"
                     >
-                        <span class="font-bold text-white">القائمة</span>
+                        <span class="font-bold text-white text-lg">القائمة</span
+                        >
                         <button
                             id="mobile-menu-close"
-                            class="p-2 hover:bg-teal-700 rounded-lg transition-colors text-white"
+                            class="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
                         >
-                            ✕
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                         </button>
                     </div>
-                    <nav class="p-4 space-y-1">
+                    <nav class="p-6 space-y-2">
                         {
                             navItems.map((item) => {
                                 const isActive = currentPath === item.href;
                                 return (
                                     <a
                                         href={item.href}
-                                        class={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
+                                        class={`flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all ${
                                             isActive
-                                                ? "bg-white text-teal-900"
-                                                : "text-teal-100 hover:bg-teal-700"
+                                                ? "bg-teal-600 text-white shadow-lg shadow-teal-900/20"
+                                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                         }`}
                                     >
                                         <span class="text-xl">{item.icon}</span>
@@ -177,33 +243,41 @@ const navItems = [
             </div>
 
             <!-- Main Content -->
-            <main class="flex-1 lg:mr-64 min-h-screen">
+            <main class="flex-1 lg:mr-72 min-h-screen bg-gray-50/50">
                 <!-- Top Bar -->
                 <div
-                    class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm"
+                    class="bg-white/80 backdrop-blur-md border-b border-gray-200/60 sticky top-0 z-10 shadow-sm"
                 >
                     <div
-                        class="px-4 lg:px-8 py-4 flex items-center justify-between"
+                        class="px-6 lg:px-10 py-4 flex items-center justify-between"
                     >
-                        <h2 class="text-2xl font-bold text-gray-900">
+                        <h2
+                            class="text-2xl font-bold text-slate-800 tracking-tight"
+                        >
                             {title}
                         </h2>
                         <div class="flex items-center gap-4">
-                            <a
-                                href="/app"
-                                class="hidden md:flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors"
+                            <div
+                                class="hidden md:flex items-center gap-3 px-4 py-2 bg-teal-50 text-teal-700 rounded-full border border-teal-100/50"
                             >
-                                <span>👤</span>
-                                <span class="text-sm font-medium"
-                                    >عرض التطبيق</span
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"
+                                    ></span>
+                                    <span
+                                        class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"
+                                    ></span>
+                                </span>
+                                <span class="text-xs font-bold tracking-wide"
+                                    >المسؤول</span
                                 >
-                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Content Area -->
-                <div class="p-4 lg:p-8 mt-16 lg:mt-0">
+                <div class="p-6 lg:p-10 mt-14 lg:mt-0 animate-fade-in">
                     <slot />
                 </div>
             </main>
@@ -213,22 +287,45 @@ const navItems = [
             import { authStore } from "../lib/stores/auth";
             authStore.init();
 
+            // Security: Reveal app shell only when access is granted
+            document.addEventListener("admin-access-granted", () => {
+                const shell = document.getElementById("admin-app-shell");
+                if (shell) {
+                    shell.style.display = "flex";
+                    // Small delay to allow display change before opacity transition
+                    setTimeout(() => {
+                        shell.classList.remove("opacity-0");
+                    }, 50);
+                }
+            });
+
             // Mobile menu toggle
             const menuBtn = document.getElementById("mobile-menu-btn");
             const mobileMenu = document.getElementById("mobile-menu");
+            const menuPanel = document.getElementById("mobile-menu-panel");
             const menuClose = document.getElementById("mobile-menu-close");
 
-            menuBtn?.addEventListener("click", () => {
+            function openMenu() {
                 mobileMenu?.classList.remove("hidden");
-            });
+                // Small delay to allow display:block to apply before transition
+                setTimeout(() => {
+                    menuPanel?.classList.remove("translate-x-full");
+                }, 10);
+            }
 
-            menuClose?.addEventListener("click", () => {
-                mobileMenu?.classList.add("hidden");
-            });
+            function closeMenu() {
+                menuPanel?.classList.add("translate-x-full");
+                setTimeout(() => {
+                    mobileMenu?.classList.add("hidden");
+                }, 300);
+            }
+
+            menuBtn?.addEventListener("click", openMenu);
+            menuClose?.addEventListener("click", closeMenu);
 
             mobileMenu?.addEventListener("click", (e) => {
                 if (e.target === mobileMenu) {
-                    mobileMenu.classList.add("hidden");
+                    closeMenu();
                 }
             });
         </script>
@@ -238,10 +335,40 @@ const navItems = [
 <style is:global>
     body {
         font-family:
+            "Outfit",
             "Noto Sans Arabic",
             -apple-system,
             BlinkMacSystemFont,
             "Segoe UI",
             sans-serif;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
     }
 </style>

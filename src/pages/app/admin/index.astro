@@ -6,53 +6,90 @@ import AdminCheck from "../../../components/admin/AdminCheck.astro";
 <AdminLayout title="لوحة التحكم">
     <AdminCheck />
     <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">لوحة التحكم</h1>
-        <p class="text-gray-600">
-            مرحبًا بك في لوحة التحكم - إدارة تطبيقك بكفاءة وأمان
+    <div class="mb-10">
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">
+            لوحة التحكم
+        </h1>
+        <p class="text-lg text-slate-500 max-w-2xl">
+            مرحبًا بك في لوحة التحكم المركزية. قم بإدارة المستخدمين، الملفات
+            الشخصية، وإعدادات النظام بكل سهولة وأمان.
         </p>
     </div>
 
     <!-- Stats -->
-    <div id="dashboard-stats"></div>
+    <div id="dashboard-stats" class="mb-10"></div>
 
     <!-- Quick Actions Grid -->
-    <div class="mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">الإجراءات السريعة</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="mb-10">
+        <div class="flex items-center justify-between mb-6">
+            <h2
+                class="text-xl font-bold text-slate-800 flex items-center gap-2"
+            >
+                <span class="w-2 h-8 bg-teal-500 rounded-full"></span>
+                الإجراءات السريعة
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <a
                 href="/app/admin/users"
-                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-teal-500 hover:shadow-md transition-all p-6 group"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-teal-500/50 hover:shadow-xl hover:shadow-teal-900/5 transition-all duration-300 p-6 group relative overflow-hidden"
             >
-                <div class="flex flex-col items-center text-center gap-3">
+                <div
+                    class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
+                >
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col items-center text-center gap-4"
+                >
                     <div
-                        class="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center group-hover:bg-teal-200 transition-colors"
+                        class="w-16 h-16 bg-white border-2 border-teal-100 rounded-2xl flex items-center justify-center shadow-sm group-hover:border-teal-500 group-hover:scale-110 transition-all duration-300"
                     >
-                        <span class="text-3xl">👥</span>
+                        <span class="text-3xl group-hover:animate-bounce"
+                            >👥</span
+                        >
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900">
+                        <h3
+                            class="text-lg font-bold text-slate-800 group-hover:text-teal-600 transition-colors"
+                        >
                             إدارة المستخدمين
                         </h3>
-                        <p class="text-sm text-gray-500">عرض جميع المستخدمين</p>
+                        <p class="text-sm text-slate-500 mt-1">
+                            عرض وتحرير حسابات المستخدمين
+                        </p>
                     </div>
                 </div>
             </a>
 
             <a
                 href="/app/admin/profiles"
-                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-pink-500 hover:shadow-md transition-all p-6 group"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-pink-500/50 hover:shadow-xl hover:shadow-pink-900/5 transition-all duration-300 p-6 group relative overflow-hidden"
             >
-                <div class="flex flex-col items-center text-center gap-3">
+                <div
+                    class="absolute top-0 right-0 w-24 h-24 bg-pink-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
+                >
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col items-center text-center gap-4"
+                >
                     <div
-                        class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center group-hover:bg-pink-200 transition-colors"
+                        class="w-16 h-16 bg-white border-2 border-pink-100 rounded-2xl flex items-center justify-center shadow-sm group-hover:border-pink-500 group-hover:scale-110 transition-all duration-300"
                     >
-                        <span class="text-3xl">❤️</span>
+                        <span class="text-3xl group-hover:animate-pulse"
+                            >❤️</span
+                        >
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900">الملفات الشخصية</h3>
-                        <p class="text-sm text-gray-500">
-                            إدارة ملفات المواعدة
+                        <h3
+                            class="text-lg font-bold text-slate-800 group-hover:text-pink-600 transition-colors"
+                        >
+                            الملفات الشخصية
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            إدارة ملفات الزواج والمواعدة
                         </p>
                     </div>
                 </div>
@@ -60,39 +97,65 @@ import AdminCheck from "../../../components/admin/AdminCheck.astro";
 
             <a
                 href="/app/admin/seed-profiles"
-                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-green-500 hover:shadow-md transition-all p-6 group"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-green-500/50 hover:shadow-xl hover:shadow-green-900/5 transition-all duration-300 p-6 group relative overflow-hidden"
             >
-                <div class="flex flex-col items-center text-center gap-3">
+                <div
+                    class="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
+                >
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col items-center text-center gap-4"
+                >
                     <div
-                        class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center group-hover:bg-green-200 transition-colors"
+                        class="w-16 h-16 bg-white border-2 border-green-100 rounded-2xl flex items-center justify-center shadow-sm group-hover:border-green-500 group-hover:scale-110 transition-all duration-300"
                     >
-                        <span class="text-3xl">🌱</span>
+                        <span
+                            class="text-3xl group-hover:rotate-12 transition-transform"
+                            >🌱</span
+                        >
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900">
-                            إضافة بيانات تجريبية
+                        <h3
+                            class="text-lg font-bold text-slate-800 group-hover:text-green-600 transition-colors"
+                        >
+                            إضافة بيانات
                         </h3>
-                        <p class="text-sm text-gray-500">
-                            إضافة بيانات للاختبار
+                        <p class="text-sm text-slate-500 mt-1">
+                            توليد بيانات تجريبية للاختبار
                         </p>
                     </div>
                 </div>
             </a>
 
             <a
-                href="/app"
-                class="bg-white rounded-xl shadow-sm border-2 border-transparent hover:border-blue-500 hover:shadow-md transition-all p-6 group"
+                href="/app/admin/fix-data"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-900/5 transition-all duration-300 p-6 group relative overflow-hidden"
             >
-                <div class="flex flex-col items-center text-center gap-3">
+                <div
+                    class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
+                >
+                </div>
+
+                <div
+                    class="relative z-10 flex flex-col items-center text-center gap-4"
+                >
                     <div
-                        class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center group-hover:bg-blue-200 transition-colors"
+                        class="w-16 h-16 bg-white border-2 border-amber-100 rounded-2xl flex items-center justify-center shadow-sm group-hover:border-amber-500 group-hover:scale-110 transition-all duration-300"
                     >
-                        <span class="text-3xl">🏠</span>
+                        <span
+                            class="text-3xl group-hover:rotate-45 transition-transform"
+                            >🔧</span
+                        >
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-900">عرض التطبيق</h3>
-                        <p class="text-sm text-gray-500">
-                            الانتقال للتطبيق الرئيسي
+                        <h3
+                            class="text-lg font-bold text-slate-800 group-hover:text-amber-600 transition-colors"
+                        >
+                            إصلاح البيانات
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            أدوات الصيانة والإصلاح
                         </p>
                     </div>
                 </div>
@@ -102,67 +165,102 @@ import AdminCheck from "../../../components/admin/AdminCheck.astro";
 
     <!-- Info Cards -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
             <h2
-                class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+                class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-3"
             >
-                <span>📋</span>
+                <span class="p-2 bg-slate-100 rounded-lg">📋</span>
                 معلومات النظام
             </h2>
-            <div class="space-y-3 text-sm">
-                <div class="flex justify-between py-2 border-b border-gray-100">
-                    <span class="text-gray-600">البيئة</span>
-                    <span class="font-medium text-gray-900">تطوير</span>
-                </div>
-                <div class="flex justify-between py-2 border-b border-gray-100">
-                    <span class="text-gray-600">قاعدة البيانات</span>
-                    <span class="font-medium text-gray-900">Firestore</span>
-                </div>
-                <div class="flex justify-between py-2 border-b border-gray-100">
-                    <span class="text-gray-600">الحالة</span>
+            <div class="space-y-4">
+                <div
+                    class="flex justify-between items-center py-3 border-b border-slate-100"
+                >
+                    <span class="text-slate-500 font-medium">البيئة</span>
                     <span
-                        class="font-medium text-green-600 flex items-center gap-1"
+                        class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold"
+                        >تطوير</span
+                    >
+                </div>
+                <div
+                    class="flex justify-between items-center py-3 border-b border-slate-100"
+                >
+                    <span class="text-slate-500 font-medium"
+                        >قاعدة البيانات</span
+                    >
+                    <span
+                        class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold"
+                        >Firestore</span
+                    >
+                </div>
+                <div
+                    class="flex justify-between items-center py-3 border-b border-slate-100"
+                >
+                    <span class="text-slate-500 font-medium">الحالة</span>
+                    <span
+                        class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold flex items-center gap-2"
                     >
                         <span
-                            class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                            class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"
                         ></span>
                         متصل
                     </span>
                 </div>
-                <div class="flex justify-between py-2">
-                    <span class="text-gray-600">الإصدار</span>
-                    <span class="font-medium text-gray-900">1.0.0</span>
+                <div class="flex justify-between items-center py-3">
+                    <span class="text-slate-500 font-medium">الإصدار</span>
+                    <span class="font-mono text-slate-900">v1.0.0</span>
                 </div>
             </div>
         </div>
 
         <div
-            class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl shadow-sm border border-teal-200 p-6"
+            class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl shadow-lg p-8 relative overflow-hidden"
         >
-            <h2
-                class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+            <!-- Decorative background elements -->
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl -mr-16 -mt-16"
             >
-                <span>🔒</span>
+            </div>
+            <div
+                class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -ml-16 -mb-16"
+            >
+            </div>
+
+            <h2
+                class="text-lg font-bold text-white mb-6 flex items-center gap-3 relative z-10"
+            >
+                <span class="p-2 bg-white/10 rounded-lg backdrop-blur-sm"
+                    >🔒</span
+                >
                 نصائح الأمان
             </h2>
-            <ul class="space-y-2 text-sm text-gray-700">
-                <li class="flex items-start gap-2">
-                    <span class="text-teal-600 mt-0.5">✓</span>
-                    <span
-                        >فقط المستخدمون المسؤولون يمكنهم الوصول لهذه اللوحة</span
+            <ul class="space-y-4 relative z-10">
+                <li
+                    class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                >
+                    <span class="text-teal-400 mt-0.5 text-lg">✓</span>
+                    <span class="text-slate-300 text-sm leading-relaxed"
+                        >فقط المستخدمون الذين يملكون دور <strong
+                            class="text-white">admin</strong
+                        > يمكنهم الوصول لهذه اللوحة.</span
                     >
                 </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-teal-600 mt-0.5">✓</span>
-                    <span>راجع قواعد أمان Firestore بانتظام</span>
+                <li
+                    class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                >
+                    <span class="text-teal-400 mt-0.5 text-lg">✓</span>
+                    <span class="text-slate-300 text-sm leading-relaxed"
+                        >تأكد من مراجعة قواعد أمان Firestore بانتظام لمنع الوصول
+                        غير المصرح به.</span
+                    >
                 </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-teal-600 mt-0.5">✓</span>
-                    <span>راقب نشاط المستخدمين والتغييرات في الملفات</span>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-teal-600 mt-0.5">✓</span>
-                    <span>احفظ بيانات الوصول بشكل آمن</span>
+                <li
+                    class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                >
+                    <span class="text-teal-400 mt-0.5 text-lg">✓</span>
+                    <span class="text-slate-300 text-sm leading-relaxed"
+                        >لا تشارك بيانات الدخول الخاصة بالمسؤول مع أي شخص.</span
+                    >
                 </li>
             </ul>
         </div>

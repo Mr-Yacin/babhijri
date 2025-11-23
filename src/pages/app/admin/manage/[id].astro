@@ -1,6 +1,7 @@
 ---
 import AdminLayout from "../../../../layouts/AdminLayout.astro";
 import UnifiedUserProfileManager from "../../../../components/admin/UnifiedUserProfileManager.svelte";
+import AdminCheck from "../../../../components/admin/AdminCheck.astro";
 
 export const prerender = false;
 
@@ -14,6 +15,7 @@ const uid = id; // Can be accessed via /app/admin/manage/[id]
 </script>
 
 <AdminLayout title="إدارة المستخدم">
+    <AdminCheck />
     <div class="mb-6">
         <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <a href="/app/admin" class="hover:text-teal-600"> لوحة الإدارة </a>

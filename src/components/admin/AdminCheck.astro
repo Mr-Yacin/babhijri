@@ -1,43 +1,79 @@
 ---
 // This component should be added to all admin pages
 // It provides a client-side check in addition to middleware
-
-const ADMIN_EMAILS = (import.meta.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((email: string) => email.trim().toLowerCase())
-    .filter((email: string) => email.length > 0);
 ---
 
 <script>
-    import { getFirebaseAuth } from "../../lib/firebase";
+    import { getFirebaseAuth, db } from "../../lib/firebase";
+    import { doc, getDoc } from "firebase/firestore";
 
-    // Get admin emails from data attribute
-    const adminCheckEl = document.getElementById("admin-check-loader");
-    const ADMIN_EMAILS = adminCheckEl?.dataset.adminEmails?.split(",") || [];
-
-    // Client-side admin check
     const auth = getFirebaseAuth();
 
+    // Visual elements
+    const loader = document.getElementById("admin-check-loader");
+    const statusText = document.getElementById("admin-check-status");
+
     if (auth) {
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 console.log("[AdminCheck] No user logged in, redirecting...");
                 window.location.href = "/app/login";
                 return;
             }
 
-            const userEmail = user.email?.toLowerCase();
-            console.log("[AdminCheck] Current user:", userEmail);
-            console.log("[AdminCheck] Admin emails:", ADMIN_EMAILS);
+            if (statusText)
+                statusText.textContent = "جاري التحقق من الصلاحيات...";
 
-            if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
-                console.log(
-                    "[AdminCheck] User is not admin, redirecting to dashboard...",
+            try {
+                // Strict check: Get user document and check role
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                let isAdmin = false;
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    if (userData.role === "admin") {
+                        isAdmin = true;
+                    }
+                }
+
+                if (!isAdmin) {
+                    console.warn(
+                        "[AdminCheck] User is not admin (Role Check Failed)",
+                    );
+                    if (statusText)
+                        statusText.textContent = "⛔ غير مصرح بالدخول";
+
+                    // Show access denied message briefly before redirecting
+                    setTimeout(() => {
+                        window.location.href = "/app/dashboard";
+                    }, 1500);
+                } else {
+                    console.log("[AdminCheck] ✓ Admin access confirmed");
+                    // Dispatch event to show app shell
+                    document.dispatchEvent(
+                        new CustomEvent("admin-access-granted"),
+                    );
+
+                    // Hide loader
+                    if (loader) {
+                        loader.style.opacity = "0";
+                        setTimeout(() => {
+                            loader.style.display = "none";
+                        }, 500);
+                    }
+                }
+            } catch (error) {
+                console.error(
+                    "[AdminCheck] Error verifying admin status:",
+                    error,
                 );
-                alert("Access Denied: You do not have admin privileges");
-                window.location.href = "/app/dashboard";
-            } else {
-                console.log("[AdminCheck] ✓ Admin access confirmed");
+                if (statusText) statusText.textContent = "❌ حدث خطأ في التحقق";
+                // Fallback to safe state (redirect)
+                setTimeout(() => {
+                    window.location.href = "/app/dashboard";
+                }, 2000);
             }
         });
     }
@@ -46,24 +82,25 @@ const ADMIN_EMAILS = (import.meta.env.ADMIN_EMAILS || "")
 <!-- Visual indicator while checking -->
 <div
     id="admin-check-loader"
-    data-admin-emails={ADMIN_EMAILS.join(",")}
-    class="fixed inset-0 bg-white z-50 flex items-center justify-center"
+    class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center transition-opacity duration-500"
 >
     <div class="text-center">
-        <div
-            class="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"
-        >
+        <div class="relative w-20 h-20 mx-auto mb-6">
+            <div
+                class="absolute inset-0 border-4 border-slate-700 rounded-full"
+            >
+            </div>
+            <div
+                class="absolute inset-0 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"
+            >
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-2xl">🛡️</span>
+            </div>
         </div>
-        <p class="text-gray-600">جاري التحقق من الصلاحيات...</p>
+        <h2 class="text-xl font-bold text-white mb-2">منطقة المسؤولين</h2>
+        <p id="admin-check-status" class="text-slate-400">
+            جاري التحقق من الهوية والصلاحيات...
+        </p>
     </div>
 </div>
-
-<script>
-    // Hide loader after auth check
-    setTimeout(() => {
-        const loader = document.getElementById("admin-check-loader");
-        if (loader) {
-            loader.style.display = "none";
-        }
-    }, 1000);
-</script>

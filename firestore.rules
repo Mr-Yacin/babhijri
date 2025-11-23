@@ -28,8 +28,8 @@ service cloud.firestore {
     match /users/{uid} {
       // Allow admins to read all users for dashboard stats
       allow read: if isOwner(uid) || isAdmin() || isAdminEmail();
-      // Allow users to create their own document during signup
-      allow create: if isOwner(uid);
+      // Allow users to create their own document during signup, OR admins to create for others (fix-data)
+      allow create: if isOwner(uid) || isAdmin() || isAdminEmail();
       // Owners can update their doc but cannot change their role. Admins can change anything.
       allow update: if isAdmin() || isAdminEmail() || (isOwner(uid) && request.resource.data.role == resource.data.role);
       allow delete: if isAdmin() || isAdminEmail();
@@ -43,7 +43,8 @@ service cloud.firestore {
     // Dating profiles - public to authenticated users, or active profiles for everyone
     match /profiles/{uid} {
       allow read: if isAuthenticated() || resource.data.isActive == true;
-      allow create: if isOwner(uid);
+      // Allow owners to create their own profile, OR admins to create (seeding)
+      allow create: if isOwner(uid) || isAdmin() || isAdminEmail();
       allow update: if isOwner(uid) || isAdmin() || isAdminEmail();
       allow delete: if isOwner(uid) || isAdmin() || isAdminEmail();
     }

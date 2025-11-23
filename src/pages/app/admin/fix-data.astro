@@ -1,136 +1,163 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import AdminCheck from "../../../components/admin/AdminCheck.astro";
 ---
 
 <AdminLayout title="إصلاح البيانات">
+    <AdminCheck />
+
     <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">
+                أداة إصلاح البيانات
+            </h1>
+            <p class="text-slate-500">
+                إصلاح مشاكل البيانات، مثل إنشاء حسابات مستخدمين للملفات الشخصية
+                المفقودة.
+            </p>
+        </div>
+
         <!-- Info Banner -->
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-6">
-            <div class="flex items-start gap-3">
-                <span class="text-2xl">🔧</span>
-                <div>
-                    <h3 class="font-bold text-amber-900 mb-1">
-                        أداة إصلاح البيانات
-                    </h3>
-                    <p class="text-sm text-amber-800">
-                        ستقوم هذه الأداة بفحص جميع الملفات الشخصية وإنشاء حسابات
-                        مستخدمين مفقودة لها. هذا ضروري للملفات الشخصية التي تمت
-                        إضافتها يدويًا أو عبر التعبئة التلقائية.
-                        <strong>تتطلب صلاحيات المسؤول.</strong>
+        <div
+            class="bg-amber-50 border border-amber-100 rounded-2xl p-6 mb-8 flex items-start gap-4"
+        >
+            <div
+                class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0 text-amber-600"
+            >
+                <span class="text-xl">⚠️</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-amber-900 mb-1">تنبيه هام</h3>
+                <p class="text-sm text-amber-800/80 leading-relaxed">
+                    هذه الأداة ستقوم بفحص جميع الملفات الشخصية في قاعدة
+                    البيانات. إذا وجد ملفًا شخصيًا بدون وثيقة مستخدم مقابلة في
+                    مجموعة <code
+                        class="bg-amber-100 px-1 py-0.5 rounded text-amber-900 text-xs"
+                        >users</code
+                    >، سيقوم بإنشائها تلقائيًا.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Single Fix Card -->
+            <div
+                class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
+            >
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    إصلاح مستخدم محدد
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-slate-700 mb-1"
+                            >معرف المستخدم (UID)</label
+                        >
+                        <input
+                            type="text"
+                            id="single-uid-input"
+                            placeholder="أدخل UID..."
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
+                        />
+                    </div>
+                    <button
+                        id="single-fix-btn"
+                        class="w-full py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-all shadow-lg hover:shadow-slate-500/20"
+                    >
+                        إصلاح هذا المستخدم
+                    </button>
+                    <div
+                        id="single-status"
+                        class="text-center text-sm min-h-[20px]"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Fix Card -->
+            <div
+                class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
+            >
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    الفحص والإصلاح الشامل
+                </h2>
+                <div class="space-y-6">
+                    <p class="text-sm text-slate-500">
+                        فحص جميع الملفات الشخصية وإصلاح المفقود منها دفعة واحدة.
                     </p>
+
+                    <!-- Progress -->
+                    <div
+                        class="bg-slate-50 rounded-xl p-4 border border-slate-100"
+                    >
+                        <div class="flex justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-500"
+                                >التقدم</span
+                            >
+                            <span
+                                id="bulk-progress-text"
+                                class="text-xs font-bold text-teal-600">0%</span
+                            >
+                        </div>
+                        <div
+                            class="w-full bg-slate-200 rounded-full h-2 overflow-hidden"
+                        >
+                            <div
+                                id="bulk-progress-bar"
+                                class="bg-teal-500 h-2 rounded-full transition-all duration-300"
+                                style="width: 0%"
+                            >
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        id="start-fix-btn"
+                        class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-amber-500/30"
+                    >
+                        <span class="flex items-center justify-center gap-2">
+                            <span>🛠️</span>
+                            <span>بدء الفحص الشامل (الكل)</span>
+                        </span>
+                    </button>
+                    <div
+                        id="bulk-status"
+                        class="text-center text-sm text-slate-500 min-h-[20px]"
+                    >
+                        جاهز...
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Action Card -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-            <!-- Auth Status -->
+        <!-- Log Area -->
+        <div
+            class="mt-8 bg-slate-900 rounded-2xl shadow-lg border border-slate-800 overflow-hidden"
+        >
             <div
-                id="auth-status"
-                class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center"
+                class="px-6 py-4 border-b border-slate-800 flex justify-between items-center"
             >
-                <div class="inline-flex items-center gap-2">
-                    <div
-                        class="w-5 h-5 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"
-                    >
-                    </div>
-                    <span class="text-gray-700"
-                        >جاري التحقق من الصلاحيات...</span
-                    >
-                </div>
-            </div>
-
-            <!-- Fix Single User Section -->
-            <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
-                <h4 class="font-bold text-gray-700 mb-4">إصلاح مستخدم محدد</h4>
-                <div class="flex gap-4">
-                    <input
-                        type="text"
-                        id="target-uid"
-                        placeholder="أدخل معرف المستخدم (UID)"
-                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
-                    />
-                    <button
-                        id="fix-single-btn"
-                        disabled
-                        class="px-6 py-2 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-md"
-                    >
-                        إصلاح هذا المستخدم
-                    </button>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-200 my-6"></div>
-
-            <!-- Bulk Fix Section -->
-            <div class="text-center mb-6">
-                <h4 class="font-bold text-gray-700 mb-4">أو إصلاح الكل</h4>
+                <h3 class="font-mono text-teal-400 text-sm">سجل العمليات</h3>
                 <button
-                    id="start-fix-btn"
-                    disabled
-                    class="px-8 py-4 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    id="clear-log-btn"
+                    class="text-xs text-slate-500 hover:text-white transition-colors"
+                    >مسح السجل</button
                 >
-                    <span class="flex items-center justify-center gap-2">
-                        <span>🛠️</span>
-                        <span>بدء الفحص الشامل (الكل)</span>
-                    </span>
-                </button>
             </div>
-
-            <!-- Progress Bar -->
-            <div class="mb-6">
-                <div class="flex justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700">التقدم</span
-                    >
-                    <span
-                        id="progress-text"
-                        class="text-sm font-bold text-teal-600">0%</span
-                    >
-                </div>
-                <div
-                    class="w-full bg-gray-200 rounded-full h-3 overflow-hidden"
-                >
-                    <div
-                        id="progress-bar"
-                        class="bg-gradient-to-r from-teal-500 to-teal-600 h-3 rounded-full transition-all duration-300 shadow-lg"
-                        style="width:0%"
-                    >
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status Message -->
             <div
-                id="status-message"
-                class="text-center text-gray-600 mb-6 min-h-[24px]"
+                id="log-container"
+                class="h-64 overflow-y-auto p-6 font-mono text-xs space-y-2 custom-scrollbar"
             >
-            </div>
-
-            <!-- Results List -->
-            <div
-                class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50"
-            >
-                <div
-                    class="bg-gradient-to-r from-gray-100 to-gray-50 px-4 py-3 border-b border-gray-200"
-                >
-                    <h3 class="font-semibold text-gray-700 text-sm">
-                        سجل العمليات
-                    </h3>
-                </div>
-                <div class="max-h-64 overflow-y-auto p-4">
-                    <ul id="results-list" class="space-y-2">
-                        <li class="text-gray-400 text-sm text-center py-4">
-                            النتائج ستظهر هنا...
-                        </li>
-                    </ul>
+                <div class="text-slate-600 italic text-center mt-20">
+                    السجلات ستظهر هنا...
                 </div>
             </div>
         </div>
     </div>
 
-    <script define:vars={{ adminEmailsStr: import.meta.env.ADMIN_EMAILS || "" }}
-    >
-        import { db, auth } from "../../../lib/firebase";
+    <script>
+        import { db } from "../../../lib/firebase";
         import {
             collection,
             getDocs,
@@ -139,248 +166,304 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
             setDoc,
             Timestamp,
         } from "firebase/firestore";
-        import { onAuthStateChanged } from "firebase/auth";
 
-        const startBtn = document.getElementById("start-fix-btn");
-        const fixSingleBtn = document.getElementById("fix-single-btn");
-        const targetUidInput = document.getElementById("target-uid");
-        const statusDiv = document.getElementById("status-message");
-        const progressBar = document.getElementById("progress-bar");
-        const progressText = document.getElementById("progress-text");
-        const resultsList = document.getElementById("results-list");
-        const authStatus = document.getElementById("auth-status");
+        // DOM Elements
+        const singleUidInput = document.getElementById(
+            "single-uid-input",
+        ) as HTMLInputElement;
+        const singleFixBtn = document.getElementById("single-fix-btn");
+        const singleStatus = document.getElementById("single-status");
 
-        const adminEmails = adminEmailsStr
-            .split(",")
-            .map((e) => e.trim().toLowerCase());
-        let currentUser = null;
+        const startFixBtn = document.getElementById("start-fix-btn");
+        const bulkStatus = document.getElementById("bulk-status");
+        const bulkProgressBar = document.getElementById("bulk-progress-bar");
+        const bulkProgressText = document.getElementById("bulk-progress-text");
 
-        // Check auth status
-        onAuthStateChanged(auth, async (user) => {
-            currentUser = user;
-            if (authStatus) {
-                if (user) {
-                    try {
-                        // Check by Email (fallback if user doc missing)
-                        const isEmailAdmin = adminEmails.includes(
-                            user.email?.toLowerCase(),
-                        );
+        const logContainer = document.getElementById("log-container");
+        const clearLogBtn = document.getElementById("clear-log-btn");
 
-                        // Check by Role
-                        let isRoleAdmin = false;
-                        const userDoc = await getDoc(
-                            doc(db, "users", user.uid),
-                        );
-                        if (userDoc.exists()) {
-                            const userData = userDoc.data();
-                            isRoleAdmin = userData?.role === "admin";
-                        }
+        // Logger
+        function log(
+            message: string,
+            type: "info" | "success" | "error" = "info",
+        ) {
+            if (!logContainer) return;
 
-                        if (isRoleAdmin || isEmailAdmin) {
-                            authStatus.innerHTML = `
-                                <div class="flex items-center justify-center gap-2 text-green-700">
-                                    <span class="text-xl">✅</span>
-                                    <span class="font-medium">تم تسجيل الدخول كمسؤول: ${user.email}</span>
-                                </div>
-                            `;
-                            if (startBtn) startBtn.disabled = false;
-                            if (fixSingleBtn) fixSingleBtn.disabled = false;
-                        } else {
-                            authStatus.innerHTML = `
-                                <div class="flex items-center justify-center gap-2 text-red-700">
-                                    <span class="text-xl">❌</span>
-                                    <span class="font-medium">غير مصرح. البريد الإلكتروني غير مسجل كمسؤول.</span>
-                                </div>
-                            `;
-                            if (startBtn) startBtn.disabled = true;
-                            if (fixSingleBtn) fixSingleBtn.disabled = true;
-                        }
-                    } catch (error) {
-                        console.error("Error checking admin status:", error);
-                        authStatus.innerHTML = `
-                            <div class="flex items-center justify-center gap-2 text-red-700">
-                                <span class="text-xl">❌</span>
-                                <span class="font-medium">خطأ في التحقق من الصلاحيات</span>
-                            </div>
-                        `;
-                        if (startBtn) startBtn.disabled = true;
-                        if (fixSingleBtn) fixSingleBtn.disabled = true;
-                    }
-                } else {
-                    authStatus.innerHTML = `
-                        <div class="flex items-center justify-center gap-2 text-amber-700">
-                            <span class="text-xl">⚠️</span>
-                            <span class="font-medium">يرجى تسجيل الدخول كمسؤول لإصلاح البيانات</span>
-                        </div>
-                    `;
-                    if (startBtn) startBtn.disabled = true;
-                    if (fixSingleBtn) fixSingleBtn.disabled = true;
+            // Remove empty state if exists
+            if (logContainer.querySelector(".text-center")) {
+                logContainer.innerHTML = "";
+            }
+
+            const div = document.createElement("div");
+            const time = new Date().toLocaleTimeString("en-US", {
+                hour12: false,
+            });
+
+            let colorClass = "text-slate-300";
+            if (type === "success") colorClass = "text-green-400";
+            if (type === "error") colorClass = "text-red-400";
+
+            div.className = `${colorClass} border-b border-slate-800/50 pb-1 mb-1`;
+            div.innerHTML = `<span class="opacity-50 mr-2">[${time}]</span> ${message}`;
+
+            logContainer.insertBefore(div, logContainer.firstChild);
+        }
+
+        if (clearLogBtn) {
+            clearLogBtn.addEventListener("click", () => {
+                if (logContainer)
+                    logContainer.innerHTML =
+                        '<div class="text-slate-600 italic text-center mt-20">السجلات ستظهر هنا...</div>';
+            });
+        }
+
+        // Helper: Generate Email from Name
+        function generateEmailFromName(displayName: string, uid: string) {
+            if (!displayName) return `user_${uid.substring(0, 8)}@babhijra.com`;
+
+            // Transliterate Arabic to English (Simple mapping)
+            // This is a basic approximation, for a real app consider a library
+            const arabicToEnglish: { [key: string]: string } = {
+                أ: "a",
+                ب: "b",
+                ت: "t",
+                ث: "th",
+                ج: "j",
+                ح: "h",
+                خ: "kh",
+                د: "d",
+                ذ: "dh",
+                ر: "r",
+                ز: "z",
+                س: "s",
+                ش: "sh",
+                ص: "s",
+                ض: "d",
+                ط: "t",
+                ظ: "z",
+                ع: "a",
+                غ: "gh",
+                ف: "f",
+                ق: "q",
+                ك: "k",
+                ل: "l",
+                م: "m",
+                ن: "n",
+                ه: "h",
+                و: "w",
+                ي: "y",
+                ة: "h",
+                ى: "a",
+                آ: "a",
+                إ: "e",
+                ئ: "e",
+                ؤ: "o",
+            };
+
+            let englishName = "";
+            for (let i = 0; i < displayName.length; i++) {
+                const char = displayName[i];
+                if (arabicToEnglish[char]) {
+                    englishName += arabicToEnglish[char];
+                } else if (/[a-zA-Z0-9]/.test(char)) {
+                    englishName += char;
+                } else if (char === " ") {
+                    englishName += ".";
                 }
             }
-        });
 
-        async function fixProfile(uid, profileData) {
+            // Clean up
+            englishName = englishName
+                .toLowerCase()
+                .replace(/\.+/g, ".")
+                .replace(/^\.| \.$/g, "");
+
+            if (englishName.length < 3) {
+                englishName = `user_${uid.substring(0, 6)}`;
+            }
+
+            const randomSuffix = Math.floor(Math.random() * 1000);
+            return `${englishName}.${randomSuffix}@babhijra.com`;
+        }
+
+        // Core Logic: Fix Profile
+        async function fixProfile(uid: string, profileData: any) {
             try {
-                // Check if user doc exists
                 const userRef = doc(db, "users", uid);
                 const userSnap = await getDoc(userRef);
 
                 if (!userSnap.exists()) {
-                    // Create missing user document
+                    log(`Creating missing user doc for: ${uid}`, "info");
+
+                    // Determine email
+                    let email = profileData.email;
+                    if (!email) {
+                        email = generateEmailFromName(
+                            profileData.displayName,
+                            uid,
+                        );
+                        log(`Generated email: ${email}`, "info");
+                    }
+
                     const userData = {
                         uid: uid,
-                        displayName: profileData.displayName || "Unknown",
-                        email: profileData.email || `${uid}@example.com`,
-                        photoURL: profileData.photos?.[0] || null,
+                        email: email,
+                        displayName: profileData.displayName || "User",
                         role: "user",
+                        photoURL:
+                            profileData.photos && profileData.photos.length > 0
+                                ? profileData.photos[0]
+                                : null,
                         createdAt: profileData.createdAt || Timestamp.now(),
-                        updatedAt: Timestamp.now(),
+                        isOnline: false,
+                        lastSeen: Timestamp.now(),
                     };
 
                     await setDoc(userRef, userData);
-
-                    const li = document.createElement("li");
-                    li.className =
-                        "flex items-center gap-2 text-sm text-green-700 bg-green-50 p-2 rounded-lg";
-                    li.innerHTML = `<span class="font-bold">✅</span> <span>تم إصلاح: ${profileData.displayName} (${uid})</span>`;
-                    if (resultsList) resultsList.appendChild(li);
+                    log(
+                        `✅ Successfully created user doc for ${uid}`,
+                        "success",
+                    );
                     return true;
                 } else {
-                    const li = document.createElement("li");
-                    li.className =
-                        "flex items-center gap-2 text-sm text-blue-700 bg-blue-50 p-2 rounded-lg";
-                    li.innerHTML = `<span class="font-bold">ℹ️</span> <span>موجود مسبقاً: ${profileData.displayName}</span>`;
-                    if (resultsList) resultsList.appendChild(li);
+                    log(`User doc already exists for ${uid}`, "info");
                     return false;
                 }
-            } catch (err) {
-                console.error(err);
-                const li = document.createElement("li");
-                li.className =
-                    "flex items-center gap-2 text-sm text-red-700 bg-red-50 p-2 rounded-lg";
-                li.innerHTML = `<span class="font-bold">❌</span> <span>خطأ: ${profileData.displayName || uid}</span>`;
-                if (resultsList) resultsList.appendChild(li);
-                throw err;
+            } catch (error) {
+                log(`❌ Error fixing ${uid}: ${error}`, "error");
+                throw error;
             }
         }
 
-        // Fix Single User Logic
-        if (fixSingleBtn && targetUidInput) {
-            fixSingleBtn.addEventListener("click", async () => {
-                const uid = targetUidInput.value.trim();
+        // Single Fix Handler
+        if (singleFixBtn) {
+            singleFixBtn.addEventListener("click", async () => {
+                const uid = singleUidInput.value.trim();
                 if (!uid) {
-                    alert("الرجاء إدخال معرف المستخدم (UID)");
+                    if (singleStatus) {
+                        singleStatus.textContent = "❌ الرجاء إدخال UID";
+                        singleStatus.className =
+                            "text-center text-sm text-red-600";
+                    }
                     return;
                 }
 
-                fixSingleBtn.disabled = true;
-                if (statusDiv)
-                    statusDiv.textContent = "⏳ جاري البحث عن الملف الشخصي...";
-                if (resultsList) resultsList.innerHTML = "";
+                if (singleStatus) {
+                    singleStatus.textContent = "⏳ جاري الفحص...";
+                    singleStatus.className =
+                        "text-center text-sm text-blue-600 animate-pulse";
+                }
 
                 try {
-                    const profileDoc = await getDoc(doc(db, "profiles", uid));
+                    // Get profile first
+                    const profileRef = doc(db, "profiles", uid);
+                    const profileSnap = await getDoc(profileRef);
 
-                    if (profileDoc.exists()) {
-                        const profileData = profileDoc.data();
-                        await fixProfile(uid, profileData);
-                        if (statusDiv) statusDiv.textContent = "✅ تمت العملية";
-                    } else {
-                        if (statusDiv)
-                            statusDiv.textContent =
+                    if (!profileSnap.exists()) {
+                        log(`Profile not found for UID: ${uid}`, "error");
+                        if (singleStatus) {
+                            singleStatus.textContent =
                                 "❌ لم يتم العثور على ملف شخصي بهذا المعرف";
-                        const li = document.createElement("li");
-                        li.className =
-                            "flex items-center gap-2 text-sm text-red-700 bg-red-50 p-2 rounded-lg";
-                        li.innerHTML = `<span class="font-bold">❌</span> <span>لم يتم العثور على ملف شخصي: ${uid}</span>`;
-                        if (resultsList) resultsList.appendChild(li);
+                            singleStatus.className =
+                                "text-center text-sm text-red-600";
+                        }
+                        return;
+                    }
+
+                    const fixed = await fixProfile(uid, profileSnap.data());
+
+                    if (singleStatus) {
+                        singleStatus.textContent = fixed
+                            ? "✅ تم الإصلاح بنجاح!"
+                            : "ℹ️ المستخدم موجود مسبقًا";
+                        singleStatus.className = fixed
+                            ? "text-center text-sm text-green-600 font-bold"
+                            : "text-center text-sm text-slate-600";
                     }
                 } catch (error) {
-                    console.error("Error fixing single user:", error);
-                    if (statusDiv)
-                        statusDiv.textContent = `❌ حدث خطأ: ${error.message}`;
-                } finally {
-                    fixSingleBtn.disabled = false;
+                    console.error(error);
+                    if (singleStatus) {
+                        singleStatus.textContent = "❌ حدث خطأ غير متوقع";
+                        singleStatus.className =
+                            "text-center text-sm text-red-600";
+                    }
                 }
             });
         }
 
-        if (startBtn) {
-            startBtn.addEventListener("click", async () => {
+        // Bulk Fix Handler
+        if (startFixBtn) {
+            startFixBtn.addEventListener("click", async () => {
                 if (
                     !confirm(
-                        "⚠️ سيتم فحص جميع الملفات الشخصية وإنشاء حسابات للمفقودين. هل تريد المتابعة؟",
+                        "هل أنت متأكد من بدء الفحص الشامل؟ قد تستغرق العملية بعض الوقت.",
                     )
-                ) {
+                )
                     return;
-                }
 
-                startBtn.disabled = true;
-                startBtn.classList.add("opacity-50");
-                if (statusDiv)
-                    statusDiv.textContent = "⏳ جاري فحص البيانات...";
-                if (resultsList) resultsList.innerHTML = "";
+                // Reset UI
+                if (startFixBtn instanceof HTMLButtonElement)
+                    startFixBtn.disabled = true;
+                if (bulkStatus)
+                    bulkStatus.textContent = "⏳ جاري جلب الملفات...";
+                if (bulkProgressBar) bulkProgressBar.style.width = "0%";
+                if (bulkProgressText) bulkProgressText.textContent = "0%";
+                log("Starting bulk fix operation...", "info");
 
                 try {
-                    const profilesRef = collection(db, "profiles");
-                    const snapshot = await getDocs(profilesRef);
-                    const total = snapshot.size;
+                    // 1. Get all profiles
+                    const profilesSnap = await getDocs(
+                        collection(db, "profiles"),
+                    );
+                    const total = profilesSnap.size;
+                    log(`Found ${total} profiles to check.`, "info");
 
+                    let processed = 0;
                     let fixedCount = 0;
-                    let skippedCount = 0;
-                    let errorCount = 0;
 
-                    let i = 0;
-                    for (const profileDoc of snapshot.docs) {
-                        i++;
-                        const profileData = profileDoc.data();
-                        const uid = profileDoc.id;
-
-                        // Update progress
-                        const progress = Math.round((i / total) * 100);
-                        if (progressBar)
-                            progressBar.style.width = `${progress}%`;
-                        if (progressText)
-                            progressText.textContent = `${progress}%`;
+                    // 2. Iterate and fix
+                    for (const docSnap of profilesSnap.docs) {
+                        const uid = docSnap.id;
+                        const profileData = docSnap.data();
 
                         try {
-                            const fixed = await fixProfile(uid, profileData);
-                            if (fixed) fixedCount++;
-                            else skippedCount++;
-                        } catch (err) {
-                            errorCount++;
+                            const wasFixed = await fixProfile(uid, profileData);
+                            if (wasFixed) fixedCount++;
+                        } catch (e) {
+                            // Continue even if one fails
                         }
 
-                        // Auto-scroll
-                        if (resultsList && resultsList.lastElementChild) {
-                            resultsList.lastElementChild.scrollIntoView({
-                                behavior: "smooth",
-                            });
-                        }
+                        processed++;
+                        const progress = Math.round((processed / total) * 100);
+
+                        // Update UI
+                        if (bulkProgressBar)
+                            bulkProgressBar.style.width = `${progress}%`;
+                        if (bulkProgressText)
+                            bulkProgressText.textContent = `${progress}%`;
+                        if (bulkStatus)
+                            bulkStatus.textContent = `جاري المعالجة: ${processed}/${total}`;
 
                         // Small delay to prevent freezing
-                        await new Promise((r) => setTimeout(r, 50));
+                        if (processed % 5 === 0)
+                            await new Promise((r) => setTimeout(r, 10));
                     }
 
-                    if (statusDiv) {
-                        statusDiv.innerHTML = `
-                            <div class="text-green-700 font-bold">
-                                🎉 اكتمل الفحص! تم إصلاح ${fixedCount}، تخطي ${skippedCount}، أخطاء ${errorCount}
-                            </div>
-                        `;
-                    }
+                    // Done
+                    log(
+                        `🏁 Bulk operation complete. Fixed ${fixedCount} users.`,
+                        "success",
+                    );
+                    if (bulkStatus)
+                        bulkStatus.textContent = `✨ تم الانتهاء! تم إصلاح ${fixedCount} مستخدم.`;
+                    if (startFixBtn instanceof HTMLButtonElement)
+                        startFixBtn.disabled = false;
                 } catch (error) {
-                    console.error("Fatal error:", error);
-                    if (statusDiv) {
-                        statusDiv.innerHTML = `
-                            <div class="text-red-700 font-bold">
-                                ❌ حدث خطأ غير متوقع: ${error.message}
-                            </div>
-                        `;
-                    }
-                } finally {
-                    startBtn.disabled = false;
-                    startBtn.classList.remove("opacity-50");
+                    log(`❌ Critical error in bulk fix: ${error}`, "error");
+                    if (bulkStatus)
+                        bulkStatus.textContent = "❌ حدث خطأ أثناء العملية";
+                    if (startFixBtn instanceof HTMLButtonElement)
+                        startFixBtn.disabled = false;
                 }
             });
         }

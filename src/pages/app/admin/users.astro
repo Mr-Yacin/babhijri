@@ -1,6 +1,7 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import UserList from "../../../components/admin/UserList.svelte";
+import AdminCheck from "../../../components/admin/AdminCheck.astro";
 ---
 
 <script>
@@ -9,6 +10,7 @@ import UserList from "../../../components/admin/UserList.svelte";
 </script>
 
 <AdminLayout title="إدارة المستخدمين">
+    <AdminCheck />
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900 mb-2">إدارة المستخدمين</h1>
         <p class="text-gray-600">عرض وإدارة جميع المستخدمين المسجلين</p>
