@@ -475,6 +475,14 @@ import { SITE_CONFIG } from "../../config";
     import { authStore } from "../../lib/stores/auth";
     import { ProfileService } from "../../lib/services/profile";
     import { userService } from "../../lib/services/user";
+    import {
+        getMatchingLikes,
+        getUnreadMessageCount,
+        subscribeToUnreadCount,
+        getLastActivity,
+        formatLastActivity,
+        updateLastActivity,
+    } from "../../lib/services/notification";
 
     const els = {
         statViews: document.getElementById("stat-views"),
@@ -486,11 +494,17 @@ import { SITE_CONFIG } from "../../config";
         completionBanner: document.getElementById("completion-banner"),
         bannerCompletion: document.getElementById("banner-completion"),
         adminCard: document.getElementById("admin-card"),
+        recentActivity: document.getElementById("recent-activity"),
     };
+
+    let unreadUnsubscribe = null;
 
     authStore.subscribe(async (state) => {
         if (state.user) {
             try {
+                // Update user's last activity
+                await updateLastActivity(state.user.uid);
+
                 // Check if user is admin
                 const userProfile = await userService.getUserProfile(
                     state.user.uid,
@@ -545,8 +559,35 @@ import { SITE_CONFIG } from "../../config";
                         els.statViews.textContent = stats.views.toString();
                     if (els.statLikes)
                         els.statLikes.textContent = stats.likes.toString();
+
+                    // Get matching likes (mutual likes)
+                    const matchingLikes = await getMatchingLikes(
+                        state.user.uid,
+                    );
                     if (els.statMatches)
-                        els.statMatches.textContent = stats.matches.toString();
+                        els.statMatches.textContent =
+                            matchingLikes.length.toString();
+
+                    // Subscribe to real-time unread message count
+                    if (unreadUnsubscribe) {
+                        unreadUnsubscribe();
+                    }
+                    unreadUnsubscribe = subscribeToUnreadCount(
+                        state.user.uid,
+                        async (unreadCount) => {
+                            // Update recent activity section
+                            await updateRecentActivity(
+                                state.user.uid,
+                                unreadCount,
+                            );
+                        },
+                    );
+
+                    // Initial recent activity update
+                    const unreadCount = await getUnreadMessageCount(
+                        state.user.uid,
+                    );
+                    await updateRecentActivity(state.user.uid, unreadCount);
                 } else {
                     // No profile, redirect to create
                     window.location.href = "/app/profile/create";
@@ -557,6 +598,75 @@ import { SITE_CONFIG } from "../../config";
         } else if (!state.loading) {
             // Not logged in, redirect to login
             window.location.href = "/app/login";
+
+            // Clean up subscription
+            if (unreadUnsubscribe) {
+                unreadUnsubscribe();
+                unreadUnsubscribe = null;
+            }
+        }
+    });
+
+    async function updateRecentActivity(userId, unreadCount) {
+        if (!els.recentActivity) return;
+
+        const lastActivityTime = await getLastActivity(userId);
+        const activityText = formatLastActivity(lastActivityTime);
+
+        let html = "";
+
+        // Add unread messages activity
+        if (unreadCount > 0) {
+            html += `
+                <div class="flex items-start gap-3 p-3 bg-pink-50 rounded-lg border border-pink-100">
+                    <div class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">رسائل جديدة</p>
+                        <p class="text-sm text-gray-600">لديك ${unreadCount} ${unreadCount === 1 ? "رسالة" : "رسائل"} غير مقروءة</p>
+                        <a href="/app/messages" class="text-sm text-pink-600 hover:text-pink-700 font-medium mt-1 inline-block">عرض الرسائل ←</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add last activity
+        html += `
+            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-gray-900">آخر نشاط</p>
+                    <p class="text-sm text-gray-600">${activityText}</p>
+                </div>
+            </div>
+        `;
+
+        if (unreadCount === 0 && !lastActivityTime) {
+            html = `
+                <div class="text-center py-8 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p>لا يوجد نشاط حديث</p>
+                    <p class="text-sm mt-1">ابدأ بتصفح الملفات للحصول على تطابقات</p>
+                </div>
+            `;
+        }
+
+        els.recentActivity.innerHTML = html;
+    }
+
+    // Clean up on page unload
+    window.addEventListener("beforeunload", () => {
+        if (unreadUnsubscribe) {
+            unreadUnsubscribe();
         }
     });
 </script>

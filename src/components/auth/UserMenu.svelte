@@ -4,10 +4,13 @@
     import { signOut } from "firebase/auth";
 
     import { userService } from "../../lib/services/user";
+    import { subscribeToUnreadCount } from "../../lib/services/notification";
     import type { UserProfile } from "../../lib/types/user";
 
     let isDropdownOpen = $state(false);
     let userProfile: UserProfile | null = $state(null);
+    let unreadCount = $state(0);
+    let unsubscribe: (() => void) | null = null;
 
     // Subscribe to auth store to fetch profile when user logs in
     $effect(() => {
@@ -15,18 +18,40 @@
             userService.getUserProfile($authStore.user.uid).then((profile) => {
                 userProfile = profile;
             });
+
+            // Subscribe to unread message count
+            if (unsubscribe) {
+                unsubscribe();
+            }
+            unsubscribe = subscribeToUnreadCount(
+                $authStore.user.uid,
+                (count) => {
+                    unreadCount = count;
+                },
+            );
         } else {
             userProfile = null;
+            unreadCount = 0;
+            if (unsubscribe) {
+                unsubscribe();
+                unsubscribe = null;
+            }
         }
+
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
     });
 
     async function handleLogout() {
         try {
             // Clear session cookie first
-            await fetch('/api/auth/session', {
-                method: 'DELETE'
+            await fetch("/api/auth/session", {
+                method: "DELETE",
             });
-            
+
             // Then sign out from Firebase
             await signOut(auth);
             window.location.href = "/";
@@ -194,7 +219,7 @@
 
                     <a
                         href="/app/messages"
-                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
+                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors relative"
                     >
                         <svg
                             class="w-5 h-5"
@@ -210,6 +235,13 @@
                             />
                         </svg>
                         <span>الرسائل</span>
+                        {#if unreadCount > 0}
+                            <span
+                                class="absolute top-2 left-3 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full"
+                            >
+                                {unreadCount > 99 ? "99+" : unreadCount}
+                            </span>
+                        {/if}
                     </a>
 
                     <a

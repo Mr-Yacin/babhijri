@@ -4,6 +4,7 @@
     import { auth } from "../../lib/firebase";
     import { signOut } from "firebase/auth";
     import { userService } from "../../lib/services/user";
+    import { subscribeToUnreadCount } from "../../lib/services/notification";
     import type { UserProfile } from "../../lib/types/user";
 
     interface NavLink {
@@ -16,6 +17,8 @@
 
     let isOpen = $state(false);
     let userProfile: UserProfile | null = $state(null);
+    let unreadCount = $state(0);
+    let unsubscribe: (() => void) | null = null;
 
     // Subscribe to auth store to fetch profile when user logs in
     $effect(() => {
@@ -23,9 +26,31 @@
             userService.getUserProfile($authStore.user.uid).then((profile) => {
                 userProfile = profile;
             });
+
+            // Subscribe to unread message count
+            if (unsubscribe) {
+                unsubscribe();
+            }
+            unsubscribe = subscribeToUnreadCount(
+                $authStore.user.uid,
+                (count) => {
+                    unreadCount = count;
+                },
+            );
         } else {
             userProfile = null;
+            unreadCount = 0;
+            if (unsubscribe) {
+                unsubscribe();
+                unsubscribe = null;
+            }
         }
+
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
     });
 
     function toggleMenu() {
@@ -45,10 +70,10 @@
     async function handleLogout() {
         try {
             // Clear session cookie first
-            await fetch('/api/auth/session', {
-                method: 'DELETE'
+            await fetch("/api/auth/session", {
+                method: "DELETE",
             });
-            
+
             // Then sign out from Firebase
             await signOut(auth);
             closeMenu();
@@ -259,7 +284,7 @@
                     <a
                         href="/app/messages"
                         onclick={closeMenu}
-                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors relative"
                     >
                         <svg
                             class="w-5 h-5"
@@ -274,7 +299,14 @@
                                 d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                             />
                         </svg>
-                        الرسائل
+                        <span>الرسائل</span>
+                        {#if unreadCount > 0}
+                            <span
+                                class="flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-red-600 text-white text-xs font-bold rounded-full ml-auto"
+                            >
+                                {unreadCount > 99 ? "99+" : unreadCount}
+                            </span>
+                        {/if}
                     </a>
                     <a
                         href="/app/settings"
