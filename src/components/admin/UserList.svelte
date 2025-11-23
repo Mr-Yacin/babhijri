@@ -4,12 +4,25 @@
     import type { UserListItem, AdminFilters } from "../../lib/types/user";
     import UserListTable from "./UserListTable.svelte";
     import UserFilters from "./UserFilters.svelte";
+    import Modal from "../common/Modal.svelte";
+    import Toast from "../common/Toast.svelte";
 
     let users: UserListItem[] = [];
     let loading = true;
     let hasMore = false;
     let lastDoc: any = null;
     let filters: AdminFilters = {};
+
+    // Modal state
+    let modalOpen = false;
+    let modalTitle = "";
+    let modalMessage = "";
+    let modalVariant: "danger" | "warning" | "info" | "success" = "danger";
+    let modalAction: (() => void) | null = null;
+    let userToDelete: string | null = null;
+
+    // Toast
+    let toastComponent: Toast;
 
     async function loadUsers(reset = false) {
         loading = true;
@@ -44,8 +57,47 @@
         loadUsers(true);
     }
 
+    function handleDelete(event: CustomEvent<{ uid: string }>) {
+        const { uid } = event.detail;
+        const user = users.find((u) => u.uid === uid);
+
+        userToDelete = uid;
+        modalTitle = "حذف المستخدم";
+        modalMessage = `هل أنت متأكد من حذف المستخدم "${user?.displayName}"؟ سيتم حذف جميع البيانات نهائياً ولا يمكن التراجع.`;
+        modalVariant = "danger";
+        modalAction = executeDelete;
+        modalOpen = true;
+    }
+
+    async function executeDelete() {
+        if (!userToDelete) return;
+
+        try {
+            await AdminService.deleteUserAccount(userToDelete);
+            toastComponent.show("تم حذف المستخدم بنجاح", "success");
+            userToDelete = null;
+            await loadUsers(true);
+        } catch (e: any) {
+            console.error("Error deleting user:", e);
+            toastComponent.show(
+                "حدث خطأ أثناء حذف المستخدم: " + e.message,
+                "error",
+            );
+        }
+    }
+
     onMount(() => loadUsers());
 </script>
+
+<Modal
+    bind:isOpen={modalOpen}
+    title={modalTitle}
+    message={modalMessage}
+    variant={modalVariant}
+    on:confirm={() => modalAction && modalAction()}
+/>
+
+<Toast bind:this={toastComponent} />
 
 <UserFilters on:apply={applyFilters} />
 
@@ -74,7 +126,7 @@
     </div>
 {/if}
 
-<UserListTable {users} on:refresh={handleRefresh} />
+<UserListTable {users} on:refresh={handleRefresh} on:delete={handleDelete} />
 
 {#if hasMore}
     <div class="flex justify-center mt-6">

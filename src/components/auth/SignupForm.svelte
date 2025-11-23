@@ -49,10 +49,19 @@
 
             // Create user profile in Firestore
             console.log('Creating user profile in Firestore...');
-            await userService.createUserProfile(userCredential.user, {
-                displayName: name,
-            });
-            console.log('User profile creation completed');
+            try {
+                await userService.createUserProfile(userCredential.user, {
+                    displayName: name,
+                });
+                console.log('User profile creation completed');
+                alert('✅ User document created successfully!');
+            } catch (profileError: any) {
+                console.error('Failed to create user profile:', profileError);
+                error = 'فشل إنشاء ملف المستخدم: ' + profileError.message;
+                alert('❌ Failed to create user document: ' + profileError.message);
+                loading = false;
+                return; // Don't continue if profile creation failed
+            }
 
             // Get the ID token and create session
             const idToken = await userCredential.user.getIdToken();
@@ -69,6 +78,7 @@
                 throw new Error('Failed to create session');
             }
 
+            alert('✅ Signup complete! Redirecting...');
             window.location.href = "/app";
         } catch (e: any) {
             console.error(e);

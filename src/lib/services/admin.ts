@@ -25,13 +25,19 @@ const PROFILES_COLLECTION = 'profiles';
 const ACTIVITY_COLLECTION = 'userActivity';
 const STATS_COLLECTION = 'adminStats';
 
+// Helper to ensure DB is initialized
+const getDb = () => {
+    if (!db) throw new Error('Firestore is not initialized');
+    return db;
+};
+
 export const AdminService = {
     /**
      * Get overall platform statistics
      */
     async getAdminStats(): Promise<AdminStats> {
         try {
-            const statsRef = doc(db, STATS_COLLECTION, 'platform');
+            const statsRef = doc(getDb(), STATS_COLLECTION, 'platform');
             const docSnap = await getDoc(statsRef);
 
             if (docSnap.exists()) {
@@ -65,7 +71,7 @@ export const AdminService = {
      */
     async calculateStats(): Promise<AdminStats> {
         try {
-            const profilesRef = collection(db, PROFILES_COLLECTION);
+            const profilesRef = collection(getDb(), PROFILES_COLLECTION);
             const allProfilesSnap = await getDocs(profilesRef);
 
             const now = Date.now();
@@ -138,7 +144,7 @@ export const AdminService = {
             const FETCH_SIZE = 50; // Fetch larger batches
 
             // ALWAYS query the users collection
-            const collectionRef = collection(db, USERS_COLLECTION);
+            const collectionRef = collection(getDb(), USERS_COLLECTION);
 
             while (accumulatedUsers.length < pageSize && hasMoreInDb && iterations < MAX_ITERATIONS) {
                 iterations++;
@@ -178,7 +184,7 @@ export const AdminService = {
                     let profileData: any = null;
 
                     try {
-                        const profileDoc = await getDoc(doc(db, PROFILES_COLLECTION, userData.uid));
+                        const profileDoc = await getDoc(doc(getDb(), PROFILES_COLLECTION, userData.uid));
                         if (profileDoc.exists()) {
                             profileData = profileDoc.data();
                         }
@@ -263,7 +269,7 @@ export const AdminService = {
      */
     async getRecentUsers(limitCount: number = 10): Promise<UserListItem[]> {
         try {
-            const profilesRef = collection(db, PROFILES_COLLECTION);
+            const profilesRef = collection(getDb(), PROFILES_COLLECTION);
             const q = query(
                 profilesRef,
                 orderBy('createdAt', 'desc'),
@@ -302,7 +308,7 @@ export const AdminService = {
      */
     async getUserActivity(uid: string, limitCount: number = 50): Promise<UserActivity[]> {
         try {
-            const activityRef = collection(db, ACTIVITY_COLLECTION);
+            const activityRef = collection(getDb(), ACTIVITY_COLLECTION);
             const q = query(
                 activityRef,
                 where('uid', '==', uid),
@@ -338,7 +344,7 @@ export const AdminService = {
      */
     async toggleUserStatus(uid: string, isActive: boolean): Promise<void> {
         try {
-            const profileRef = doc(db, PROFILES_COLLECTION, uid);
+            const profileRef = doc(getDb(), PROFILES_COLLECTION, uid);
             await updateDoc(profileRef, {
                 isActive,
                 updatedAt: serverTimestamp()
@@ -354,7 +360,7 @@ export const AdminService = {
      */
     async updateUserRole(uid: string, role: 'user' | 'admin'): Promise<void> {
         try {
-            const userRef = doc(db, USERS_COLLECTION, uid);
+            const userRef = doc(getDb(), USERS_COLLECTION, uid);
             await updateDoc(userRef, {
                 role,
                 updatedAt: serverTimestamp()
@@ -370,22 +376,22 @@ export const AdminService = {
      */
     async deleteUserAccount(uid: string): Promise<void> {
         try {
-            const batch = writeBatch(db);
+            const batch = writeBatch(getDb());
 
             // Delete profile
-            const profileRef = doc(db, PROFILES_COLLECTION, uid);
+            const profileRef = doc(getDb(), PROFILES_COLLECTION, uid);
             batch.delete(profileRef);
 
             // Delete user document
-            const userRef = doc(db, USERS_COLLECTION, uid);
+            const userRef = doc(getDb(), USERS_COLLECTION, uid);
             batch.delete(userRef);
 
             // Delete user settings
-            const settingsRef = doc(db, 'userSettings', uid);
+            const settingsRef = doc(getDb(), 'userSettings', uid);
             batch.delete(settingsRef);
 
             // Delete user stats
-            const statsRef = doc(db, STATS_COLLECTION, uid);
+            const statsRef = doc(getDb(), STATS_COLLECTION, uid);
             batch.delete(statsRef);
 
             // Commit the batch
@@ -408,7 +414,7 @@ export const AdminService = {
             // This is a simple implementation that fetches all profiles and filters client-side
             // For production, consider using Algolia or similar service
 
-            const profilesRef = collection(db, PROFILES_COLLECTION);
+            const profilesRef = collection(getDb(), PROFILES_COLLECTION);
             const q = query(profilesRef, limit(100)); // Limit to avoid fetching too much data
 
             const querySnapshot = await getDocs(q);

@@ -8,8 +8,8 @@
 
     function viewUser(uid: string) {
         dispatch("view", { uid });
-        // navigate to user detail page
-        window.location.href = `/app/admin/users/${uid}`;
+        // navigate to unified user/profile management page
+        window.location.href = `/app/admin/manage/${uid}`;
     }
 
     function toggleActive(uid: string, isActive: boolean) {
@@ -25,15 +25,8 @@
     }
 
     function deleteUser(uid: string) {
-        if (confirm("هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع.")) {
-            import("../../lib/services/admin").then(({ AdminService }) => {
-                AdminService.deleteUserAccount(uid)
-                    .then(() => {
-                        dispatch("refresh");
-                    })
-                    .catch((err) => console.error(err));
-            });
-        }
+        // Emit delete event - parent component will show modal
+        dispatch("delete", { uid });
     }
 </script>
 

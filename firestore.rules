@@ -28,6 +28,7 @@ service cloud.firestore {
     match /users/{uid} {
       // Allow admins to read all users for dashboard stats
       allow read: if isOwner(uid) || isAdmin() || isAdminEmail();
+      // Allow users to create their own document during signup
       allow create: if isOwner(uid);
       // Owners can update their doc but cannot change their role. Admins can change anything.
       allow update: if isAdmin() || isAdminEmail() || (isOwner(uid) && request.resource.data.role == resource.data.role);

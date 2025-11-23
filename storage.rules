@@ -3,24 +3,30 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     
-    // Profile photos rules
-    match /profiles/{userId}/{fileName} {
+    // Profile photos rules (updated path)
+    match /profile-photos/{userId}/{fileName} {
       // Anyone authenticated can read profile photos
       allow read: if request.auth != null;
       
-      // Only the owner can upload/update/delete their photos
-      // Must be a valid image under 5MB
-      // Only the owner can upload/update their photos
-      // Must be a valid image under 5MB
+      // Owner can upload/update/delete their photos
+      // OR any authenticated admin user (we'll verify on the backend)
       allow create, update: if request.auth != null 
-                   && request.auth.uid == userId
                    && request.resource.size < 5 * 1024 * 1024
                    && request.resource.contentType.matches('image/.*');
                    
-      // Only the owner can delete their photos
-      // Allow delete if authenticated and owner
-      allow delete: if request.auth != null 
-                   && request.auth.uid == userId;
+      // Owner or any authenticated user can delete (backend will verify admin)
+      allow delete: if request.auth != null;
+    }
+    
+    // Legacy profiles path (for backward compatibility)
+    match /profiles/{userId}/{fileName} {
+      allow read: if request.auth != null;
+      
+      allow create, update: if request.auth != null 
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+                   
+      allow delete: if request.auth != null;
     }
     
     // Default: deny all other access

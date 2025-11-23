@@ -6,12 +6,25 @@
         deleteProfile,
         toggleProfileStatus,
     } from "../../lib/services/adminProfiles";
+    import Modal from "../common/Modal.svelte";
+    import Toast from "../common/Toast.svelte";
 
     let profiles: DatingProfile[] = [];
     let loading = true;
     let error = "";
     let searchQuery = "";
     let filterStatus: "all" | "active" | "inactive" = "all";
+
+    // Modal state
+    let modalOpen = false;
+    let modalTitle = "";
+    let modalMessage = "";
+    let modalVariant: "danger" | "warning" | "info" | "success" = "danger";
+    let modalAction: (() => void) | null = null;
+    let profileToDelete: { uid: string; name: string } | null = null;
+
+    // Toast
+    let toastComponent: Toast;
 
     onMount(async () => {
         await loadProfiles();
@@ -28,20 +41,25 @@
         }
     }
 
-    async function handleDelete(uid: string, name: string) {
-        if (
-            !confirm(
-                `هل أنت متأكد من حذف ملف ${name}؟ لا يمكن التراجع عن هذا الإجراء.`,
-            )
-        ) {
-            return;
-        }
+    function handleDelete(uid: string, name: string) {
+        profileToDelete = { uid, name };
+        modalTitle = "حذف الملف الشخصي";
+        modalMessage = `هل أنت متأكد من حذف ملف "${name}"؟ لا يمكن التراجع عن هذا الإجراء.`;
+        modalVariant = "danger";
+        modalAction = executeDelete;
+        modalOpen = true;
+    }
+
+    async function executeDelete() {
+        if (!profileToDelete) return;
 
         try {
-            await deleteProfile(uid);
-            profiles = profiles.filter((p) => p.uid !== uid);
+            await deleteProfile(profileToDelete.uid);
+            profiles = profiles.filter((p) => p.uid !== profileToDelete!.uid);
+            toastComponent.show("تم حذف الملف الشخصي بنجاح", "success");
+            profileToDelete = null;
         } catch (err: any) {
-            alert("فشل حذف الملف: " + err.message);
+            toastComponent.show("فشل حذف الملف: " + err.message, "error");
         }
     }
 
@@ -51,13 +69,19 @@
             profiles = profiles.map((p) =>
                 p.uid === uid ? { ...p, isActive: !currentStatus } : p,
             );
+            toastComponent.show(
+                currentStatus
+                    ? "تم إلغاء تنشيط الملف الشخصي"
+                    : "تم تنشيط الملف الشخصي",
+                "success",
+            );
         } catch (err: any) {
-            alert("فشل تغيير الحالة: " + err.message);
+            toastComponent.show("فشل تغيير الحالة: " + err.message, "error");
         }
     }
 
     function viewProfile(uid: string) {
-        window.location.href = `/app/admin/profiles/${uid}`;
+        window.location.href = `/app/admin/manage/${uid}`;
     }
 
     $: filteredProfiles = profiles.filter((profile) => {
@@ -79,6 +103,16 @@
         return matchesSearch && matchesStatus;
     });
 </script>
+
+<Modal
+    bind:isOpen={modalOpen}
+    title={modalTitle}
+    message={modalMessage}
+    variant={modalVariant}
+    on:confirm={() => modalAction && modalAction()}
+/>
+
+<Toast bind:this={toastComponent} />
 
 <div class="space-y-6">
     <!-- Filters -->

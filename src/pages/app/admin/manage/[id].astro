@@ -1,0 +1,34 @@
+---
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import UnifiedUserProfileManager from "../../../../components/admin/UnifiedUserProfileManager.svelte";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const uid = id; // Can be accessed via /app/admin/manage/[id]
+---
+
+<script>
+    import { requireAdmin } from "../../../../lib/utils/auth-guard";
+    requireAdmin();
+</script>
+
+<AdminLayout title="إدارة المستخدم">
+    <div class="mb-6">
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <a href="/app/admin" class="hover:text-teal-600"> لوحة الإدارة </a>
+            <span>/</span>
+            <a href="/app/admin/users" class="hover:text-teal-600">
+                المستخدمين
+            </a>
+            <span>/</span>
+            <span class="text-gray-900">إدارة المستخدم</span>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">إدارة المستخدم</h1>
+        <p class="text-gray-600 mt-1">
+            عرض وتعديل تفاصيل المستخدم والملف الشخصي
+        </p>
+    </div>
+
+    <UnifiedUserProfileManager client:only="svelte" uid={uid as string} />
+</AdminLayout>

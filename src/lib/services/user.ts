@@ -14,14 +14,15 @@ export const userService = {
         }
 
         const userRef = doc(db, 'users', user.uid);
-        const snapshot = await getDoc(userRef);
 
-        if (!snapshot.exists()) {
-            const { displayName, email, photoURL } = user;
-            const createdAt = Date.now();
+        try {
+            const snapshot = await getDoc(userRef);
 
-            try {
-                await setDoc(userRef, {
+            if (!snapshot.exists()) {
+                const { displayName, email, photoURL } = user;
+                const createdAt = Date.now();
+
+                const userData = {
                     uid: user.uid,
                     displayName: displayName || '',
                     email: email || '',
@@ -30,20 +31,27 @@ export const userService = {
                     createdAt,
                     updatedAt: createdAt,
                     ...additionalData
-                });
-                console.log('User profile created successfully in Firestore:', user.uid);
-            } catch (error) {
-                console.error('Error creating user profile', error);
-                throw error;
+                };
+
+                try {
+                    await setDoc(userRef, userData);
+                    console.log('User profile created successfully in Firestore:', user.uid);
+                } catch (error) {
+                    console.error('Error creating user profile', error);
+                    throw error;
+                }
+            } else {
+                console.log('User profile already exists:', user.uid);
             }
-        } else {
-            console.log('User profile already exists:', user.uid);
+        } catch (outerError) {
+            console.error('Error checking/creating user profile:', outerError);
+            throw outerError;
         }
     },
 
     async getUserProfile(uid: string): Promise<UserProfile | null> {
         if (!uid) return null;
-        
+
         const db = getFirebaseDb();
         if (!db) {
             console.error('Firestore not initialized');
@@ -65,7 +73,7 @@ export const userService = {
 
     async updateUserProfile(uid: string, data: Partial<UserProfile>) {
         if (!uid) return;
-        
+
         const db = getFirebaseDb();
         if (!db) {
             console.error('Firestore not initialized');

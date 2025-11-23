@@ -1,0 +1,388 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="إصلاح البيانات">
+    <div class="max-w-4xl mx-auto">
+        <!-- Info Banner -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-6">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl">🔧</span>
+                <div>
+                    <h3 class="font-bold text-amber-900 mb-1">
+                        أداة إصلاح البيانات
+                    </h3>
+                    <p class="text-sm text-amber-800">
+                        ستقوم هذه الأداة بفحص جميع الملفات الشخصية وإنشاء حسابات
+                        مستخدمين مفقودة لها. هذا ضروري للملفات الشخصية التي تمت
+                        إضافتها يدويًا أو عبر التعبئة التلقائية.
+                        <strong>تتطلب صلاحيات المسؤول.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+            <!-- Auth Status -->
+            <div
+                id="auth-status"
+                class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center"
+            >
+                <div class="inline-flex items-center gap-2">
+                    <div
+                        class="w-5 h-5 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"
+                    >
+                    </div>
+                    <span class="text-gray-700"
+                        >جاري التحقق من الصلاحيات...</span
+                    >
+                </div>
+            </div>
+
+            <!-- Fix Single User Section -->
+            <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <h4 class="font-bold text-gray-700 mb-4">إصلاح مستخدم محدد</h4>
+                <div class="flex gap-4">
+                    <input
+                        type="text"
+                        id="target-uid"
+                        placeholder="أدخل معرف المستخدم (UID)"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                    />
+                    <button
+                        id="fix-single-btn"
+                        disabled
+                        class="px-6 py-2 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-md"
+                    >
+                        إصلاح هذا المستخدم
+                    </button>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 my-6"></div>
+
+            <!-- Bulk Fix Section -->
+            <div class="text-center mb-6">
+                <h4 class="font-bold text-gray-700 mb-4">أو إصلاح الكل</h4>
+                <button
+                    id="start-fix-btn"
+                    disabled
+                    class="px-8 py-4 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                    <span class="flex items-center justify-center gap-2">
+                        <span>🛠️</span>
+                        <span>بدء الفحص الشامل (الكل)</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">التقدم</span
+                    >
+                    <span
+                        id="progress-text"
+                        class="text-sm font-bold text-teal-600">0%</span
+                    >
+                </div>
+                <div
+                    class="w-full bg-gray-200 rounded-full h-3 overflow-hidden"
+                >
+                    <div
+                        id="progress-bar"
+                        class="bg-gradient-to-r from-teal-500 to-teal-600 h-3 rounded-full transition-all duration-300 shadow-lg"
+                        style="width:0%"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Message -->
+            <div
+                id="status-message"
+                class="text-center text-gray-600 mb-6 min-h-[24px]"
+            >
+            </div>
+
+            <!-- Results List -->
+            <div
+                class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50"
+            >
+                <div
+                    class="bg-gradient-to-r from-gray-100 to-gray-50 px-4 py-3 border-b border-gray-200"
+                >
+                    <h3 class="font-semibold text-gray-700 text-sm">
+                        سجل العمليات
+                    </h3>
+                </div>
+                <div class="max-h-64 overflow-y-auto p-4">
+                    <ul id="results-list" class="space-y-2">
+                        <li class="text-gray-400 text-sm text-center py-4">
+                            النتائج ستظهر هنا...
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script define:vars={{ adminEmailsStr: import.meta.env.ADMIN_EMAILS || "" }}
+    >
+        import { db, auth } from "../../../lib/firebase";
+        import {
+            collection,
+            getDocs,
+            doc,
+            getDoc,
+            setDoc,
+            Timestamp,
+        } from "firebase/firestore";
+        import { onAuthStateChanged } from "firebase/auth";
+
+        const startBtn = document.getElementById("start-fix-btn");
+        const fixSingleBtn = document.getElementById("fix-single-btn");
+        const targetUidInput = document.getElementById("target-uid");
+        const statusDiv = document.getElementById("status-message");
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const resultsList = document.getElementById("results-list");
+        const authStatus = document.getElementById("auth-status");
+
+        const adminEmails = adminEmailsStr
+            .split(",")
+            .map((e) => e.trim().toLowerCase());
+        let currentUser = null;
+
+        // Check auth status
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (authStatus) {
+                if (user) {
+                    try {
+                        // Check by Email (fallback if user doc missing)
+                        const isEmailAdmin = adminEmails.includes(
+                            user.email?.toLowerCase(),
+                        );
+
+                        // Check by Role
+                        let isRoleAdmin = false;
+                        const userDoc = await getDoc(
+                            doc(db, "users", user.uid),
+                        );
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            isRoleAdmin = userData?.role === "admin";
+                        }
+
+                        if (isRoleAdmin || isEmailAdmin) {
+                            authStatus.innerHTML = `
+                                <div class="flex items-center justify-center gap-2 text-green-700">
+                                    <span class="text-xl">✅</span>
+                                    <span class="font-medium">تم تسجيل الدخول كمسؤول: ${user.email}</span>
+                                </div>
+                            `;
+                            if (startBtn) startBtn.disabled = false;
+                            if (fixSingleBtn) fixSingleBtn.disabled = false;
+                        } else {
+                            authStatus.innerHTML = `
+                                <div class="flex items-center justify-center gap-2 text-red-700">
+                                    <span class="text-xl">❌</span>
+                                    <span class="font-medium">غير مصرح. البريد الإلكتروني غير مسجل كمسؤول.</span>
+                                </div>
+                            `;
+                            if (startBtn) startBtn.disabled = true;
+                            if (fixSingleBtn) fixSingleBtn.disabled = true;
+                        }
+                    } catch (error) {
+                        console.error("Error checking admin status:", error);
+                        authStatus.innerHTML = `
+                            <div class="flex items-center justify-center gap-2 text-red-700">
+                                <span class="text-xl">❌</span>
+                                <span class="font-medium">خطأ في التحقق من الصلاحيات</span>
+                            </div>
+                        `;
+                        if (startBtn) startBtn.disabled = true;
+                        if (fixSingleBtn) fixSingleBtn.disabled = true;
+                    }
+                } else {
+                    authStatus.innerHTML = `
+                        <div class="flex items-center justify-center gap-2 text-amber-700">
+                            <span class="text-xl">⚠️</span>
+                            <span class="font-medium">يرجى تسجيل الدخول كمسؤول لإصلاح البيانات</span>
+                        </div>
+                    `;
+                    if (startBtn) startBtn.disabled = true;
+                    if (fixSingleBtn) fixSingleBtn.disabled = true;
+                }
+            }
+        });
+
+        async function fixProfile(uid, profileData) {
+            try {
+                // Check if user doc exists
+                const userRef = doc(db, "users", uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    // Create missing user document
+                    const userData = {
+                        uid: uid,
+                        displayName: profileData.displayName || "Unknown",
+                        email: profileData.email || `${uid}@example.com`,
+                        photoURL: profileData.photos?.[0] || null,
+                        role: "user",
+                        createdAt: profileData.createdAt || Timestamp.now(),
+                        updatedAt: Timestamp.now(),
+                    };
+
+                    await setDoc(userRef, userData);
+
+                    const li = document.createElement("li");
+                    li.className =
+                        "flex items-center gap-2 text-sm text-green-700 bg-green-50 p-2 rounded-lg";
+                    li.innerHTML = `<span class="font-bold">✅</span> <span>تم إصلاح: ${profileData.displayName} (${uid})</span>`;
+                    if (resultsList) resultsList.appendChild(li);
+                    return true;
+                } else {
+                    const li = document.createElement("li");
+                    li.className =
+                        "flex items-center gap-2 text-sm text-blue-700 bg-blue-50 p-2 rounded-lg";
+                    li.innerHTML = `<span class="font-bold">ℹ️</span> <span>موجود مسبقاً: ${profileData.displayName}</span>`;
+                    if (resultsList) resultsList.appendChild(li);
+                    return false;
+                }
+            } catch (err) {
+                console.error(err);
+                const li = document.createElement("li");
+                li.className =
+                    "flex items-center gap-2 text-sm text-red-700 bg-red-50 p-2 rounded-lg";
+                li.innerHTML = `<span class="font-bold">❌</span> <span>خطأ: ${profileData.displayName || uid}</span>`;
+                if (resultsList) resultsList.appendChild(li);
+                throw err;
+            }
+        }
+
+        // Fix Single User Logic
+        if (fixSingleBtn && targetUidInput) {
+            fixSingleBtn.addEventListener("click", async () => {
+                const uid = targetUidInput.value.trim();
+                if (!uid) {
+                    alert("الرجاء إدخال معرف المستخدم (UID)");
+                    return;
+                }
+
+                fixSingleBtn.disabled = true;
+                if (statusDiv)
+                    statusDiv.textContent = "⏳ جاري البحث عن الملف الشخصي...";
+                if (resultsList) resultsList.innerHTML = "";
+
+                try {
+                    const profileDoc = await getDoc(doc(db, "profiles", uid));
+
+                    if (profileDoc.exists()) {
+                        const profileData = profileDoc.data();
+                        await fixProfile(uid, profileData);
+                        if (statusDiv) statusDiv.textContent = "✅ تمت العملية";
+                    } else {
+                        if (statusDiv)
+                            statusDiv.textContent =
+                                "❌ لم يتم العثور على ملف شخصي بهذا المعرف";
+                        const li = document.createElement("li");
+                        li.className =
+                            "flex items-center gap-2 text-sm text-red-700 bg-red-50 p-2 rounded-lg";
+                        li.innerHTML = `<span class="font-bold">❌</span> <span>لم يتم العثور على ملف شخصي: ${uid}</span>`;
+                        if (resultsList) resultsList.appendChild(li);
+                    }
+                } catch (error) {
+                    console.error("Error fixing single user:", error);
+                    if (statusDiv)
+                        statusDiv.textContent = `❌ حدث خطأ: ${error.message}`;
+                } finally {
+                    fixSingleBtn.disabled = false;
+                }
+            });
+        }
+
+        if (startBtn) {
+            startBtn.addEventListener("click", async () => {
+                if (
+                    !confirm(
+                        "⚠️ سيتم فحص جميع الملفات الشخصية وإنشاء حسابات للمفقودين. هل تريد المتابعة؟",
+                    )
+                ) {
+                    return;
+                }
+
+                startBtn.disabled = true;
+                startBtn.classList.add("opacity-50");
+                if (statusDiv)
+                    statusDiv.textContent = "⏳ جاري فحص البيانات...";
+                if (resultsList) resultsList.innerHTML = "";
+
+                try {
+                    const profilesRef = collection(db, "profiles");
+                    const snapshot = await getDocs(profilesRef);
+                    const total = snapshot.size;
+
+                    let fixedCount = 0;
+                    let skippedCount = 0;
+                    let errorCount = 0;
+
+                    let i = 0;
+                    for (const profileDoc of snapshot.docs) {
+                        i++;
+                        const profileData = profileDoc.data();
+                        const uid = profileDoc.id;
+
+                        // Update progress
+                        const progress = Math.round((i / total) * 100);
+                        if (progressBar)
+                            progressBar.style.width = `${progress}%`;
+                        if (progressText)
+                            progressText.textContent = `${progress}%`;
+
+                        try {
+                            const fixed = await fixProfile(uid, profileData);
+                            if (fixed) fixedCount++;
+                            else skippedCount++;
+                        } catch (err) {
+                            errorCount++;
+                        }
+
+                        // Auto-scroll
+                        if (resultsList && resultsList.lastElementChild) {
+                            resultsList.lastElementChild.scrollIntoView({
+                                behavior: "smooth",
+                            });
+                        }
+
+                        // Small delay to prevent freezing
+                        await new Promise((r) => setTimeout(r, 50));
+                    }
+
+                    if (statusDiv) {
+                        statusDiv.innerHTML = `
+                            <div class="text-green-700 font-bold">
+                                🎉 اكتمل الفحص! تم إصلاح ${fixedCount}، تخطي ${skippedCount}، أخطاء ${errorCount}
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error("Fatal error:", error);
+                    if (statusDiv) {
+                        statusDiv.innerHTML = `
+                            <div class="text-red-700 font-bold">
+                                ❌ حدث خطأ غير متوقع: ${error.message}
+                            </div>
+                        `;
+                    }
+                } finally {
+                    startBtn.disabled = false;
+                    startBtn.classList.remove("opacity-50");
+                }
+            });
+        }
+    </script>
+</AdminLayout>
