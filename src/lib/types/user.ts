@@ -10,7 +10,7 @@ export interface UserProfile {
     updatedAt: number;
 }
 
-export interface DatingProfile {
+export interface PublicProfile {
     uid: string;
     displayName: string;
     age: number;
@@ -23,7 +23,7 @@ export interface DatingProfile {
     education: string;
     occupation: string;
     photos: string[];
-    verified: boolean;
+    verified: boolean; // Public verification badge
     lookingFor: 'marriage' | 'friendship';
     maritalStatus: 'single' | 'divorced' | 'widowed';
     hasChildren: boolean;
@@ -34,6 +34,15 @@ export interface DatingProfile {
     updatedAt: number;
     isActive: boolean;
 }
+
+export interface AdminProfileData {
+    verificationStatus?: 'pending' | 'verified' | 'rejected' | 'none';
+    adminNotes?: string;
+    verificationDate?: number;
+    rejectionReason?: string;
+}
+
+export type DatingProfile = PublicProfile & AdminProfileData;
 
 export interface ProfileFormData {
     displayName: string;

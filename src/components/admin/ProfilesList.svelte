@@ -531,7 +531,7 @@
                                 </td>
                                 <td class="p-4 text-gray-500">
                                     {new Date(
-                                        profile.createdAt.seconds * 1000,
+                                        profile.createdAt,
                                     ).toLocaleDateString("ar-SA")}
                                 </td>
                                 <td class="p-4">

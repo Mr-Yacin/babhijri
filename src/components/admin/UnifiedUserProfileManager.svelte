@@ -70,7 +70,7 @@
         loading = true;
         try {
             // First, get the profile to find the real user UID
-            const p = await ProfileService.getProfile(uid);
+            const p = await ProfileService.getFullProfile(uid);
             profile = p;
 
             // If profile exists, use its UID (which is the real user UID)
@@ -106,11 +106,25 @@
         isEditing = false;
         editForm = {};
     }
-
     async function saveProfile() {
         if (!uid || !editForm) return;
         saving = true;
         try {
+            // Update verification date if status changes to verified
+            if (
+                editForm.verificationStatus === "verified" &&
+                profile?.verificationStatus !== "verified"
+            ) {
+                editForm.verificationDate = Date.now();
+            }
+
+            // Sync verified boolean with verificationStatus
+            if (editForm.verificationStatus === "verified") {
+                editForm.verified = true;
+            } else if (editForm.verificationStatus) {
+                editForm.verified = false;
+            }
+
             await ProfileService.updateProfile(uid, editForm);
             await loadUserData();
             isEditing = false;
@@ -926,6 +940,80 @@
                         </div>
                     </div>
 
+                    <!-- Admin Data Section -->
+                    <div
+                        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 border-l-4 border-l-purple-500"
+                    >
+                        <h3
+                            class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"
+                        >
+                            <span>🛡️</span>
+                            بيانات الإدارة
+                        </h3>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label
+                                    for="verificationStatus"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                >
+                                    حالة التوثيق
+                                </label>
+                                <select
+                                    id="verificationStatus"
+                                    bind:value={editForm.verificationStatus}
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                >
+                                    <option value="none">غير موثق (None)</option
+                                    >
+                                    <option value="pending"
+                                        >قيد المراجعة (Pending)</option
+                                    >
+                                    <option value="verified"
+                                        >موثق (Verified)</option
+                                    >
+                                    <option value="rejected"
+                                        >مرفوض (Rejected)</option
+                                    >
+                                </select>
+                            </div>
+
+                            {#if editForm.verificationStatus === "rejected"}
+                                <div>
+                                    <label
+                                        for="rejectionReason"
+                                        class="block text-sm font-medium text-gray-700 mb-2"
+                                    >
+                                        سبب الرفض
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="rejectionReason"
+                                        bind:value={editForm.rejectionReason}
+                                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                        placeholder="اذكر سبب رفض التوثيق..."
+                                    />
+                                </div>
+                            {/if}
+
+                            <div>
+                                <label
+                                    for="adminNotes"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                >
+                                    ملاحظات الإدارة (سرية)
+                                </label>
+                                <textarea
+                                    id="adminNotes"
+                                    bind:value={editForm.adminNotes}
+                                    rows="3"
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    placeholder="ملاحظات خاصة بالمشرفين فقط..."
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Action Buttons -->
                     <div class="flex gap-4">
                         <button
@@ -1056,6 +1144,80 @@
                             </div>
                         </div>
                     {/if}
+                    <!-- Admin Data Display -->
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <h4
+                            class="text-sm font-bold text-purple-700 mb-3 flex items-center gap-2"
+                        >
+                            <span>🛡️</span> بيانات الإدارة
+                        </h4>
+                        <div class="bg-purple-50 rounded-lg p-4 space-y-3">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-xs text-gray-500 block"
+                                        >حالة التوثيق</span
+                                    >
+                                    <span class="font-medium text-gray-900">
+                                        {#if profile.verificationStatus === "verified"}
+                                            <span class="text-green-600"
+                                                >موثق ✅</span
+                                            >
+                                        {:else if profile.verificationStatus === "pending"}
+                                            <span class="text-orange-600"
+                                                >قيد المراجعة ⏳</span
+                                            >
+                                        {:else if profile.verificationStatus === "rejected"}
+                                            <span class="text-red-600"
+                                                >مرفوض ❌</span
+                                            >
+                                        {:else}
+                                            <span class="text-gray-600"
+                                                >غير موثق</span
+                                            >
+                                        {/if}
+                                    </span>
+                                </div>
+
+                                {#if profile.verificationDate}
+                                    <div>
+                                        <span
+                                            class="text-xs text-gray-500 block"
+                                            >تاريخ التوثيق</span
+                                        >
+                                        <span class="text-gray-900">
+                                            {new Date(
+                                                profile.verificationDate,
+                                            ).toLocaleDateString("ar-SA")}
+                                        </span>
+                                    </div>
+                                {/if}
+                            </div>
+
+                            {#if profile.verificationStatus === "rejected" && profile.rejectionReason}
+                                <div>
+                                    <span class="text-xs text-gray-500 block"
+                                        >سبب الرفض</span
+                                    >
+                                    <span class="text-red-700"
+                                        >{profile.rejectionReason}</span
+                                    >
+                                </div>
+                            {/if}
+
+                            {#if profile.adminNotes}
+                                <div>
+                                    <span class="text-xs text-gray-500 block"
+                                        >ملاحظات الإدارة</span
+                                    >
+                                    <p
+                                        class="text-gray-700 text-sm whitespace-pre-wrap"
+                                    >
+                                        {profile.adminNotes}
+                                    </p>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
                 </div>
             {/if}
         </div>

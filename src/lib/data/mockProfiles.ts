@@ -26,7 +26,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 165,
         createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 20 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_002',
@@ -593,7 +595,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 182,
         createdAt: Date.now() - 40 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 35 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_023',
@@ -620,7 +624,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 180,
         createdAt: Date.now() - 25 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 20 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_024',
@@ -647,7 +653,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 176,
         createdAt: Date.now() - 50 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 45 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_025',
@@ -674,7 +682,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 179,
         createdAt: Date.now() - 20 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 15 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_026',
@@ -701,7 +711,8 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 177,
         createdAt: Date.now() - 15 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'pending'
     },
     {
         uid: 'profile_027',
@@ -728,7 +739,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 183,
         createdAt: Date.now() - 55 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 6 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 50 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_028',
@@ -755,7 +768,9 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 181,
         createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'verified',
+        verificationDate: Date.now() - 25 * 24 * 60 * 60 * 1000
     },
     {
         uid: 'profile_029',
@@ -782,7 +797,8 @@ export const MOCK_PROFILES: DatingProfile[] = [
         height: 178,
         createdAt: Date.now() - 22 * 24 * 60 * 60 * 1000,
         updatedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-        isActive: true
+        isActive: true,
+        verificationStatus: 'pending'
     },
     {
         uid: 'profile_030',

@@ -5,15 +5,24 @@ import {
     updateDoc,
     deleteDoc,
     serverTimestamp,
-    Timestamp
+    Timestamp,
+    type Firestore
 } from 'firebase/firestore';
-import { db } from '../firebase';
-import type { DatingProfile, ProfileFormData, UserSettings, ProfileStats } from '../types/user';
+import { getFirebaseDb } from '../firebase';
+import type { DatingProfile, PublicProfile, ProfileFormData, UserSettings, ProfileStats } from '../types/user';
 import { ImageUploadService } from '../utils/imageUpload';
 
 const COLLECTION_NAME = 'profiles';
 const SETTINGS_COLLECTION = 'userSettings';
 const STATS_COLLECTION = 'profileStats';
+
+function getDb(): Firestore {
+    const db = getFirebaseDb();
+    if (!db) {
+        throw new Error('Firestore is not initialized');
+    }
+    return db;
+}
 
 export const ProfileService = {
     /**
@@ -35,7 +44,7 @@ export const ProfileService = {
      */
     async createProfile(uid: string, data: ProfileFormData): Promise<void> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
 
             const newProfile: any = {
                 uid,
@@ -67,15 +76,52 @@ export const ProfileService = {
     /**
      * Get a user's dating profile
      */
-    async getProfile(uid: string): Promise<DatingProfile | null> {
+    /**
+     * Get a user's public dating profile (strips admin data)
+     */
+    async getProfile(uid: string): Promise<PublicProfile | null> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
             const docSnap = await getDoc(profileRef);
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
 
                 // Convert Firestore Timestamps to numbers for compatibility
+                const fullProfile = {
+                    ...data,
+                    createdAt: data.createdAt instanceof Timestamp
+                        ? data.createdAt.toMillis()
+                        : data.createdAt,
+                    updatedAt: data.updatedAt instanceof Timestamp
+                        ? data.updatedAt.toMillis()
+                        : data.updatedAt
+                } as DatingProfile;
+
+                // Strip admin fields for public view
+                const { verificationStatus, adminNotes, verificationDate, rejectionReason, ...publicProfile } = fullProfile;
+                return publicProfile as PublicProfile;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error('Error getting profile:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Get a user's full dating profile (including admin data)
+     * Only for use by admins or the user themselves (in edit mode)
+     */
+    async getFullProfile(uid: string): Promise<DatingProfile | null> {
+        try {
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
+            const docSnap = await getDoc(profileRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+
                 return {
                     ...data,
                     createdAt: data.createdAt instanceof Timestamp
@@ -89,7 +135,7 @@ export const ProfileService = {
                 return null;
             }
         } catch (error) {
-            console.error('Error getting profile:', error);
+            console.error('Error getting full profile:', error);
             throw error;
         }
     },
@@ -99,7 +145,7 @@ export const ProfileService = {
      */
     async updateProfile(uid: string, data: Partial<DatingProfile>): Promise<void> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
 
             const updateData = {
                 ...data,
@@ -121,7 +167,7 @@ export const ProfileService = {
      */
     async deleteProfile(uid: string): Promise<void> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
             await deleteDoc(profileRef);
         } catch (error) {
             console.error('Error deleting profile:', error);
@@ -134,7 +180,7 @@ export const ProfileService = {
      */
     async profileExists(uid: string): Promise<boolean> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
             const docSnap = await getDoc(profileRef);
             return docSnap.exists();
         } catch (error) {
@@ -172,7 +218,7 @@ export const ProfileService = {
      */
     async updateProfileVisibility(uid: string, isActive: boolean): Promise<void> {
         try {
-            const profileRef = doc(db, COLLECTION_NAME, uid);
+            const profileRef = doc(getDb(), COLLECTION_NAME, uid);
             await updateDoc(profileRef, {
                 isActive,
                 updatedAt: serverTimestamp()
@@ -188,7 +234,7 @@ export const ProfileService = {
      */
     async getProfileStats(uid: string): Promise<ProfileStats> {
         try {
-            const statsRef = doc(db, STATS_COLLECTION, uid);
+            const statsRef = doc(getDb(), STATS_COLLECTION, uid);
             const docSnap = await getDoc(statsRef);
 
             if (docSnap.exists()) {
@@ -221,7 +267,7 @@ export const ProfileService = {
      */
     async initializeStats(uid: string): Promise<void> {
         try {
-            const statsRef = doc(db, STATS_COLLECTION, uid);
+            const statsRef = doc(getDb(), STATS_COLLECTION, uid);
             await setDoc(statsRef, {
                 views: 0,
                 likes: 0,
@@ -239,7 +285,7 @@ export const ProfileService = {
      */
     async getUserSettings(uid: string): Promise<UserSettings> {
         try {
-            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            const settingsRef = doc(getDb(), SETTINGS_COLLECTION, uid);
             const docSnap = await getDoc(settingsRef);
 
             if (docSnap.exists()) {
@@ -280,7 +326,7 @@ export const ProfileService = {
      */
     async updateUserSettings(uid: string, settings: Partial<UserSettings>): Promise<void> {
         try {
-            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            const settingsRef = doc(getDb(), SETTINGS_COLLECTION, uid);
             const updateData = {
                 ...settings,
                 uid,
@@ -300,7 +346,7 @@ export const ProfileService = {
      */
     async initializeSettings(uid: string): Promise<void> {
         try {
-            const settingsRef = doc(db, SETTINGS_COLLECTION, uid);
+            const settingsRef = doc(getDb(), SETTINGS_COLLECTION, uid);
             await setDoc(settingsRef, {
                 uid,
                 emailNotifications: true,
